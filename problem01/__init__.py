@@ -1,11 +1,11 @@
 from typing import List, Tuple, Optional
 
+import itertools
+from functools import reduce
 
-def find_pair(nums: List[int], goal: int) -> Optional[Tuple[int, int]]:
-    for x in nums:
-        for y in nums:
-            if x == y:
-                continue
-            if x + y == goal:
-                return (x, y) if x < y else (y, x)
+
+def find_sum_product(nums: List[int], length: int, goal: int) -> Optional[int]:
+    for c in itertools.combinations(nums, length):
+        if sum(c) == goal:
+            return reduce(lambda a, b: a * b, c)
     return None

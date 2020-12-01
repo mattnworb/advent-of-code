@@ -1,6 +1,12 @@
-from problem01 import find_pair
+from problem01 import find_sum_product
 
 
-def test_simple():
-    nums = [1721, 979, 366, 299, 675, 1456]
-    assert find_pair(nums, 2020) == (299, 1721)
+nums = [1721, 979, 366, 299, 675, 1456]
+
+
+def test_pair():
+    assert find_sum_product(nums, 2, 2020) == 514579
+
+
+def test_triple():
+    assert find_sum_product(nums, 3, 2020) == 241861950
