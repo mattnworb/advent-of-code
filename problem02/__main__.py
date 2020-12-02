@@ -1,4 +1,4 @@
-from problem02 import count_valid_passwords
+from problem02 import *
 
 if __name__ == "__main__":
     with open("problem02/input") as f:
@@ -6,5 +6,5 @@ if __name__ == "__main__":
 
     lines = inp.split("\n")
 
-    # part 1
-    print("part 1:", count_valid_passwords(lines))
+    print("part 1:", count_valid_passwords_v1(lines))
+    print("part 2:", count_valid_passwords_v2(lines))
