@@ -3,3 +3,4 @@
 .mypy_cache/
 .tox/
 .vscode/.ropeproject/
+.python-version
