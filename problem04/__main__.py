@@ -5,8 +5,9 @@ if __name__ == "__main__":
         inp = f.read(-1).strip()
 
     passports = parse_passports(inp)
-    valid = [is_valid(p) for p in passports]
+    valid1 = [is_valid(p) for p in passports]
 
-    print("part 1:", valid.count(True))
+    print("part 1:", valid1.count(True))
 
-    print("part 2:", "TODO")
+    valid2 = [is_valid(p, check_fields_valid=True) for p in passports]
+    print("part 2:", valid2.count(True))
