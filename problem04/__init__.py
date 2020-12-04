@@ -75,7 +75,7 @@ def is_int(text: str) -> bool:
 
 
 def _check_hgt(text: str):
-    m = re.match(r"(\d+)(cm|in)", text)
+    m = re.fullmatch(r"(\d+)(cm|in)", text)
     if m:
         num = int(m.group(1))
         if m.group(2) == "cm":
