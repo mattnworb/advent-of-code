@@ -1,7 +1,5 @@
 from typing import List, Set
 
-from functools import reduce
-
 
 def count_groups(inp: str, intersect=False) -> int:
 
@@ -19,11 +17,10 @@ def count_groups(inp: str, intersect=False) -> int:
         # reduce the list of sets to a single set, using intersection or union
         # depending on the param
         if intersect:
-            f = lambda a, b: a.intersection(b)
+            reduced = set.intersection(*answers)
         else:
-            f = lambda a, b: a.union(b)
+            reduced = set.union(*answers)
 
-        reduced = reduce(f, answers)
         all_answers.append(reduced)
 
     return sum(len(s) for s in all_answers)
