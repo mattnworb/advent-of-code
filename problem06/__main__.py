@@ -6,4 +6,4 @@ if __name__ == "__main__":
 
     print("part 1:", count_groups(inp))
 
-    print("part 2:", "TODO")
+    print("part 2:", count_groups(inp, intersect=True))
