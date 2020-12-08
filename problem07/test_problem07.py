@@ -16,20 +16,35 @@ dotted black bags contain no other bags.
 def test_part1_example():
     rules = example.strip().split("\n")
     g = parse_rules(rules)
-    # assert len(g) == 9
+    r = reverse(g)
 
-    # assert g["dotted black"] == set()
-    # assert g["dark orange"] == {(3, "bright white"), (4, "muted yellow")}
-
-    # count = 0
-    # for bagname, conns in g.items():
-    #     for count, name in conns:
-    #         if name == "shiny gold":
-    #             count += 1
-    # assert count == 4
-    assert expand("shiny gold", g) == {
+    assert expand("shiny gold", r) == {
         "bright white",
         "muted yellow",
         "dark orange",
         "light red",
     }
+
+
+def test_count_bags():
+    rules = example.strip().split("\n")
+    g = parse_rules(rules)
+    assert count_bags("vibrant plum", g) == 11
+    assert count_bags("shiny gold", g) == 32
+
+
+def test_count_bags_ex2():
+    rules = """
+shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.
+""".strip().split(
+        "\n"
+    )
+
+    g = parse_rules(rules)
+    assert count_bags("shiny gold", g) == 126

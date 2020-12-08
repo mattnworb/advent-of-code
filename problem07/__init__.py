@@ -36,10 +36,10 @@ def parse_rules(rules: List[str]) -> Graph:
 
         links[leftbag] = s
 
-    return reverse(links)
+    return links
 
 
-def reverse(g: Graph):
+def reverse(g: Graph) -> Dict[str, Set[str]]:
     n: Dict[str, Set[str]] = defaultdict(set)
     for bagname, conns in g.items():
         for count, name in conns:
@@ -57,3 +57,10 @@ def expand(bagname: str, rgraph: Dict[str, Set[str]]) -> Set[str]:
         for b in rgraph[item]:
             queue.add(b)
     return answer
+
+
+def count_bags(outer_bag: str, g: Graph) -> int:
+    n = 0
+    for count, inner_bag in g[outer_bag]:
+        n += count * (1 + count_bags(inner_bag, g))
+    return n
