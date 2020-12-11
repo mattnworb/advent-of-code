@@ -118,14 +118,7 @@ def solve_part2_dp(adapters: List[int]) -> int:
     c = {0: 1}
     # for each adapter to use
     for a in [*adapters, max(adapters) + 3]:
-        s = 0
-        for j in [0, *adapters]:
-            # is adapter j 1, 2, or 3 less than a?
-            d = a - j
-            if d > 0 and d < 4:
-                # print(f"{a} can be used after {j}")
-                s += c[j]
-
+        c[a] = sum(c[j] if 0 < a - j < 4 else 0 for j in [0, *adapters])
         # the key thing with DP here is the summing of c[j] above and storing it
         # in c[a].
         #
@@ -144,8 +137,6 @@ def solve_part2_dp(adapters: List[int]) -> int:
         # is already defined in terms of c[4] - the sequence where 5 comes last
         # is just appending it to the sequence(s) where 4 comes last.
 
-        c[a] = s
-        # print(f"done: {a} can be used {c[a]} ways\n")
     return max(c.values())
 
 
