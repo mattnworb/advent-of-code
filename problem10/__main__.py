@@ -8,4 +8,4 @@ if __name__ == "__main__":
 
     print("part 1:", solve_part1(adapters))
 
-    print("part 2:", part2(adapters))
+    print("part 2:", solve_part2_dp(adapters))

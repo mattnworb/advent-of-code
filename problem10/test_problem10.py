@@ -50,3 +50,8 @@ def test_part1_smarter():
 def test_part2():
     assert part2(ex1) == 8
     assert part2(ex2) == 19208
+
+
+def test_part2_dp():
+    assert solve_part2_dp(ex1) == 8
+    assert solve_part2_dp(ex2) == 19208

@@ -111,3 +111,49 @@ def _part2(current, adapters: Set[int], end, memo) -> int:
     memo[(current, end)] = c
 
     return c
+
+
+def solve_part2_dp(adapters: List[int]) -> int:
+    adapters = sorted(adapters)
+    c = {0: 1}
+    # for each adapter to use
+    for a in [*adapters, max(adapters) + 3]:
+        s = 0
+        for j in [0, *adapters]:
+            # is adapter j 1, 2, or 3 less than a?
+            d = a - j
+            if d > 0 and d < 4:
+                # print(f"{a} can be used after {j}")
+                s += c[j]
+
+        # the key thing with DP here is the summing of c[j] above and storing it
+        # in c[a].
+        #
+        # Lets say we know that c[4] = 1, meaning that there is one sequence
+        # that ends with adapter 4 (when we only consider the subset of adapters
+        # up through 4), which is [0, 1, 4]. When we get to j=5, there is also
+        # just one sequence where 5 comes last: [0, 1, 4, 5]. But when we get to
+        # j=6, it can be used last in two sequences, since it is within range of
+        # both 4 and 5: the subset that ended in 4 ([0, 1, 4, 6]) and the one
+        # that ended in 5 ([0, 1, 4, 5, 6]).
+        #
+        # So what DP does is to combine those two branches of possibility (c[4]
+        # = 1 and c[5] = 1) so that we assign c[6] = c[5] + c[4].
+        #
+        # One neat thing is that c[5] - the sequence where adapter 5 is last -
+        # is already defined in terms of c[4] - the sequence where 5 comes last
+        # is just appending it to the sequence(s) where 4 comes last.
+
+        c[a] = s
+        # print(f"done: {a} can be used {c[a]} ways\n")
+    return max(c.values())
+
+
+# above is made more verbose to make it understandable.
+# shorter, from yarin:
+#
+# a = sorted(int(s) for s in sys.stdin)
+# c = {0:1}
+# for i in [*a, max(a)+3]:
+#     c[i] = sum(c[j] if i-4 < j < i else 0 for j in [0, *a])
+# print(max(c.values()))
