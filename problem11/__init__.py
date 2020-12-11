@@ -1,10 +1,23 @@
-from typing import List
+from typing import List, Callable
 
 occupied_seat = "#"
 empty_seat = "L"
 
 
 def solve_part1(inp: str) -> int:
+    return solve(inp, count_occupied, 4, 0)
+
+
+def solve_part2(inp: str) -> int:
+    return solve(inp, count_visible_occupied, 5, 0)
+
+
+def solve(
+    inp: str,
+    count_func: Callable[[List[str], int, int], int],
+    need_occupied: int,
+    need_empty: int,
+) -> int:
     seats = inp.split("\n")
 
     rounds = 0
@@ -14,16 +27,13 @@ def solve_part1(inp: str) -> int:
         for r in range(len(seats)):
             new_row = ""
             for c in range(len(seats[r])):
-
-                # The following rules are applied to every seat simultaneously:
-                #
-                # - If a seat is empty (L) and there are no occupied seats adjacent to it, the seat becomes occupied.
-                # - If a seat is occupied (#) and four or more seats adjacent to it are also occupied, the seat becomes empty.
-                # - Otherwise, the seat's state does not change.
                 seat = prev_map[r][c]
-                if seat == empty_seat and count_occupied(prev_map, r, c) == 0:
+                if seat == empty_seat and count_func(prev_map, r, c) == need_empty:
                     new_seat = occupied_seat
-                elif seat == occupied_seat and count_occupied(prev_map, r, c) >= 4:
+                elif (
+                    seat == occupied_seat
+                    and count_func(prev_map, r, c) >= need_occupied
+                ):
                     new_seat = empty_seat
                 else:
                     new_seat = seat
@@ -32,9 +42,6 @@ def solve_part1(inp: str) -> int:
             new_map.append(new_row)
 
         rounds += 1
-
-        # print(f"Round {rounds}:")
-        # print("\n".join(new_map), "\n")
 
         # check if done
         if new_map == prev_map:
@@ -70,43 +77,6 @@ def count_occupied(seatmap: List[str], r: int, c: int) -> int:
 # four or more from the previous rules). The other rules still apply: empty
 # seats that see no occupied seats become occupied, seats matching no rule don't
 # change, and floor never changes.
-def solve_part2(inp: str) -> int:
-    seats = inp.split("\n")
-
-    rounds = 0
-    prev_map = list(seats)  # copy
-    while rounds < 1000:
-
-        # print(f"Round {rounds}:")
-        # print("\n".join(prev_map), "\n")
-
-        new_map: List[str] = []
-        for r in range(len(seats)):
-            new_row = ""
-            for c in range(len(seats[r])):
-                seat = prev_map[r][c]
-                if seat == empty_seat and count_visible_occupied(prev_map, r, c) == 0:
-                    new_seat = occupied_seat
-                elif (
-                    seat == occupied_seat
-                    and count_visible_occupied(prev_map, r, c) >= 5
-                ):
-                    new_seat = empty_seat
-                else:
-                    new_seat = seat
-                new_row += new_seat
-
-            new_map.append(new_row)
-
-        rounds += 1
-
-        # check if done
-        if new_map == prev_map:
-            return sum(row.count(occupied_seat) for row in new_map)
-
-        prev_map = new_map
-
-    raise ValueError("too many rounds? 1000 and not stable")
 
 
 def count_visible_occupied(seatmap: List[str], r: int, c: int) -> int:
