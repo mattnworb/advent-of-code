@@ -31,7 +31,7 @@ def test_count_visible_occupied1():
 ...#.....
 """
 
-    assert count_visible_occupied(m.strip().split("\n"), 4, 3, debug=True) == 8
+    assert count_visible_occupied(m.strip().split("\n"), 4, 3) == 8
 
 
 def test_count_visible_occupied2():
@@ -64,7 +64,7 @@ def test_count_visible_occupied4():
 #######.##
 """
 
-    assert count_visible_occupied(m.strip().split("\n"), 0, 2, debug=True) == 5
+    assert count_visible_occupied(m.strip().split("\n"), 0, 2) == 5
 
 
 def test_count_visible_occupied5():
@@ -80,7 +80,7 @@ def test_count_visible_occupied5():
 #.######.#
 #.#####.##
 """
-    assert count_visible_occupied(m.strip().split("\n"), 1, 9, debug=True) == 5
+    assert count_visible_occupied(m.strip().split("\n"), 1, 9) == 5
 
 
 def test_count_visible_occupied6():
@@ -96,7 +96,7 @@ LLLLLLLLL#
 #.LLLLLL.L
 #.LLLLL.L#
 """
-    assert count_visible_occupied(m.strip().split("\n"), 2, 7, debug=True) == 0
+    assert count_visible_occupied(m.strip().split("\n"), 2, 7) == 0
 
 
 def test_solve_part2():
