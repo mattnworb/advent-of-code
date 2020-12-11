@@ -120,22 +120,35 @@ def solve_part2_dp(adapters: List[int]) -> int:
     for a in [*adapters, max(adapters) + 3]:
         c[a] = sum(c[j] if 0 < a - j < 4 else 0 for j in [0, *adapters])
         # the key thing with DP here is the summing of c[j] above and storing it
-        # in c[a].
+        # in c[a]. DP is breaking the problem down into subproblems.
         #
-        # Lets say we know that c[4] = 1, meaning that there is one sequence
-        # that ends with adapter 4 (when we only consider the subset of adapters
-        # up through 4), which is [0, 1, 4]. When we get to j=5, there is also
-        # just one sequence where 5 comes last: [0, 1, 4, 5]. But when we get to
-        # j=6, it can be used last in two sequences, since it is within range of
-        # both 4 and 5: the subset that ended in 4 ([0, 1, 4, 6]) and the one
-        # that ended in 5 ([0, 1, 4, 5, 6]).
+        # example input: [1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19]
+        #
+        #
+        # For the subproblem of adapters=[0], there is one valid sequence, so
+        # c[0] = 1. For the subproblem of adapters=[0, 1] there is also one
+        # valid sequence so c[1] = c[0] = 1. Same for adapters=[0, 1, 4] and
+        # c[4] = c[1]. When we get to j=5, there is also just one sequence where
+        # 5 comes last: [0, 1, 4, 5].
+        #
+        # But when we get to j=6, it can be used last in two sequences, since it
+        # is within range of both 4 and 5: the subset that ended in 4 ([0, 1, 4,
+        # 6]) and the one that ended in 5 ([0, 1, 4, 5, 6]).
         #
         # So what DP does is to combine those two branches of possibility (c[4]
         # = 1 and c[5] = 1) so that we assign c[6] = c[5] + c[4].
         #
-        # One neat thing is that c[5] - the sequence where adapter 5 is last -
+        # (One neat thing is that c[5] - the sequence where adapter 5 is last -
         # is already defined in terms of c[4] - the sequence where 5 comes last
-        # is just appending it to the sequence(s) where 4 comes last.
+        # is just appending it to the sequence(s) where 4 comes last.)
+        #
+        # Then we get to j=7, which is within range of 4, 5, and 6, so we have
+        # to add those "histories" together - the number of possible sequences
+        # up through adapter=7 is: c[7] = c[6] + c[5] + c[4] = 6
+
+    # And then the answer is the last value in the dict (or the largest value),
+    # but max(c.values()) is easier to read.
+    assert max(c.values()) == c[max(c.keys())]
 
     return max(c.values())
 
