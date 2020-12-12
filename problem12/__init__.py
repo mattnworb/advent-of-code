@@ -9,7 +9,7 @@ from typing import List, Tuple
 # - Action F means to move forward by the given value in the direction the ship is currently facing.
 
 
-def make_moves(instr: List[str]) -> Tuple[int, int]:
+def part1(instr: List[str]) -> Tuple[int, int]:
     pos = (0, 0)  # (x, y) - x = east/west, y = north/south
     direction = 90  # degrees, clockwise
 
@@ -64,3 +64,56 @@ def move(pos: Tuple[int, int], action: str, value: int) -> Tuple[int, int]:
 
 def manhattan_distance(pos: Tuple[int, int]) -> int:
     return abs(pos[0]) + abs(pos[1])
+
+
+# - Action N means to move the waypoint north by the given value.
+# - Action S means to move the waypoint south by the given value.
+# - Action E means to move the waypoint east by the given value.
+# - Action W means to move the waypoint west by the given value.
+# - Action L means to rotate the waypoint around the ship left (counter-clockwise) the given number of degrees.
+# - Action R means to rotate the waypoint around the ship right (clockwise) the given number of degrees.
+# - Action F means to move forward to the waypoint a number of times equal to the given value.
+def part2(instr: List[str]) -> Tuple[int, int]:
+    pos = (0, 0)  # (x, y) - x = east/west, y = north/south
+
+    # The waypoint starts 10 units east and 1 unit north relative to the ship.
+    # The waypoint is relative to the ship; that is, if the ship moves, the
+    # waypoint moves with it.
+    waypoint = (10, -1)
+
+    for line in instr:
+        action = line[0]
+        value = int(line[1:])
+
+        if action in ["N", "E", "S", "W"]:
+            waypoint = move(waypoint, action, value)
+
+        # move X times towards the waypoint
+        elif action == "F":
+            w = waypoint[0] * value, waypoint[1] * value
+            pos = pos[0] + w[0], pos[1] + w[1]
+        # rotate the waypoint around the ship
+        elif action == "R":
+            assert value % 90 == 0
+            # clockwise
+            # example:  waypoint starts at (10, -4). R90 moves it to (4, 10).
+            # a second R90 would move it to (-10, 4)
+            # move 90 degrees at a time
+            for _ in range(value // 90):
+                x = -1 * waypoint[1]
+                y = waypoint[0]
+                waypoint = x, y
+
+        elif action == "L":
+            assert value % 90 == 0
+            # counterclockwise
+            # example: (10, -4) = east 10 north 4
+            # move L90 should bring it to west 4 north 10 == (-4, -10)
+            for _ in range(value // 90):
+                x = waypoint[1]
+                y = -1 * waypoint[0]
+                waypoint = x, y
+
+        else:
+            raise ValueError("bad instruction")
+    return pos

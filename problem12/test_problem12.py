@@ -12,6 +12,11 @@ F11
 
 
 def test_part1_example():
-    r = make_moves(ex)
+    r = part1(ex)
     assert r == (17, 8)
     assert manhattan_distance(r) == 25
+
+
+def test_part2():
+    r = part2(ex)
+    assert r == (214, 72)
