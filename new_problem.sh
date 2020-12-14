@@ -3,15 +3,21 @@ set -euo pipefail
 IFS=$'\n\t'
 
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <directory>"
-  exit 1
+    echo "Usage: $0 <directory>"
+    exit 1
 fi
 
 name=$1
 mkdir "$name"
 touch "$name/__init__.py"
+cat <<END >"${name}/__init__.py"
+from typing import *
 
-cat <<END >"$name/__main__.py"
+def part1():
+    pass
+END
+
+cat <<END >"${name}/__main__.py"
 from $name import *
 
 if __name__ == "__main__":
@@ -23,7 +29,7 @@ if __name__ == "__main__":
     print("part 2:", "TODO")
 END
 
-cat <<END >"$name/test_$name.py"
+cat <<END >"${name}/test_$name.py"
 from $name import *
 
 def test_part1_example():
