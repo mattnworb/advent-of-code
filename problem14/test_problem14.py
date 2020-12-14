@@ -15,4 +15,20 @@ def test_apply_mask():
 
 
 def test_part1_example():
-    assert part1(ex1) == 165
+    assert computer(ex1) == 165
+
+
+def test_apply_mask_v2():
+    assert apply_mask_v2("000000000000000000000000000000X1001X", 42) == {26, 27, 58, 59}
+
+
+ex2 = """
+mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1
+"""
+
+
+def test_part2_example():
+    assert computer(ex2, version=2) == 208
