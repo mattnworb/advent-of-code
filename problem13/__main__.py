@@ -11,4 +11,5 @@ if __name__ == "__main__":
     first_t, bus = part1(start_t, buses)
     print("part 1:", first_t * bus, "\n")
 
+    parse_p2_input(inp)
     print("part 2:", part2_find_min_answer(inp))
