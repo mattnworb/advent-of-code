@@ -6,6 +6,6 @@ if __name__ == "__main__":
 
     inp = "16,1,0,18,12,14,19"
 
-    print("part 1:", part1(inp, 2020))
+    print("part 1:", solve(inp, 2020))
 
-    print("part 2:", "TODO")
+    print("part 2:", solve(inp, 30_000_000))

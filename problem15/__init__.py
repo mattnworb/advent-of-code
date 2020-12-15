@@ -9,7 +9,7 @@ from typing import *
 # how many turns apart the number is from when it was previously spoken.
 
 
-def part1(inp: str, max_round: int) -> int:
+def solve(inp: str, max_round: int) -> int:
     """Play the game for max_round, returning the max_round-th number spoken."""
 
     input_numbers = [int(n) for n in inp.strip().split(",")]
