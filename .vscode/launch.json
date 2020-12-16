@@ -5,6 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python: problem16",
+      "type": "python",
+      "request": "launch",
+      "module": "problem16"
+    },
+    {
       "name": "Python: problem14",
       "type": "python",
       "request": "launch",
