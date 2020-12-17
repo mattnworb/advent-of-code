@@ -1,6 +1,7 @@
 from typing import *
 from functools import reduce
 import operator
+import collections
 
 # example:
 # class: 1-3 or 5-7
@@ -63,7 +64,8 @@ def is_ticket_valid_for_all(rules: Rules, ticket: Ticket) -> bool:
 def part2(inp: str) -> int:
     rules, my_ticket, nearby_tickets = parse_input(inp)
 
-    def v(ticket):
+    # TODO cleanup
+    def v(ticket: Ticket) -> bool:
         for field in ticket:
             if not any(field in r for ranges in rules.values() for r in ranges):
                 return False
@@ -160,16 +162,49 @@ def part2(inp: str) -> int:
 # candidates [{"row"}, {"class"}, {"seat"}]
 
 
+class Board(object):
+    def __init__(self, rules: Rules, field_count: int):
+        self.candidates = [set(rules.keys()) for _ in range(field_count)]
+
+    def is_possible(self, rule_name: str, ix: int) -> bool:
+        return rule_name in self.candidates[ix]
+
+    def remove_rule_from_position(self, rule_name: str, ix: int):
+        if rule_name in self.candidates[ix]:
+            self.candidates[ix].remove(rule_name)
+
+    def remove_rule_from_other_positions(self, rule_name: str, ix: int):
+        for j in range(len(self.candidates)):
+            if j == ix:
+                continue
+            self.remove_rule_from_position(rule_name, j)
+
+    def possible_rules(self, ix: int) -> int:
+        return len(self.candidates[ix])
+
+    def times_possible(self, rule_name: str) -> int:
+        return sum(1 for c in self.candidates if rule_name in c)
+
+
 def determine_rule_order(rules: Rules, tickets: List[Ticket]) -> Dict[str, int]:
 
-    # one element in this list for each position
+    # solved_rules: Set[str] = set()
+    solved_positions = {}
+
+    # candidates is a list with the remaining valid rules for each position, so
+    # we can access the valid/possible rules for a given position with
+    # candidates[ix].
+    candidates = [set(rules.keys()) for _ in range(len(tickets[0]))]
+
     # note: this only creates one set object which breaks below because removing
     # something from candidates[i] removes it from every position:
     # candidates = [set(rules.keys())] * len(tickets[0])
-    candidates = [set(rules.keys()) for _ in range(len(tickets[0]))]
 
+    # Look at each field in each ticket. If the field value violates a rule,
+    # then that means that the rule cannot possible be for that field /
+    # position.
     for ticket in tickets:
-        print(f"at ticket: {ticket}")
+        # print(f"at ticket: {ticket}")
         for ix, field in enumerate(ticket):
             for rule_name in rules.keys():
                 if rule_name in candidates[ix] and not is_field_valid(
@@ -180,26 +215,96 @@ def determine_rule_order(rules: Rules, tickets: List[Ticket]) -> Dict[str, int]:
                     # )
                     candidates[ix].remove(rule_name)
                     # print(f"remaining candidates for position={ix}: {candidates[ix]}")
-                    if len(candidates[ix]) == 1:
 
-                        # remove the value in candidates[ix] from other positions
-                        answer_for_ix = extract_name(candidates[ix])
+                    # if we just reduced the candidate set for this position to
+                    # 1, then that rule can't be in any other position, so
+                    # remove them.
+                    # TODO consider moving this to stage 2 below.
+                    if len(candidates[ix]) == 1:
+                        solved_rule = extract_name(candidates[ix])
+                        # TODO check if already solved?
+                        solved_positions[ix] = solved_rule
+
                         # print(
                         #     f"position {ix} must be {answer_for_ix}, removing from other positions"
                         # )
                         for ix2, c in enumerate(candidates):
-                            if ix2 != ix and answer_for_ix in c:
-                                c.remove(answer_for_ix)
+                            if ix2 != ix and solved_rule in c:
+                                c.remove(solved_rule)
 
         # print(f"state after processing ticket: {candidates}")
 
+    # assert all(
+    #     len(possible_rules) == 1 for possible_rules in candidates
+    # ), f"did not solve problem after a pass over all tickets, state is {candidates}"
+
+    # TODO: tighten the answer by finding rule names that appear only once in the candidates array, and then removing them from other slots
+    # TODO continue until each rule is solved, or no progress is made
+
+    # solved = all(len(possible_rules) == 1 for possible_rules in candidates)
+
+    # now we should have a candidates list like
+    # 0: {a, b, d}
+    # 1: {c}
+    # 2: {a, d}
+    # 3: {...}
+    # (this isn't a great example)
+    #
+    # If the puzzle isn't solved after the first pass above, continually search
+    # for rules that appear just once like b in element 0 above. We can then
+    # move those to be solved, remove that rule from other positions, and
+    # continue.
+
+    unsolved_rules = set(rules.keys()) - set(solved_positions.values())
+
+    print("state dump")
+    for ix, c in enumerate(candidates):
+        print(f"{ix}: {len(c)} rules: {c}")
+
+    while set(rules.keys()) != set(solved_positions.values()):
+        print("\nnot solved")
+
+        made_progress = False
+
+        print(f"solved so far: {solved_positions}")
+
+        for rule_name in rules.keys():
+            if rule_name not in solved_positions.values():
+                # check if this rule appears in just one position
+                positions_in = [ix for ix, c in enumerate(candidates) if rule_name in c]
+                print(f"Rule '{rule_name}' is valid for positions: {positions_in}")
+
+                if len(positions_in) == 1:
+                    print(
+                        f"unsolved rule {rule_name} appears in just one position ({ix}), moving it to solved"
+                    )
+
+                    ix = positions_in[0]
+                    solved_positions[ix] = rule_name
+
+                    for other in rules.keys():
+                        if other != rule_name and other in candidates[ix]:
+                            candidates[ix].remove(other)
+
+                    made_progress = True
+
+        if not made_progress:
+            raise ValueError("no progress made")
+
     assert all(
         len(possible_rules) == 1 for possible_rules in candidates
-    ), f"did not solve problem after a pass over all tickets, state is {candidates}"
+    ), f"did not solve problem after pass #2, state is {candidates}"
 
+    print("\nsolved?")
+    print("candidates:")
+    for ix, c in enumerate(candidates):
+        print(f"{ix}: {len(c)} rules: {c}")
+
+    print(solved_positions)
+
+    # reverse the dict
     d = {}
     for ix, possible_rules in enumerate(candidates):
-
         name = extract_name(possible_rules)
         d[name] = ix + 1  # start at 1
     return d
