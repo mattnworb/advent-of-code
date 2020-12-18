@@ -26,17 +26,31 @@ from typing import *
 # so... its a three-dimensional Conway's Game of Life
 from collections import defaultdict
 
+# part1 is 3 dimensional
 Position3 = Tuple[int, int, int]
 State3 = Set[Position3]
+# part2 is 4 dimensional
+Position4 = Tuple[int, int, int, int]
+State4 = Set[Position4]
 
 
-def neighbors(p: Position3) -> Iterator[Position3]:
+def neighbors3(p: Position3) -> Iterator[Position3]:
     r = range(-1, 2)
     for x in r:
         for y in r:
             for z in r:
                 if not (x == y == z == 0):
                     yield p[0] + x, p[1] + y, p[2] + z
+
+
+def neighbors4(p: Position4) -> Iterator[Position4]:
+    r = range(-1, 2)
+    for x in r:
+        for y in r:
+            for z in r:
+                for w in r:
+                    if not (x == y == z == w == 0):
+                        yield p[0] + x, p[1] + y, p[2] + z, p[3] + w
 
 
 # Starting with your given initial configuration, simulate six cycles. How many
@@ -58,13 +72,13 @@ def part1(inp: str, cycles: int = 6) -> int:
         y += 1
 
     for _ in range(cycles):
-        print_state(state)
-        state = one_round(state)
+        # print_state3(state)
+        state = one_round3(state)
 
     return len(state)
 
 
-def print_state(state: State3):
+def print_state3(state: State3):
 
     min_z = min(z for x, y, z in state)
     max_z = max(z for x, y, z in state)
@@ -88,7 +102,7 @@ def print_state(state: State3):
     return s
 
 
-def one_round(state: State3) -> State3:
+def one_round3(state: State3) -> State3:
     # make a copy
     new_state = set(state)
 
@@ -98,12 +112,53 @@ def one_round(state: State3) -> State3:
     # not neighbors of an active can't transition.
     to_explore = {p: "#" for p in state}
     for p in state:
-        for n in neighbors(p):
+        for n in neighbors3(p):
             if n not in to_explore:
                 to_explore[n] = "."
 
     for p, ch in to_explore.items():
-        active_neighbors = sum(1 if n in state else 0 for n in neighbors(p))
+        active_neighbors = sum(1 if n in state else 0 for n in neighbors3(p))
+        if ch == "#" and active_neighbors not in {2, 3}:
+            new_state.remove(p)
+        elif ch == "." and active_neighbors == 3:
+            new_state.add(p)
+
+    return new_state
+
+
+def part2(inp: str, cycles: int = 6) -> int:
+    state = set()
+
+    y, z, w = 0, 0, 0
+    for line in inp.strip().split("\n"):
+        for x, ch in enumerate(line.strip()):
+            if ch == "#":
+                state.add((x, y, z, w))
+        y += 1
+
+    for _ in range(cycles):
+        # print_state3(state)
+        state = one_round4(state)
+
+    return len(state)
+
+
+def one_round4(state: State4) -> State4:
+    # make a copy
+    new_state = set(state)
+
+    # The grid is infinite, but we have to consider if inactive cubes should
+    # transition to active. Since the state set only tracks the active ones, we
+    # can look at just the inactives who are neighbors of actives - inactives
+    # not neighbors of an active can't transition.
+    to_explore = {p: "#" for p in state}
+    for p in state:
+        for n in neighbors4(p):
+            if n not in to_explore:
+                to_explore[n] = "."
+
+    for p, ch in to_explore.items():
+        active_neighbors = sum(1 if n in state else 0 for n in neighbors4(p))
         if ch == "#" and active_neighbors not in {2, 3}:
             new_state.remove(p)
         elif ch == "." and active_neighbors == 3:
