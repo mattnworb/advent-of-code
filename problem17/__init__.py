@@ -26,60 +26,11 @@ from typing import *
 # so... its a three-dimensional Conway's Game of Life
 from collections import defaultdict
 
-Position = Tuple[int, int, int]
-# State = Dict[Position, str]
+Position3 = Tuple[int, int, int]
+State3 = Set[Position3]
 
 
-class State(object):
-    def __init__(self, initial_state: Set[Position] = None):
-        self.state = initial_state or set()
-
-    def set_state(self, p: Position, active: bool):
-        if active:
-            self.state.add(p)
-        elif p in self.state:
-            self.state.remove(p)
-
-    def get_state(self, p: Position) -> bool:
-        return p in self.state
-
-    # def get_positions(self) -> Set[Position]:
-    #     positions = set(self.state.keys())
-    #     # union
-    #     return positions | set(n for p in positions for n in neighbors(p))
-
-    def copy(self) -> "State":
-        return State(initial_state=set(self.state))
-
-    def active_positions(self) -> Set[Position]:
-        return self.state
-
-    def __repr__(self):
-        return f"len={len(self.state)} " + repr(self.state)
-
-    def viz(self):
-        min_z = min(z for x, y, z in self.state)
-        max_z = max(z for x, y, z in self.state)
-        s = ""
-        for z in range(min_z, max_z + 1):
-            s += f"z={z}"
-            min_y = min(y for x, y, z in self.state)
-            max_y = max(y for x, y, z in self.state)
-            min_x = min(x for x, y, z in self.state)
-            max_x = max(x for x, y, z in self.state)
-            for y in range(min_y, max_y + 1):
-                for x in range(min_x, max_x + 1):
-                    if self.get_state((x, y, z)):
-                        s += "#"
-                    else:
-                        s += "."
-                s += "\n"
-            s += "\n"
-        return s
-        # x, y = min((x, y) for x, y, z1 in self.state if z1 == z)
-
-
-def neighbors(p: Position) -> Iterator[Position]:  # Generator[int, None, None]:
+def neighbors(p: Position3) -> Iterator[Position3]:
     r = range(-1, 2)
     for x in r:
         for y in r:
@@ -91,53 +42,71 @@ def neighbors(p: Position) -> Iterator[Position]:  # Generator[int, None, None]:
 # Starting with your given initial configuration, simulate six cycles. How many
 # cubes are left in the active state after the sixth cycle?
 def part1(inp: str, cycles: int = 6) -> int:
-    # default positions to inactive
-    state = State()  #: State = defaultdict(lambda: ".")
+    # The grid is made up of active and inactive cubes. Represent this as a set
+    # containing the positions of active cubes - anything not in the set is an
+    # inactive cube.
+    state = set()
 
-    # treat the starting point as (0,0,0) - the values don't actually matter since the answer to return is the number of cubes in a certain state
+    # treat the starting point as (0,0,0) - the position values don't actually
+    # matter since the value to return is the number of cubes in a certain
+    # state.
     y, z = 0, 0
     for line in inp.strip().split("\n"):
         for x, ch in enumerate(line.strip()):
-            state.set_state((x, y, z), ch == "#")
+            if ch == "#":
+                state.add((x, y, z))
         y += 1
 
     for _ in range(cycles):
-        print(state.viz())
+        print_state(state)
         state = one_round(state)
 
-    return len(state.active_positions())
+    return len(state)
 
 
-def one_round(state: State) -> State:
-    new_state = state.copy()
+def print_state(state: State3):
 
-    # the rules say all inactive cubes have to be looked at, but also, they are
-    # an unlimited amount. is it enough to just look at each key?
+    min_z = min(z for x, y, z in state)
+    max_z = max(z for x, y, z in state)
 
-    # since we use a defaultdict, simply looking at all the neighbors changes
-    # the contents/size of state - so make a copy of the keys first
-    # keys = list(state.keys())
-    # for p in keys:  # , ch in state.items():
-    #     ch = state[p]
-    #     active_neighbors = sum(1 if state[n] == "#" else 0 for n in neighbors(p))
-    #     if state[p] == "#" and active_neighbors not in {2, 3}:
-    #         new_state[p] = "."
-    #     elif state[p] == "." and active_neighbors == 3:
-    #         new_state[p] = "#"
+    for z in range(min_z, max_z + 1):
+        print(f"z={z}")
+        # probably an easier way to do this...
+        min_y = min(y for x, y, z in state)
+        max_y = max(y for x, y, z in state)
+        min_x = min(x for x, y, z in state)
+        max_x = max(x for x, y, z in state)
+        for y in range(min_y, max_y + 1):
+            s = ""
+            for x in range(min_x, max_x + 1):
+                if (x, y, z) in state:
+                    s += "#"
+                else:
+                    s += "."
+            print(s)
+        print()
+    return s
 
-    actives = state.active_positions()
-    to_explore = {p: "#" for p in actives}
-    # | set(n for p in actives for n in neighbors(p))
-    for p in actives:
+
+def one_round(state: State3) -> State3:
+    # make a copy
+    new_state = set(state)
+
+    # The grid is infinite, but we have to consider if inactive cubes should
+    # transition to active. Since the state set only tracks the active ones, we
+    # can look at just the inactives who are neighbors of actives - inactives
+    # not neighbors of an active can't transition.
+    to_explore = {p: "#" for p in state}
+    for p in state:
         for n in neighbors(p):
             if n not in to_explore:
                 to_explore[n] = "."
 
     for p, ch in to_explore.items():
-        active_neighbors = sum(1 if state.get_state(n) else 0 for n in neighbors(p))
+        active_neighbors = sum(1 if n in state else 0 for n in neighbors(p))
         if ch == "#" and active_neighbors not in {2, 3}:
-            new_state.set_state(p, False)
+            new_state.remove(p)
         elif ch == "." and active_neighbors == 3:
-            new_state.set_state(p, True)
+            new_state.add(p)
 
     return new_state
