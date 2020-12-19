@@ -38,7 +38,7 @@ nearby tickets:
 def test_part2_determine_rule_order():
     rules, mine, nearby = parse_input(inp2)
     assert determine_rule_order(rules, [mine, *nearby]) == {
-        "row": 1,
-        "class": 2,
-        "seat": 3,
+        0: "row",
+        1: "class",
+        2: "seat",
     }
