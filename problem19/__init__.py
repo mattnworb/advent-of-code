@@ -30,18 +30,31 @@ import re
 
 
 def part1(inp: str) -> int:
-    rules, messages = parse_input(inp)
+    raw_rules, messages = parse_input(inp)
 
+    rules: Dict[int, str] = {}
+    for n in raw_rules.keys():
+        rules[n] = expand_rules(raw_rules, n)
+
+    # test rule is fully expanded
     assert all(not ch.isnumeric() for ch in rules[0])
 
     pattern = re.compile(rules[0])
+    return sum(1 if pattern.fullmatch(line) else 0 for line in messages)
 
-    c = 0
-    for line in messages:
-        if pattern.fullmatch(line):
-            c += 1
-    return c
-    # return sum(1 if pattern.fullmatch(line) else 0 for line in messages)
+
+def part2(inp: str) -> int:
+    raw_rules, messages = parse_input(inp)
+
+    raw_rules[8] = "42 | 42 8"
+    raw_rules[11] = "42 31 | 42 11 31"
+
+    rules: Dict[int, str] = {}
+    for n in raw_rules.keys():
+        rules[n] = expand_rules(raw_rules, n)
+
+    pattern = re.compile(rules[0])
+    return sum(1 if pattern.fullmatch(line) else 0 for line in messages)
 
 
 def parse_input(inp: str) -> Tuple[Dict[int, str], List[str]]:
@@ -52,20 +65,46 @@ def parse_input(inp: str) -> Tuple[Dict[int, str], List[str]]:
         num, rest = line.split(": ")
         raw_rules[int(num)] = rest
 
-    rules: Dict[int, str] = {}
-    for n in raw_rules.keys():
-        rules[n] = expand_rules(raw_rules, n)
-
-    return rules, [line.strip() for line in messages.split("\n")]
+    return raw_rules, [line.strip() for line in messages.split("\n")]
 
 
 # TODO memoize?
 def expand_rules(raw_rules: Dict[int, str], rule_num: int) -> str:
-    if raw_rules[rule_num].startswith('"'):
-        return raw_rules[rule_num].replace('"', "")
+    rule_text = raw_rules[rule_num]
+    if rule_text.startswith('"'):
+        return rule_text.replace('"', "")
+
+    # special case for part 2:
+    # instead of solving it generically, we have special transformations for these two rules
+    # 8: 42 | 42 8
+    # 11: 42 31 | 42 11 31
+    #
+    # the loop here can be solved with + in the regex:
+    #
+    # 8: 42+ (group 42 repeated 1 or more times)
+    # 11: 42 repeated N times, 31 repeated N times
+    #
+    # what are rules 42 and 31?
+    # 42: 120 16 | 2 126
+    # 31: 2 26 | 120 47
+
+    if rule_num == 8 and rule_text == "42 | 42 8":
+        return "(" + expand_rules(raw_rules, 42) + ")+"
+
+    if rule_num == 11 and rule_text == "42 31 | 42 11 31":
+        # not sure if it is possible to say "match group 42 N times" and then
+        # "match group 31 the same number of times"
+        #
+        # so lets hack it to say rule 11 is: match 42 31, or match 42 42 31 31,
+        # or match 42 42 42 31 31 31, up until 20 times
+        #
+        # do this by rewriting the rule_text
+        #
+        # this produces extra spaces but I think it works anyway
+        rule_text = " | ".join("42 " * i + "31 " * i for i in range(1, 21))
 
     output = ""
-    for token in raw_rules[rule_num].split(" "):
+    for token in rule_text.split(" "):
         # ignore |
         if token.isnumeric():
             output += "(" + expand_rules(raw_rules, int(token)) + ")"
