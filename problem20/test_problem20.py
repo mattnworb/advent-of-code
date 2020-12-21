@@ -48,4 +48,6 @@ def test_borders(tiles):
 
 
 def test_part1_example():
-    pass
+    with open("problem20/example_input") as f:
+        example_input = f.read(-1).strip()
+    assert part1(example_input) == 20899048083289
