@@ -1,8 +1,46 @@
 from typing import *
+from collections import Counter
+from functools import reduce
+from operator import mul
 
+# some thoughts on an approach:
+#
+# only the borders of each tile matter
+#
+# since the border of one tile and the border of the tile next to it have to be
+# equal, we can count how often each border (which is just a string) occurs in
+# the total set of tiles.
+#
+# any border that only occurs once must be on the edge of the original image
+# with everything put together
+#
+# if a tile has two borders that only occur once - is that a corner piece? No,
+# because the tile could be flipped (horizontally or vertically), which means
+# some "borders" are never actually used / matched up with other tiles.
+#
+# But from inspecting the data, there are only four tiles that have 3 unique
+# borders - which seems like those must be the corner pieces.
+def part1(inp: str) -> int:
+    tiles = parse_input(inp)
 
-def part1():
-    pass
+    # dict of border (string) to count (int)
+    border_counts = Counter(b for t in tiles.values() for b in borders(t))
+
+    corner_tile_nums: Set[int] = set()
+
+    for tile_num, tile in tiles.items():
+        b = borders(tile)
+
+        # count how many times each border appears once
+        c = sum(1 for b in borders(tile) if border_counts[b] == 1)
+        # print(f"tile {tile_num} has unique borders: {c}")
+        if c == 3:
+            print(f"found corner tile: {tile_num}")
+            corner_tile_nums.add(tile_num)
+
+    assert len(corner_tile_nums) == 4
+
+    return reduce(mul, corner_tile_nums)
 
 
 Tile = List[str]

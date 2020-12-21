@@ -19,6 +19,19 @@ def test_parse_input(tiles):
         for line in tile:
             assert len(line) == 10
 
+    assert tiles[1913] == [
+        "##..#....#",
+        ".#.#.#.###",
+        "#...##.##.",
+        ".....#.#.#",
+        ".#......##",
+        ".........#",
+        "#...###..#",
+        ".#..#.....",
+        ".##...#..#",
+        "#.#...#...",
+    ]
+
 
 def test_borders(tiles):
     b = borders(tiles[1913])
