@@ -29,11 +29,9 @@ def part1(inp: str) -> int:
     corner_tile_nums: Set[int] = set()
 
     for tile_num, tile in tiles.items():
-        b = borders(tile)
-
         # count how many times each border appears once
         c = sum(1 for b in borders(tile) if border_counts[b] == 1)
-        print(f"tile {tile_num} has unique borders: {c}")
+        # print(f"tile {tile_num} has unique borders: {c}")
         if c >= 3:
             print(f"found corner tile: {tile_num}")
             corner_tile_nums.add(tile_num)
