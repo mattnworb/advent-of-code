@@ -35,6 +35,7 @@ def test_parse_input(tiles):
 
 def test_borders(tiles):
     b = borders(tiles[1913])
+    assert len(b) == 8
     assert set(b) == {
         "##..#....#",
         "#.#...#...",

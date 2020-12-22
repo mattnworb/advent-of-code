@@ -68,7 +68,6 @@ def borders(tile: Tile) -> List[str]:
         left,
         # right side
         right,
-        "".join([t[-1] for t in tile]),
         # top reversed (if flipped)
         tile[0][::-1],
         # bottom reversed (if flipped)
