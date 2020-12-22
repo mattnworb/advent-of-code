@@ -160,51 +160,55 @@ def transformations(tile: Tile, include_flip=True) -> Iterator[Tile]:
         yield rotate_clockwise(flipped, times=3)
 
 
-def part2(inp: str) -> int:
-    tiles = parse_input(inp)
+def assert_image_valid(image: Image):
+    max_x, max_y = max(image.keys())
 
-    # this was the output of part1
-    corner_tile_nums = {3343, 3821, 3677, 3709}
+    # for each position, check that the neighboring tiles have matching borders
+    for p, tile in image.items():
+        x, y = p
+
+        if x > 0:
+            q = x - 1, y
+            assert left_border(tile) == right_border(
+                image[q]
+            ), f"left border of {p} does not match right border of {q}: {left_border(tile)} != {right_border(image[q])}"
+
+        if y > 0:
+            q = x, y - 1
+            assert top_border(tile) == bottom_border(
+                image[q]
+            ), f"top border of {p} does not match bottom border of {q}: {top_border(tile)} != {bottom_border(image[q])}"
+
+        if x < max_x - 1:
+            q = x + 1, y
+            assert right_border(tile) == left_border(
+                image[q]
+            ), f"right border of {p} does not match left border of {q}: {right_border(tile)} != {left_border(image[q])}"
+
+        if y < max_y - 1:
+            q = x, y + 1
+            assert bottom_border(tile) == top_border(
+                image[q]
+            ), f"bottom border of {p} does not match top border of {q}: {bottom_border(tile)} != {top_border(image[q])}"
+
+
+def assemble_image(
+    tiles: Dict[int, Tile], corner_tile_nums: Set[int]
+) -> Tuple[Image, Dict[Position, int]]:
 
     # dict of border (string) to count (int)
     border_counts = Counter(b for t in tiles.values() for b in borders(t))
-
-    counts_per_tile: Dict[int, Dict[str, int]] = {}
-
-    # for each tile, count how often its borders occur in the total set of borders
-    for tile_num, tile in tiles.items():
-        counts_per_tile[tile_num] = Counter()
-        for b in borders(tile):
-            counts_per_tile[tile_num][b] += border_counts[b]
-
-    # for each tile, we now have a Counter of how often each border occurs in
-    # the total set, like {"border1": 1, "border2", 4, ...}
-
-    # now, within each tile, reduce that Counter of string to int to a Counter
-    # of how many borders in that tile occur like {2:1, 6:1} meaning the tite
-    # has 7 (potential) borders that occur twice and 1 that occurs 5 times
-    # for tile_num, c in counts_per_tile.items():
-    #     print(f"{tile_num}: {Counter(c.values())}", end="")
-    #     if tile_num in corner_tile_nums:
-    #         print("   (corner!)", end="")
-    #     print()
-
-    # interesting that only the corner tiles have this pattern:
-    #
-    # {2: 4, 1: 3, 4: 1}
 
     border_to_tile: Dict[str, Set[int]] = defaultdict(set)
     for tile_num, tile in tiles.items():
         for b in borders(tile):
             border_to_tile[b].add(tile_num)
 
-    # TODO: pick one corner arbitrarily. Rotate the image until the 2
-    # connections are on the right and bottom side, which lets us treat this
-    # tile as (0, 0) if we were to make a two-dimensional grid of where all the
-    # tiles are to end up in the larger image. We can then add the next tile
-    # that connects to these two pieces, simiarly rotating it until the
-    # connection is on the intended side.
-    start_corner_num = 3343
+    # Pick one corner arbitrarily. Rotate the image until the 2 connections are
+    # on the right and bottom side, which lets us treat this tile as (0, 0) if
+    # we were to make a two-dimensional grid of where all the tiles are to end
+    # up in the larger image.
+    start_corner_num = next(iter(corner_tile_nums))
 
     # safety check - the corner tile has connections on just two sides
     assert {2: 2, 1: 2} == Counter(
@@ -213,8 +217,10 @@ def part2(inp: str) -> int:
 
     image: Image = {}
     image_tile_nums: Dict[Position, int] = {}
-    pos = (0, 0)
-    # figure out which way to orient this tile to place it in the top-left corner
+
+    # Next, figure out which way to orient this tile to place it in the top-left
+    # corner (so that its borders which other tiles share are at the bottom and
+    # right side).
     for t, rotated_tile in enumerate(
         transformations(tiles[start_corner_num], include_flip=False)
     ):
@@ -223,45 +229,99 @@ def part2(inp: str) -> int:
             and border_counts[bottom_border(rotated_tile)] == 2
         ):
             print(
-                f"rotated corner tile 3343 {t} times to make it fit in top left corner"
+                f"rotated corner tile {start_corner_num} {t} times to make it fit in top left corner"
             )
 
-            image[pos] = rotated_tile
-            image_tile_nums[pos] = start_corner_num
+            image[(0, 0)] = rotated_tile
+            image_tile_nums[(0, 0)] = start_corner_num
             break
     else:
         raise ValueError("couldn't fit corner 1 into top-left position")
 
-    # now we march on from this tile right-ward to fill the next 11 tiles
-    for x in range(11):
-        # the variable `pos` now refers to the previous position
-        this_pos = pos[0] + 1, pos[1]
-        border_to_match = right_border(image[pos])
+    # Now we march on from this tile right-ward to fill the next 11 tiles, then
+    # move down a row, repeat the right-ward march, until we have assembled the full image
+    for y in range(12):
+        for x in range(12):
+            if x == y == 0:
+                continue  # (0,0) was done above
 
-        # which tile also has this border? check the dict containing the set of
-        # tile nums with this border, and remove the tile num we've already
-        # placed
-        s = border_to_tile[border_to_match] - {image_tile_nums[pos]}
-        assert len(s) == 1
-        next_tile_num = s.pop()
-        print(f"from tile {image_tile_nums[pos]}, right connection is: {next_tile_num}")
+            this_pos = x, y
+            if x == 0:
+                # When we are at the first tile in a row (the left most one /
+                # first column), then the previous tile we want to match is the
+                # one above it.
+                prev_pos = x, y - 1
+            else:
+                # Otherwise we are matching the tile to the left.
+                prev_pos = x - 1, y
+            print(f"at position {this_pos}, previous position was {prev_pos}")
 
-        # we know which tile has the matching border, but we have to figure out how to rotate/orient it
-        for candidate in transformations(tiles[next_tile_num]):
-            if left_border(candidate) == border_to_match:
-                print(
-                    f"found matching rotation/orientation, placing {next_tile_num} to right of {image_tile_nums[pos]}"
+            prev_tile_num = image_tile_nums[prev_pos]
+            prev_tile = image[prev_pos]
+
+            # Similar to the block above, when we are past the first column, we
+            # will match the right border of the previous tile to the left
+            # border of this tile. When we are at the first column, we compare
+            # the bottom border of whats above to the top border of this tile.
+            #
+            # This could be more sophisticated and make sure that we are
+            # matching both above and to the left (when past the first
+            # column/row), but in the problem's input this is fine - there is
+            # only one tile that matches at each iteration.
+            if x > 0:
+                border_to_match = right_border(prev_tile)
+                border_fn = left_border
+                # for logging
+                prev_border_side, this_border_side = "right", "left"
+            else:
+                border_to_match = bottom_border(prev_tile)
+                border_fn = top_border
+                prev_border_side, this_border_side = "bottom", "top"
+
+            # Which tile has a border matching the previous tile? Check the dict
+            # containing the set of tile nums with this border, and remove the tile
+            # num we've already placed
+            s = border_to_tile[border_to_match] - {prev_tile_num}
+            # Make sure there is only one in the set - we didn't build an
+            # algorithm that can handle more than one candidate.
+            if len(s) != 1:
+                raise ValueError(
+                    f"error trying to find tile to place next to {prev_tile_num} at {prev_pos} in this_pos={this_pos}:"
+                    f' tiles that match border="{border_to_match}": {border_to_tile[border_to_match]}'
                 )
-                image[this_pos] = candidate
-                image_tile_nums[this_pos] = next_tile_num
-                break
-        else:
-            raise ValueError(
-                f"couldn't rotate/flip tile {next_tile_num} to make it fit"
-            )
 
-        pos = this_pos
+            next_tile_num = s.pop()
+            # print(f"from tile {prev_tile_num}, right connection is: {next_tile_num}")
 
-    print(f"done with first row, image so far is: {image_tile_nums}")
+            # We know which tile has the matching border, but we have to figure
+            # out how to rotate/orient it so that the sides match up.
+            for candidate in transformations(tiles[next_tile_num]):
+                if border_fn(candidate) == border_to_match:
+                    print(
+                        f"tile {prev_tile_num}'s {prev_border_side} border ({border_to_match}) matches "
+                        f"{this_border_side} border of {next_tile_num} ({left_border(candidate)}) after rotating/flipping"
+                    )
+                    image[this_pos] = candidate
+                    image_tile_nums[this_pos] = next_tile_num
+                    break
+            else:
+                raise ValueError(
+                    f"couldn't rotate/flip tile {next_tile_num} to make it fit"
+                )
 
+        # print(f"done with row, image so far is: {image_tile_nums}")
+
+    assert_image_valid(image)
+    print("image looks valid, all borders match!")
+
+    return image, image_tile_nums
+
+
+def part2(inp: str) -> int:
+    tiles = parse_input(inp)
+
+    # this was the output of part1
+    corner_tile_nums = {3343, 3821, 3677, 3709}
+
+    image, image_tile_nums = assemble_image(tiles, corner_tile_nums)
     return 0
