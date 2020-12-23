@@ -1,4 +1,5 @@
 from typing import *
+import time
 
 # The small crab challenges you to a game! The crab is going to mix up some
 # cups, and you have to predict where they'll end up.
@@ -42,6 +43,8 @@ from typing import *
 
 
 def play_game(cups: List[int], rounds: int, debug=False) -> List[int]:
+    start = time.monotonic()
+
     cups = list(cups)
     min_cup_label = min(cups)
     max_cup_label = max(cups)
@@ -91,8 +94,11 @@ def play_game(cups: List[int], rounds: int, debug=False) -> List[int]:
         if debug:
             print(f"destination: {dest_label}")
 
-        dst = cups.index(dest_label)  # TODO can we remove this index call?
         # insert into list after the destination
+        # t = time.monotonic()
+        dst = cups.index(dest_label)  # TODO can we remove this index call?
+        # e = time.monotonic() - t
+        # print(f"cups.index(dest_label) took {e*1000:0.3f}  ms")
         cups[dst + 1 : dst + 1] = pick_up
 
         # we need to adjust current since we may have just inserted things before it
@@ -102,7 +108,16 @@ def play_game(cups: List[int], rounds: int, debug=False) -> List[int]:
         current = (current + 1) % len(cups)
 
         if round_num % 1000 == 0:
-            print(f"Round {round_num} done")
+            now = time.monotonic()
+            elapsed = now - start
+            # last 1000 rounds took `elapsed`, how many are there to go?
+            est = elapsed * (rounds - round_num) / 1000
+            per_round = elapsed / 1000
+            print(
+                f"Round {round_num} done, 1000 rounds took {elapsed:.2f} secs, estimated completion time: {est:.2f} secs. "
+                f"Time per round: {per_round*1000:.2f} ms."
+            )
+            start = time.monotonic()
 
     return cups
 
