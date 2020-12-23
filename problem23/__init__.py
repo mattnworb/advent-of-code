@@ -41,9 +41,8 @@ from typing import *
 # cup 1?
 
 
-def part1(inp: str, rounds=100):
-    cups = list(map(int, inp))
-
+def play_game(cups: List[int], rounds: int, debug=False) -> List[int]:
+    cups = list(cups)
     min_cup_label = min(cups)
     max_cup_label = max(cups)
 
@@ -53,29 +52,33 @@ def part1(inp: str, rounds=100):
         # instead of adjusting the index of the current item when we insert
         # things potentially before it in the list, keep track of the label
         # instead
-        current_label = cups[current]
+        # current_label = cups[current]
 
-        print(f"-- move {round_num} --")
-        cstr = ""
-        for c in cups:
-            if c == current_label:
-                cstr += f"({c}) "
-            else:
-                cstr += f"{c} "
-        print(f"cups: {cstr}")
+        if debug and len(cups) == 9:
+            print(f"-- move {round_num} --")
+            cstr = ""
+            for ix, c in enumerate(cups):
+                if ix == current:
+                    cstr += f"({c}) "
+                else:
+                    cstr += f"{c} "
+            print(f"cups: {cstr}")
 
         # pick up 3 cups after current
         pick_up = []
         for _ in range(1, 4):
             # since we delete from the list, the position is the same on each
             # iteration
-            p = (cups.index(current_label) + 1) % len(cups)
+            p = (current + 1) % len(cups)
             pick_up.append(cups[p])
             del cups[p]
+            if p < current:
+                current -= 1
 
-        print(f"pick up: {pick_up}")
+        if debug:
+            print(f"pick up: {pick_up}")
 
-        dest_label = current_label - 1
+        dest_label = cups[current] - 1
 
         if dest_label < min_cup_label:
             dest_label = max_cup_label
@@ -85,17 +88,30 @@ def part1(inp: str, rounds=100):
             if dest_label < min_cup_label:
                 dest_label = max_cup_label
 
-        print(f"destination: {dest_label}")
+        if debug:
+            print(f"destination: {dest_label}")
 
-        dst = cups.index(dest_label)
+        dst = cups.index(dest_label)  # TODO can we remove this index call?
         # insert into list after the destination
         cups[dst + 1 : dst + 1] = pick_up
 
         # we need to adjust current since we may have just inserted things before it
+        if dst < current:
+            current += 3
 
-        current = (cups.index(current_label) + 1) % len(cups)
+        current = (current + 1) % len(cups)
 
-    print(f"after 100 moves, cups are: {cups}")
+        if round_num % 1000 == 0:
+            print(f"Round {round_num} done")
+
+    return cups
+
+
+def part1(inp: str, rounds=100):
+    cups = list(map(int, inp))
+
+    cups = play_game(cups, rounds)
+    print(f"after {rounds} moves, cups are: {cups}")
 
     # this needs to start at 1 and loop back around to 1 again
     result = []
@@ -105,3 +121,22 @@ def part1(inp: str, rounds=100):
         result.append(cups[j])
 
     return "".join(map(str, result))
+
+
+def part2(inp: str):
+    cups = list(map(int, inp))
+
+    # extend the list to 1 million
+    for v in range(max(cups) + 1, 1_000_000 + 1):
+        cups.append(v)
+
+    cups = play_game(cups, 10_000_000, debug=False)
+    print("Game done")
+
+    # two cups clockwise of `1`
+    one_ix = cups.index(1)
+
+    a = (one_ix + 1) % len(cups)
+    b = (a + 1) % len(cups)
+
+    return a * b
