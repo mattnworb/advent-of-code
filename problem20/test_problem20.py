@@ -1,5 +1,5 @@
 from problem20 import *
-
+from collections import Counter
 import pytest  # type: ignore
 
 
@@ -101,3 +101,107 @@ def test_transformations():
 
     transforms = list(transformations(tile))
     assert len(transforms) == 8
+
+
+def test_remove_borders():
+    t = [
+        "#...##.#..",
+        "..#.#..#.#",
+        ".###....#.",
+        "###.##.##.",
+        ".###.#####",
+        ".##.#....#",
+        "#...######",
+        ".....#..##",
+        "#.####...#",
+        "#.##...##.",
+    ]
+
+    expected = [
+        ".#.#..#.",
+        "###....#",
+        "##.##.##",
+        "###.####",
+        "##.#....",
+        "...#####",
+        "....#..#",
+        ".####...",
+    ]
+
+    assert remove_borders(t) == expected
+
+
+def test_combine_tiles():
+    #  ab cd ef
+    #  gh ij kl
+    #
+    #  mn op qr
+    #  st uv wx
+    #
+    #  yz 12 34
+    #  56 78 90
+
+    image = {}
+    image[0, 0] = ["ab", "gh"]
+    image[1, 0] = ["cd", "ij"]
+    image[2, 0] = ["ef", "kl"]
+
+    image[0, 1] = ["mn", "st"]
+    image[1, 1] = ["op", "uv"]
+    image[2, 1] = ["qr", "wx"]
+
+    image[0, 2] = ["yz", "56"]
+    image[1, 2] = ["12", "78"]
+    image[2, 2] = ["34", "90"]
+
+    t = combine_tiles(image)
+
+    assert t == ["abcdef", "ghijkl", "mnopqr", "stuvwx", "yz1234", "567890"]
+
+
+tile_with_monsters = """
+.#.#..#.##...#.##..#####
+###....#.#....#..#......
+##.##.###.#.#..######...
+###.#####...#.#####.#..#
+##.#....#.##.####...#.##
+...########.#....#####.#
+....#..#...##..#.#.###..
+.####...#..#.....#......
+#..#.##..#..###.#.##....
+#.####..#.####.#.#.###..
+###.#.#...#.######.#..##
+#.####....##..########.#
+##..##.#...#...#.#.#.#..
+...#..#..#.#.##..###.###
+.#.#....#.##.#...###.##.
+###.#...#..#.##.######..
+.#.#.###.##.##.#..#.##..
+.####.###.#...###.#..#.#
+..#.#..#..#.#.#.####.###
+#..####...#.#.#.###.###.
+#####..#####...###....##
+#.##..#..#...#..####...#
+.#.###..##..##..####.##.
+...###...##...#...#..###
+""".strip().split(
+    "\n"
+)
+
+
+def test_count_sea_monsters():
+    c = Counter(count_sea_monsters(t) for t in transformations(tile_with_monsters))
+
+    # only one transformation should have any sea monsters, and it should have two
+    assert c == {0: 7, 2: 1}
+
+
+def test_count_roughness():
+    found = False
+    for t in transformations(tile_with_monsters):
+        num_monsters = count_sea_monsters(t)
+        if num_monsters > 0:
+            found = True
+            assert count_roughness(t, num_monsters) == 273
+            break
+    assert found

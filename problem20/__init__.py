@@ -199,6 +199,9 @@ def assemble_image(
     # dict of border (string) to count (int)
     border_counts = Counter(b for t in tiles.values() for b in borders(t))
 
+    # keep track of which tiles contain each border - we'll use this later to
+    # find the next tile to place based on the last placed tile, since the sides
+    # have to match up.
     border_to_tile: Dict[str, Set[int]] = defaultdict(set)
     for tile_num, tile in tiles.items():
         for b in borders(tile):
@@ -317,6 +320,74 @@ def assemble_image(
     return image, image_tile_nums
 
 
+def remove_borders(tile: Tile) -> Tile:
+    return [t[1:-1] for t in tile[1:-1]]
+
+
+def combine_tiles(image: Image) -> Tile:
+    max_x, max_y = max(image.keys())
+    rows_per_tile = len(image[0, 0])
+    t = []
+    for y in range(max_y + 1):
+        for row_num in range(rows_per_tile):
+            t.append("".join(image[x, y][row_num] for x in range(max_x + 1)))
+    return t
+
+
+# sea monster:
+# ----------------------
+# |                  # |
+# |#    ##    ##    ###|
+# | #  #  #  #  #  #   |
+# ----------------------
+#
+# When looking for this pattern in the image, the spaces can be anything; only
+# the # need to match. Also, you might need to rotate or flip your image before
+# it's oriented correctly to find sea monsters.
+monster = [
+    "                  # ",
+    "#    ##    ##    ###",
+    " #  #  #  #  #  #   ",
+]
+
+
+def indexes_of_char(ch, s):
+    return [ix for ix, c in enumerate(s) if c == ch]
+
+
+monster_positions = list(map(lambda row: indexes_of_char("#", row), monster))
+
+
+def count_sea_monsters(tile: Tile) -> int:
+    monster_rows = len(monster)
+    monster_cols = len(monster[0])
+
+    tile_rows = len(tile)
+    tile_cols = len(tile[0])
+
+    c = 0
+
+    # if the tile has 96 rows, range from 0 to 93 so we can overlay the 3 rows
+    # of the monster onto it (with the last group being rows [93,94,95]).
+    for y in range(0, tile_rows - monster_rows + 1):
+        for x in range(0, tile_cols - monster_cols + 1):
+
+            if all(
+                tile[y + j][x + i] == "#"
+                for j, indices in enumerate(monster_positions)
+                for i in indices
+            ):
+                c += 1
+
+    return c
+
+
+def count_roughness(tile: Tile, num_monsters: int) -> int:
+    total_hashes = sum(row.count("#") for row in tile)
+    hashes_in_monster = sum(row.count("#") for row in monster)
+    return total_hashes - num_monsters * hashes_in_monster
+
+
 def part2(inp: str) -> int:
     tiles = parse_input(inp)
 
@@ -324,4 +395,26 @@ def part2(inp: str) -> int:
     corner_tile_nums = {3343, 3821, 3677, 3709}
 
     image, image_tile_nums = assemble_image(tiles, corner_tile_nums)
-    return 0
+
+    # TODO: remove all four borders from each tile, and make a new image out of
+    # the results. Represent this as just a Tile since it is a List[str] rather
+    # than the Image type which is a Dict of Tiles.
+    #
+    # then search for sea monsters - trying all 8 transformations of the mega
+    # Tile. From the instructions, it seems like only one should contain >= 1
+    # sea monster.
+    #
+    # Determine how rough the waters are in the sea monsters' habitat by
+    # counting the number of # that are not part of a sea monster.
+
+    image = {p: remove_borders(t) for p, t in image.items()}
+    mega_tile = combine_tiles(image)
+    print("\n".join(mega_tile))
+
+    for t in transformations(mega_tile):
+        num_monsters = count_sea_monsters(t)
+        if num_monsters > 0:
+            print(f"{num_monsters} sea monsters found")
+            return count_roughness(t, num_monsters)
+
+    raise ValueError("didn't find any sea monsters?")
