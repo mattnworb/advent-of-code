@@ -46,10 +46,13 @@ def parse_input(inp: str) -> Tuple[Deck, Deck]:
 
 
 def play_game(deck1: Deck, deck2: Deck, max_rounds: int = None) -> Tuple[Deck, Deck]:
+
+    # make copies
     deck1 = list(deck1)
     deck2 = list(deck2)
 
     round_num = 1
+
     while (
         len(deck1) > 0
         and len(deck2) > 0
@@ -94,3 +97,88 @@ def play_game(deck1: Deck, deck2: Deck, max_rounds: int = None) -> Tuple[Deck, D
 def score(winning_deck: Deck) -> int:
     num_cards = len(winning_deck)
     return sum((num_cards - ix) * card for ix, card in enumerate(winning_deck))
+
+
+def play_game2(
+    deck1: Deck, deck2: Deck, max_rounds: int = None, game_num: int = 1
+) -> Tuple[Deck, Deck, int]:
+
+    # make copies
+    deck1 = list(deck1)
+    deck2 = list(deck2)
+
+    previous_rounds: Set[Tuple[Tuple, Tuple]] = set()
+
+    round_num = 1
+
+    while (
+        len(deck1) > 0
+        and len(deck2) > 0
+        and (max_rounds is None or round_num < max_rounds)
+    ):
+        log(f"-- Round {round_num} (Game {game_num}--")
+        log(f"Player 1's deck: {deck1}")
+        log(f"Player 2's deck: {deck2}")
+
+        if (tuple(deck1), tuple(deck2)) in previous_rounds:
+            # print("Previous round in this game has same state - Player 1 wins")
+            return deck1, deck2, 1
+
+        previous_rounds.add((tuple(deck1), tuple(deck2)))
+
+        c1, c2 = deck1.pop(0), deck2.pop(0)
+
+        log(f"Player 1 plays: {c1}")
+        log(f"Player 2 plays: {c2}")
+
+        # if round_num % 10000 == 0:
+        #     print(
+        #         f"Round {round_num} Game {game_num}: player 1 has {len(deck1)} cards, player 2 has {len(deck2)}"
+        #     )
+
+        # If both players have at least as many cards remaining in their deck as
+        # the value of the card they just drew, the winner of the round is
+        # determined by playing a new game of Recursive Combat (see below).
+        if len(deck1) >= c1 and len(deck2) >= c2:
+            # print(
+            #     f"Round {round_num} (Game {game_num}): Playing a sub-game to determine the winner..."
+            # )
+            _, _, winner = play_game2(deck1[:c1], deck2[:c2], game_num=game_num + 1)
+            if winner == 1:
+                # winning card goes first
+                deck1.append(c1)
+                deck1.append(c2)
+            elif winner == 2:
+                deck2.append(c2)
+                deck2.append(c1)
+            else:
+                raise ValueError(f"unexpected winner of recursive game: {winner}")
+        elif c1 > c2:
+            log("Player 1 wins the round!")
+            # player 1 wins
+            # winning card goes first
+            deck1.append(c1)
+            deck1.append(c2)
+        elif c2 > c1:
+            log("Player 2 wins the round!")
+            # winning card goes first
+            deck2.append(c2)
+            deck2.append(c1)
+        else:
+            raise ValueError("ties shouldn't happen")
+
+        round_num += 1
+
+    assert len(deck1) == 0 or len(deck2) == 0
+    # print(f"Game {game_num} done after {round_num} rounds")
+
+    return deck1, deck2, 1 if len(deck1) > 0 else 2
+
+
+def part2(inp: str):
+    deck1, deck2 = parse_input(inp)
+    deck1, deck2, _ = play_game2(deck1, deck2)
+
+    # who won?
+    winning_deck = deck1 if len(deck1) > 0 else deck2
+    return score(winning_deck)
