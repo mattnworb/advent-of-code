@@ -22,19 +22,22 @@ Image = Dict[Position, Tile]
 # because the tile could be flipped (horizontally or vertically), which means
 # some "borders" are never actually used / matched up with other tiles.
 #
-# But from inspecting the data, there are only four tiles that have 3 unique
-# borders - which seems like those must be the corner pieces.
+# But from inspecting the data after counting how often each border string
+# occurs, and what those counts look like in each tile ...  there are only four
+# tiles that have 3 unique borders - which seems like those must be the corner
+# pieces. This means we don't have to actually assemble the whole image out of
+# all of the tiles for this part.
 def part1(inp: str) -> int:
     tiles = parse_input(inp)
 
     # dict of border (string) to count (int)
-    border_counts = Counter(b for t in tiles.values() for b in borders(t))
+    border_counts = Counter(b for t in tiles.values() for b in all_borders(t))
 
     corner_tile_nums: Set[int] = set()
 
     for tile_num, tile in tiles.items():
         # count how many times each border appears once
-        c = sum(1 for b in borders(tile) if border_counts[b] == 1)
+        c = sum(1 for b in all_borders(tile) if border_counts[b] == 1)
         # print(f"tile {tile_num} has unique borders: {c}")
         if c >= 3:
             print(f"found corner tile: {tile_num}")
@@ -56,28 +59,26 @@ def parse_input(inp: str) -> Dict[int, Tile]:
     return tiles
 
 
-# TODO: rename
-def borders(tile: Tile) -> List[str]:
-    left = "".join([t[0] for t in tile])
-    right = "".join([t[-1] for t in tile])
+def all_borders(tile: Tile) -> Iterator[str]:
+    """Return the eight distinct borders for the Tile after rotations/flips."""
 
-    return [
-        # top
-        tile[0],
-        # bottom
-        tile[-1],
-        # left side
-        left,
-        # right side
-        right,
-        # top reversed (if flipped)
-        tile[0][::-1],
-        # bottom reversed (if flipped)
-        tile[-1][::-1],
-        # left and right reversed
-        left[::-1],
-        right[::-1],
-    ]
+    yield top_border(tile)
+    yield bottom_border(tile)
+    yield left_border(tile)
+    yield right_border(tile)
+
+    # when we flip the tile on the x or y axis, two of the borders are the same
+    # as before, depending on which axis we did
+    fx, fy = flip_x(tile), flip_y(tile)
+
+    yield top_border(fx)
+    yield bottom_border(fx)
+    yield left_border(fy)
+    yield right_border(fy)
+
+
+# To solve part 2, we'll need to actually assemble all the tiles into one image.
+# For that, we need to define rotation and flip operations:
 
 
 def rotate_clockwise(tile: Tile, times=1) -> Tile:
@@ -146,7 +147,7 @@ def simple_borders(tile: Tile) -> Iterator[str]:
 
 
 def transformations(tile: Tile, include_flip=True) -> Iterator[Tile]:
-    """Return an iterator containing all possible oridentations and rotations of the tile."""
+    """Return an iterator containing all possible orientations and rotations of the tile."""
     yield tile
     yield rotate_clockwise(tile, times=1)
     yield rotate_clockwise(tile, times=2)
@@ -197,14 +198,14 @@ def assemble_image(
 ) -> Tuple[Image, Dict[Position, int]]:
 
     # dict of border (string) to count (int)
-    border_counts = Counter(b for t in tiles.values() for b in borders(t))
+    border_counts = Counter(b for t in tiles.values() for b in all_borders(t))
 
     # keep track of which tiles contain each border - we'll use this later to
     # find the next tile to place based on the last placed tile, since the sides
     # have to match up.
     border_to_tile: Dict[str, Set[int]] = defaultdict(set)
     for tile_num, tile in tiles.items():
-        for b in borders(tile):
+        for b in all_borders(tile):
             border_to_tile[b].add(tile_num)
 
     # Pick one corner arbitrarily. Rotate the image until the 2 connections are
@@ -372,6 +373,9 @@ def count_sea_monsters(tile: Tile) -> int:
     for y in range(0, tile_rows - monster_rows + 1):
         for x in range(0, tile_cols - monster_cols + 1):
 
+            # using (x, y) as an anchor point, we see if the monster could exist
+            # from this anchor point. Do this by checking if the positions from
+            # here contain the required '#' characters.
             if all(
                 tile[y + j][x + i] == "#"
                 for j, indices in enumerate(monster_positions)
