@@ -398,18 +398,7 @@ def part2(inp: str) -> int:
     # this was the output of part1
     corner_tile_nums = {3343, 3821, 3677, 3709}
 
-    image, image_tile_nums = assemble_image(tiles, corner_tile_nums)
-
-    # TODO: remove all four borders from each tile, and make a new image out of
-    # the results. Represent this as just a Tile since it is a List[str] rather
-    # than the Image type which is a Dict of Tiles.
-    #
-    # then search for sea monsters - trying all 8 transformations of the mega
-    # Tile. From the instructions, it seems like only one should contain >= 1
-    # sea monster.
-    #
-    # Determine how rough the waters are in the sea monsters' habitat by
-    # counting the number of # that are not part of a sea monster.
+    image, _ = assemble_image(tiles, corner_tile_nums)
 
     image = {p: remove_borders(t) for p, t in image.items()}
     mega_tile = combine_tiles(image)
