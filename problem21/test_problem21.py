@@ -2,13 +2,7 @@ from problem21 import *
 
 
 def test_parse_input():
-    inp = """
-mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
-trh fvjkl sbzzf mxmxvkd (contains dairy)
-sqjhc fvjkl (contains soy)
-sqjhc mxmxvkd sbzzf (contains fish)
-"""
-    result = parse_input(inp)
+    result = parse_input(example_inp)
     assert len(result) == 4
 
     assert result == [
@@ -20,4 +14,4 @@ sqjhc mxmxvkd sbzzf (contains fish)
 
 
 def test_part1_example():
-    pass
+    assert part1(example_inp) == 5

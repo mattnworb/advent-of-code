@@ -1,4 +1,5 @@
 from typing import *
+from collections import defaultdict
 
 # You start by compiling a list of foods (your puzzle input), one food per line.
 # Each line includes that food's ingredients list followed by some or all of the
@@ -50,14 +51,18 @@ from typing import *
 
 Ingredient = str
 Allergen = str
-Food = Set[Ingredient]
+Ingredients = Set[Ingredient]
 
 
-def part1(inp: str) -> int:
-    pass
+example_inp = """
+mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
+trh fvjkl sbzzf mxmxvkd (contains dairy)
+sqjhc fvjkl (contains soy)
+sqjhc mxmxvkd sbzzf (contains fish)
+""".strip()
 
 
-def parse_input(inp: str) -> List[Tuple[Food, Set[Allergen]]]:
+def parse_input(inp: str) -> List[Tuple[Ingredients, Set[Allergen]]]:
     items = []
 
     for line in inp.strip().split("\n"):
@@ -69,3 +74,65 @@ def parse_input(inp: str) -> List[Tuple[Food, Set[Allergen]]]:
         items.append((ingredients, allergens))
 
     return items
+
+
+def part1(inp: str) -> int:
+    items = parse_input(inp)
+
+    all_allergens = set()  # all the allergens seen in the input
+    recipes = []  # list of sets of ingredients, each element is one recipe
+
+    # which ingredients could contain an allergen
+    candidates: Dict[Allergen, Set[Ingredient]] = {}
+
+    for ix, (recipe, allergens) in enumerate(items):
+        all_allergens.update(allergens)
+
+        recipes.append(recipe)
+
+        for allergen in allergens:
+            # if this is the first time we've seen an allergen, then it could be
+            # any one of the ingredients in this recipe
+            if allergen not in candidates:
+                candidates[allergen] = set(recipe)
+            else:
+                # but if this is not the first recipe with this allergen, then
+                # it can only be from any ingredients common to this recipe and
+                # previously seen recipes
+                candidates[allergen].intersection_update(recipe)
+
+    print(f"{len(all_allergens)} unique allergens: {all_allergens}")
+
+    for allergen in all_allergens:
+        print(f"{allergen} candidate ingredients: {candidates[allergen]}")
+
+    # Figure out which ingredients correspond to which allergens by doing the
+    # following:
+    # - above we keep track of which ingredients are possible for each allergen
+    # - for any allergens that only have one candidate ingredient, then it must
+    #   be that one - add it to the solved list
+    # - remove that ingredient from the candidate list for all other allergens
+    # - repeat until we have solved all the allergens
+
+    solved: Dict[str, str] = {}
+
+    while len(solved) != len(all_allergens):
+        print(f"\nsolutions: {solved}")
+
+        for allergen in all_allergens:
+            if allergen not in solved and len(candidates[allergen]) == 1:
+                solved[allergen] = next(iter(candidates[allergen]))
+                print(f"allergen {allergen} must be {solved[allergen]}")
+                # remove it from all other candidates
+                for other_allergen, possible_ingredients in candidates.items():
+                    if other_allergen == allergen:
+                        continue
+                    if solved[allergen] in possible_ingredients:
+                        possible_ingredients.remove(solved[allergen])
+
+    print(f"solved all allergens: {solved}")
+
+    non_allergen_ingredients = set.union(*recipes) - set(solved.values())
+
+    # how often does each of the non-allergen ingedients occur in all the recipes?
+    return sum(len(non_allergen_ingredients & recipe) for recipe in recipes)
