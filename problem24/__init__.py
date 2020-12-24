@@ -69,6 +69,10 @@ Position = Tuple[int, int]
 
 
 def part1(inp: str) -> int:
+    return len(process_moves(inp))
+
+
+def process_moves(inp: str) -> Set[Position]:
     black_tiles: Set[Position] = set()
 
     for line in inp.strip().split("\n"):
@@ -83,8 +87,7 @@ def part1(inp: str) -> int:
             black_tiles.remove(pos)
         else:
             black_tiles.add(pos)
-
-    return len(black_tiles)
+    return black_tiles
 
 
 moves = {
@@ -119,3 +122,40 @@ def parse_line(line: str) -> Iterator[str]:
             ix += 2
         else:
             raise ValueError(f"unrecognized character: {ch}")
+
+
+def part2(inp: str, rounds: int):
+    black_tiles = process_moves(inp)
+
+    for _ in range(rounds):
+        new_set = set(black_tiles)  # copy original set
+
+        # Any black tile with zero or more than 2 black tiles immediately adjacent to it is flipped to white.
+        for b in black_tiles:
+            count = sum(1 if n in black_tiles else 0 for n in adjacent_tiles(b))
+            if count == 0 or count > 2:
+                new_set.remove(b)
+
+        # we only need to care about the white tiles that are adjacent to at
+        # least one black tile
+        white_tiles: Set[Position] = set()
+        for t in black_tiles:
+            for n in adjacent_tiles(t):
+                if n not in black_tiles:
+                    white_tiles.add(n)
+
+        # "Any white tile with exactly 2 black tiles immediately adjacent to it
+        # is flipped to black."
+        for w in white_tiles:
+            if sum(1 if a in black_tiles else 0 for a in adjacent_tiles(w)) == 2:
+                new_set.add(w)
+
+        black_tiles = new_set
+
+    return len(black_tiles)
+
+
+def adjacent_tiles(p: Position) -> Iterator[Position]:
+    # x, y = p
+    for m in moves.keys():
+        yield move(p, m)
