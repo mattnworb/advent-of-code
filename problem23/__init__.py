@@ -42,46 +42,50 @@ import time
 # cup 1?
 
 
-def play_game(cups: List[int], rounds: int, debug=False) -> List[int]:
+# Originally, these solutions kept state in a list, with some logic to treat it
+# as circular. This is really slow for part 2, because inserting elements into
+# the list at the destination cup requires finding which index that cup is at
+# (with list.index(val)), and with one million elements in the list each call to
+# .index(val) takes ~12 ms on my laptop to run.
+#
+# so instead, keep a dict from one cup to the next.
+DictList = Dict[int, int]
+
+
+def play_game(
+    cups: List[int], rounds: int, debug=False, timing_batch=100_000
+) -> DictList:
     start = time.monotonic()
 
-    cups = list(cups)
+    next_cup = {}
+    for ix in range(len(cups)):
+        next_cup[cups[ix]] = cups[(ix + 1) % len(cups)]
+
     min_cup_label = min(cups)
     max_cup_label = max(cups)
 
-    current = 0
+    current_label = cups[0]
+
     for round_num in range(1, rounds + 1):
-
-        # instead of adjusting the index of the current item when we insert
-        # things potentially before it in the list, keep track of the label
-        # instead
-        # current_label = cups[current]
-
         if debug and len(cups) == 9:
             print(f"-- move {round_num} --")
             cstr = ""
-            for ix, c in enumerate(cups):
-                if ix == current:
+            c = current_label
+            for _ in range(len(cups)):
+                if c == current_label:
                     cstr += f"({c}) "
                 else:
                     cstr += f"{c} "
+                c = next_cup[c]
             print(f"cups: {cstr}")
 
         # pick up 3 cups after current
-        pick_up = []
-        for _ in range(1, 4):
-            # since we delete from the list, the position is the same on each
-            # iteration
-            p = (current + 1) % len(cups)
-            pick_up.append(cups[p])
-            del cups[p]
-            if p < current:
-                current -= 1
+        pick_up = remove(next_cup, current_label, 3)
 
         if debug:
             print(f"pick up: {pick_up}")
 
-        dest_label = cups[current] - 1
+        dest_label = current_label - 1
 
         if dest_label < min_cup_label:
             dest_label = max_cup_label
@@ -95,63 +99,102 @@ def play_game(cups: List[int], rounds: int, debug=False) -> List[int]:
             print(f"destination: {dest_label}")
 
         # insert into list after the destination
-        # t = time.monotonic()
-        dst = cups.index(dest_label)  # TODO can we remove this index call?
-        # e = time.monotonic() - t
-        # print(f"cups.index(dest_label) took {e*1000:0.3f}  ms")
-        cups[dst + 1 : dst + 1] = pick_up
+        insert(next_cup, dest_label, pick_up)
 
-        # we need to adjust current since we may have just inserted things before it
-        if dst < current:
-            current += 3
+        # advance current
+        current_label = next_cup[current_label]
 
-        current = (current + 1) % len(cups)
-
-        if round_num % 1000 == 0:
+        if round_num % timing_batch == 0:
             now = time.monotonic()
             elapsed = now - start
-            # last 1000 rounds took `elapsed`, how many are there to go?
-            est = elapsed * (rounds - round_num) / 1000
-            per_round = elapsed / 1000
+            # last N rounds took `elapsed`, how many are there to go?
+            est = elapsed * (rounds - round_num) / timing_batch
+            per_round_ms = elapsed / timing_batch * 1000
             print(
-                f"Round {round_num} done, 1000 rounds took {elapsed:.2f} secs, estimated completion time: {est:.2f} secs. "
-                f"Time per round: {per_round*1000:.2f} ms."
+                f"Round {round_num} done, {timing_batch} rounds took {elapsed:.4f} secs, estimated completion time: {est:.2f} sec. "
+                f"Time per round: {per_round_ms:.4f} ms."
             )
             start = time.monotonic()
 
-    return cups
+    return next_cup
 
 
-def part1(inp: str, rounds=100):
+# operations on our "dict list":
+def make_dict_list(nums: List[int]) -> DictList:
+    state = {}
+    for ix in range(len(nums)):
+        state[nums[ix]] = nums[(ix + 1) % len(nums)]
+    return state
+
+
+def remove(d: DictList, after: int, amount: int) -> List[int]:
+    """Remove `amount` numbers after the `after` label, returning them in a list"""
+    new_list = []
+    # perhaps this could be smarter about not re-assigning d[after] N times
+    for _ in range(amount):
+        # if we have <after => b => c, ...>, n is now b
+        temp = d[after]
+        new_list.append(temp)
+        d[after] = d[temp]  # <after => c, b => c...>
+        del d[temp]  # remove b => c
+    return new_list
+
+
+def insert(d: DictList, after: int, nums: List[int]):
+    assert all(num not in d for num in nums)
+
+    for num in nums:
+        temp = d[after]  # <after => b, b => c, ...>
+        d[after] = num  # <after => num, b => c, ...> num is not in d
+        d[num] = temp  # <after => num, num => b, b => c, ...>
+        after = num  # next insertion point is what we just added
+
+
+def dictlist_to_str(d: DictList, start: int = None, sep=" ") -> str:
+    if not start:
+        start = next(iter(d.keys()))
+    cur = start
+    s = ""
+    while True:
+        s += f"{cur}{sep}"
+        cur = d[cur]
+        if cur == start:
+            break
+    return s
+
+
+def part1(inp: str, rounds=100, debug=False) -> str:
     cups = list(map(int, inp))
 
-    cups = play_game(cups, rounds)
-    print(f"after {rounds} moves, cups are: {cups}")
+    result = play_game(cups, rounds, debug=debug)
 
-    # this needs to start at 1 and loop back around to 1 again
-    result = []
-    ix = cups.index(1)
-    for i in range(len(cups) - 1):
-        j = (ix + i + 1) % len(cups)
-        result.append(cups[j])
+    print(f"after {rounds} moves, cups are: {dictlist_to_str(result)}")
 
-    return "".join(map(str, result))
+    s = ""
+    c = result[1]
+    while c != 1:
+        s += f"{c}"
+        c = result[c]
+    return s
 
 
-def part2(inp: str):
+def part2(inp: str) -> int:
     cups = list(map(int, inp))
 
     # extend the list to 1 million
+    now = time.monotonic()
     for v in range(max(cups) + 1, 1_000_000 + 1):
         cups.append(v)
+    elapsed = time.monotonic() - now
+    print(f"Took {elapsed:.2f} secs to add one million items to the cups list")
 
-    cups = play_game(cups, 10_000_000, debug=False)
+    result = play_game(cups, 10_000_000, debug=False, timing_batch=1_000_000)
     print("Game done")
 
     # two cups clockwise of `1`
     one_ix = cups.index(1)
 
-    a = (one_ix + 1) % len(cups)
-    b = (a + 1) % len(cups)
+    a = result[1]
+    b = result[a]
 
     return a * b
