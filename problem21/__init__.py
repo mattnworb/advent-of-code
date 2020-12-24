@@ -76,7 +76,7 @@ def parse_input(inp: str) -> List[Tuple[Ingredients, Set[Allergen]]]:
     return items
 
 
-def part1(inp: str) -> int:
+def solve(inp: str) -> Tuple[int, str]:
     items = parse_input(inp)
 
     all_allergens = set()  # all the allergens seen in the input
@@ -134,5 +134,14 @@ def part1(inp: str) -> int:
 
     non_allergen_ingredients = set.union(*recipes) - set(solved.values())
 
-    # how often does each of the non-allergen ingedients occur in all the recipes?
-    return sum(len(non_allergen_ingredients & recipe) for recipe in recipes)
+    # part1: how often does each of the non-allergen ingedients occur in all the recipes?
+
+    # part2: Arrange the ingredients alphabetically by their allergen and
+    # separate them by commas to produce your canonical dangerous ingredient
+    # list. (There should not be any spaces in your canonical dangerous
+    # ingredient list.)
+    part1 = sum(len(non_allergen_ingredients & recipe) for recipe in recipes)
+
+    part2 = ",".join(solved[k] for k in sorted(solved.keys()))
+
+    return part1, part2

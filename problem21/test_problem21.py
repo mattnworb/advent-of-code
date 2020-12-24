@@ -13,5 +13,7 @@ def test_parse_input():
     ]
 
 
-def test_part1_example():
-    assert part1(example_inp) == 5
+def test_solve():
+    p1, p2 = solve(example_inp)
+    assert p1 == 5
+    assert p2 == "mxmxvkd,sqjhc,fvjkl"

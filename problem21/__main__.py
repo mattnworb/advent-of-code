@@ -6,6 +6,9 @@ if __name__ == "__main__":
         inp = f.read(-1).strip()
 
     # print("part 1 (example) :", part1(example_inp))
-    print("part 1 (my input):", part1(inp))
 
-    print("part 2:", "TODO")
+    part1, part2 = solve(inp)
+
+    print("part 1 (my input):", part1)
+
+    print("part 2:", part2)
