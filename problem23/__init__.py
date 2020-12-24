@@ -141,7 +141,7 @@ def remove(d: DictList, after: int, amount: int) -> List[int]:
 
 
 def insert(d: DictList, after: int, nums: List[int]):
-    assert all(num not in d for num in nums)
+    # assert all(num not in d for num in nums)
 
     for num in nums:
         temp = d[after]  # <after => b, b => c, ...>
