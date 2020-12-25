@@ -64,11 +64,22 @@ def transform(subject: int) -> Iterator[int]:
 
 
 def transform_n_times(subject: int, loop_size: int) -> int:
-    x = 0
-    gen = transform(subject)
-    for _ in range(loop_size):
-        x = next(gen)
-    return x
+    # x = 0
+    # gen = transform(subject)
+    # for _ in range(loop_size):
+    #     x = next(gen)
+    # return x
+
+    # From the documentation for `pow(base, exp[, mod])`:
+    #
+    # Return base to the power exp; if mod is present, return base to the power
+    # exp, modulo mod (computed more efficiently than `pow(base, exp) % mod`).
+    # The two-argument form pow(base, exp) is equivalent to using the power
+    # operator: base**exp.
+    #
+    # How much faster is this? Cuts the run time for part1() down from ~8.7s to
+    # ~4.2s.
+    return pow(subject, loop_size, 20201227)
 
 
 def part1(inp: str) -> int:
