@@ -7,6 +7,7 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
+# TODO: fix to allow specifying year too so this can be run from root dir
 name=$1
 mkdir "$name"
 touch "$name/__init__.py"
