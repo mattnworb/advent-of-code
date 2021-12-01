@@ -44,7 +44,7 @@ def part1(inp: str):
 # than the previous sum?
 def part2(inp: str):
     increases = 0
-    this_window = []
+    this_window: List[int] = []
 
     measurements = [int(line) for line in inp.split("\n")]
 
