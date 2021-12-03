@@ -7,14 +7,19 @@ if [[ $# -lt 2 ]]; then
     exit 1
 fi
 
-# TODO: fix to allow specifying year too so this can be run from root dir
 year=$1
 day=$2
-path="y${year}/problem${day}"
-pkg="y${year}.problem${day}"
+padded_day=$(printf "%02d" "${day}")
+path="y${year}/problem${padded_day}"
+pkg="y${year}.problem${padded_day}"
 
 mkdir -p "${path}"
 touch "${path}/input"
+
+#TODO: needs auth
+#wget -O "${path}/input" "https://adventofcode.com/${year}/day/${day}/input"
+touch "${path}/input"
+
 touch "${path}/__init__.py"
 cat <<END >"${path}/__init__.py"
 from typing import *
@@ -38,7 +43,7 @@ if __name__ == "__main__":
     print("part 2:", "TODO")
 END
 
-cat <<END >"${path}/test_problem${day}.py"
+cat <<END >"${path}/test_problem${padded_day}.py"
 from $pkg import *
 
 def test_part1_example():
