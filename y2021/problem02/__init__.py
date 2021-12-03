@@ -6,14 +6,14 @@ def part1(commands: List[str]) -> int:
     depth = 0
     for c in commands:
         direction, num = c.split(" ")
-        num = int(num)
+        m = int(num)
 
         if direction == "forward":
-            h_pos += num
+            h_pos += m
         elif direction == "up":
-            depth -= num
+            depth -= m
         elif direction == "down":
-            depth += num
+            depth += m
         else:
             raise ValueError()
 
@@ -26,15 +26,15 @@ def part2(commands: List[str]) -> int:
     aim = 0
     for c in commands:
         direction, num = c.split(" ")
-        num = int(num)
+        m = int(num)
 
         if direction == "forward":
-            h_pos += num
-            depth += aim * num
+            h_pos += m
+            depth += aim * m
         elif direction == "up":
-            aim -= num
+            aim -= m
         elif direction == "down":
-            aim += num
+            aim += m
         else:
             raise ValueError()
 
