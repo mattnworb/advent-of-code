@@ -2,12 +2,16 @@ from typing import *
 from collections import Counter
 
 # tuple where index 0 = x, 1 = y
-Point = Tuple[int]
+Point = Tuple[int, int]
 
 
 def points_in_line(p1: Point, p2: Point) -> Iterable[Point]:
     assert is_horizontal_or_vertical(p1, p2)
-    (x1, y1), (x2, y2) = p1, p2  # unpack for readability
+
+    # unpack for readability
+    x1, y1 = p1
+    x2, y2 = p2
+
     if x1 == x2:
         # input can be in either direction - fix order
         if y1 > y2:
@@ -25,11 +29,13 @@ def is_horizontal_or_vertical(p1: Point, p2: Point) -> bool:
     return p1[0] == p2[0] or p1[1] == p2[1]
 
 
-def parse_points(line: str) -> Tuple[Point]:
+def parse_points(line: str) -> Tuple[Point, Point]:
     # value is like: x1,y1 -> x2,y2
     left, right = line.split(" -> ")
-    p1 = tuple(map(int, left.split(",")))
-    p2 = tuple(map(int, right.split(",")))
+    s1 = left.split(",", 2)
+    s2 = right.split(",", 2)
+    p1 = int(s1[0]), int(s1[1])
+    p2 = int(s2[0]), int(s2[1])
     return p1, p2
 
 
