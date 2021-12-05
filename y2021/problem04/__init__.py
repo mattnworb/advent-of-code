@@ -25,12 +25,28 @@ class Board:
                 return True
         return False
 
+    def all_unmarked(self) -> Set[int]:
+        return set([p for row in self.nums for p in row if p not in self.marked])
+
 
 def part1(inp: str):
     sp = inp.split("\n\n")
     draw = sp[0]
-    boards = sp[1:]
-    pass
+    boards = [Board(s) for s in sp[1:]]
+
+    for num in (int(n) for n in draw.split(",")):
+        for b in boards:
+            b.mark(num)
+
+        winner = None
+        for b in boards:
+            if b.is_complete():
+                assert winner is None, "Should be only one winner"
+                winner = b
+        if winner is not None:
+            return sum(winner.all_unmarked()) * num
+
+    return -1
 
 
 def part2(inp: str):

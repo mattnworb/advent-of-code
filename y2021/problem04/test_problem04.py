@@ -61,12 +61,10 @@ def test_board_col():
     b.mark(5)
     assert b.is_complete() is False
 
-    b.mark(19)
-    assert b.is_complete() is True
-
 
 def test_part1_example():
-    pass
+
+    assert part1(example) == 4512
 
 
 def test_part2_example():
