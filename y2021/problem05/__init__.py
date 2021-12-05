@@ -5,8 +5,8 @@ from collections import Counter
 Point = Tuple[int, int]
 
 
-def points_in_line(p1: Point, p2: Point) -> Iterable[Point]:
-    assert is_horizontal_or_vertical(p1, p2)
+def points_in_line(p1: Point, p2: Point, allow_diagonal: bool) -> Iterable[Point]:
+    assert is_allowed(p1, p2, allow_diagonal)
 
     # unpack for readability
     x1, y1 = p1
@@ -18,15 +18,33 @@ def points_in_line(p1: Point, p2: Point) -> Iterable[Point]:
             y1, y2 = y2, y1
         for y in range(y1, y2 + 1):
             yield x1, y
-    else:
+    elif y1 == y2:
         if x1 > x2:
             x1, x2 = x2, x1
         for x in range(x1, x2 + 1):
             yield x, y1
+    elif allow_diagonal:
+        # diagonal line
+        # figure out traversal order
+        if x1 > x2:
+            x_range = range(x1, x2 - 1, -1)
+        else:
+            x_range = range(x1, x2 + 1)
+        if y1 > y2:
+            y_range = range(y1, y2 - 1, -1)
+        else:
+            y_range = range(y1, y2 + 1)
+
+        for x, y in zip(x_range, y_range):
+            yield x, y
 
 
-def is_horizontal_or_vertical(p1: Point, p2: Point) -> bool:
-    return p1[0] == p2[0] or p1[1] == p2[1]
+def is_allowed(p1: Point, p2: Point, allow_diagonal: bool) -> bool:
+    return (
+        p1[0] == p2[0]
+        or p1[1] == p2[1]
+        or (allow_diagonal and abs(p1[0] - p2[0]) == abs(p1[1] - p2[1]))
+    )
 
 
 def parse_points(line: str) -> Tuple[Point, Point]:
@@ -39,15 +57,15 @@ def parse_points(line: str) -> Tuple[Point, Point]:
     return p1, p2
 
 
-def part1(inp: str):
+def count_overlapping_lines(inp: str, allow_diagonal: bool) -> int:
     lines = inp.split("\n")
 
     grid: Counter[Point] = Counter()
 
     for line in lines:
         p1, p2 = parse_points(line)
-        if is_horizontal_or_vertical(p1, p2):
-            for p in points_in_line(p1, p2):
+        if is_allowed(p1, p2, allow_diagonal):
+            for p in points_in_line(p1, p2, allow_diagonal):
                 grid[p] += 1
 
     # find all points in grid where >= 2 lines overlap
@@ -58,5 +76,9 @@ def part1(inp: str):
     return ans
 
 
+def part1(inp: str):
+    return count_overlapping_lines(inp, False)
+
+
 def part2(inp: str):
-    pass
+    return count_overlapping_lines(inp, True)

@@ -17,4 +17,19 @@ def test_part1_example():
 
 
 def test_part2_example():
-    pass
+    assert part2(example) == 12
+
+
+def test_points_in_line():
+    points = list(points_in_line((8, 0), (0, 8), True))
+    assert points == [
+        (8, 0),
+        (7, 1),
+        (6, 2),
+        (5, 3),
+        (4, 4),
+        (3, 5),
+        (2, 6),
+        (1, 7),
+        (0, 8),
+    ]
