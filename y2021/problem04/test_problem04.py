@@ -68,4 +68,4 @@ def test_part1_example():
 
 
 def test_part2_example():
-    pass
+    assert part2(example) == 1924

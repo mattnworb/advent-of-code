@@ -50,4 +50,20 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    sp = inp.split("\n\n")
+    draw = sp[0]
+    boards = [Board(s) for s in sp[1:]]
+    has_won = [False for n in range(len(boards))]
+
+    # Figure out which board will win last. Once it wins, what would its final score be?
+    for num in (int(n) for n in draw.split(",")):
+        for b in boards:
+            b.mark(num)
+
+        for ix, b in enumerate(boards):
+            if b.is_complete():
+                has_won[ix] = True
+                if all(has_won):
+                    return sum(b.all_unmarked()) * num
+
+    return -1
