@@ -38,17 +38,21 @@ if __name__ == "__main__":
     with open("$path/input") as f:
         inp = f.read(-1).strip()
 
-    print("part 1:", "TODO")
+    print("part 1:", part1(inp))
 
-    print("part 2:", "TODO")
+    print("part 2:", part2(inp))
 END
 
 cat <<END >"${path}/test_problem${padded_day}.py"
 from $pkg import *
 
+example = """"""
+
 def test_part1_example():
-    pass
+    # TODO: populate
+    assert part1(example)
 
 def test_part2_example():
-    pass
+    # TODO: populate
+    assert part2(example)
 END
