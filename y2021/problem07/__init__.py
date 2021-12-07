@@ -92,7 +92,14 @@ def part1(inp: str):
 # NOTE: this could be optimized
 def pt2cost(p1: int, p2: int) -> int:
     dist = abs(p1 - p2)
-    return sum(range(1, dist + 1))
+    # slow:
+    # return sum(range(1, dist + 1))
+
+    # smarter: sum of arithmetic series [a, b, c, d, ..., z] is: n/2 * (a + z).
+    #
+    # dist == num steps
+    # sum of [1, 2, ..., dist]
+    return int(dist / 2 * (1 + dist))
 
 
 def part2(inp: str):

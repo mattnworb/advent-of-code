@@ -13,9 +13,21 @@ def test_least_distance():
 
 
 def test_pt2cost():
+    assert pt2cost(1, 5) == 10
     assert pt2cost(16, 5) == 66
     assert pt2cost(5, 16) == 66
+
+    # needed more after refactoring
+    assert pt2cost(16, 5) == 66
     assert pt2cost(1, 5) == 10
+    assert pt2cost(2, 5) == 6
+    assert pt2cost(0, 5) == 15
+    assert pt2cost(4, 5) == 1
+    assert pt2cost(2, 5) == 6
+    assert pt2cost(7, 5) == 3
+    assert pt2cost(1, 5) == 10
+    assert pt2cost(2, 5) == 6
+    assert pt2cost(14, 5) == 45
 
 
 def test_part2_example():
