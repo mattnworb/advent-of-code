@@ -42,17 +42,21 @@ from typing import *
 #
 # is the answer to just take the mean?
 # after trying: no
-def total_distances(candidate: int, positions: List[int]) -> int:
-    return sum(map(lambda p: abs(p - candidate), positions))
+def total_distances(
+    candidate: int, positions: List[int], cost_fn: Callable[[int, int], int]
+) -> int:
+    return sum(map(lambda p: cost_fn(p, candidate), positions))
 
 
-def least_distance(positions: List[int]) -> Tuple[int, int]:
+def least_distance(
+    positions: List[int], cost_fn: Callable[[int, int], int]
+) -> Tuple[int, int]:
     # calculate initial position
     best_position = min(positions)
-    least_distance = total_distances(best_position, positions)
+    least_distance = total_distances(best_position, positions, cost_fn)
     # TODO: could this be binary search?
     for candidate in range(min(positions) + 1, max(positions) + 1):
-        this_total = total_distances(candidate, positions)
+        this_total = total_distances(candidate, positions, cost_fn)
         if this_total < least_distance:
             best_position = candidate
             least_distance = this_total
@@ -64,11 +68,34 @@ def parse_input(inp: str) -> List[int]:
     return list(map(int, inp.split(",")))
 
 
+def pt1cost(a, b):
+    return abs(a - b)
+
+
 def part1(inp: str):
     positions = parse_input(inp)
-    best_pos, total_dist = least_distance(positions)
+    best_pos, total_dist = least_distance(positions, pt1cost)
     return total_dist
 
 
+# Part 2:
+#
+# As it turns out, crab submarine engines don't burn fuel at a constant rate.
+# Instead, each change of 1 step in horizontal position costs 1 more unit of
+# fuel than the last: the first step costs 1, the second step costs 2, the third
+# step costs 3, and so on.
+#
+# ----
+# approach: parameterize the cost function
+
+
+# NOTE: this could be optimized
+def pt2cost(p1: int, p2: int) -> int:
+    dist = abs(p1 - p2)
+    return sum(range(1, dist + 1))
+
+
 def part2(inp: str):
-    pass
+    positions = parse_input(inp)
+    best_pos, total_dist = least_distance(positions, pt2cost)
+    return total_dist
