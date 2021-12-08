@@ -49,8 +49,22 @@ from typing import *
 # 9: 6
 
 
+# Because the digits 1, 4, 7, and 8 each use a unique number of segments, you
+# should be able to tell which combinations of signals correspond to those
+# digits. Counting only digits in the output values (the part after | on each
+# line), in the above example, there are 26 instances of digits that use a
+# unique number of segments (highlighted above).
+#
+# In the output values, how many times do digits 1, 4, 7, or 8 appear?
 def part1(inp: str):
-    pass
+    # 1, 4, 7, 8 respectively have 2, 4, 3, 7 segments
+    ans = 0
+    for line in inp.split("\n"):
+        _, outputs = line.split(" | ")
+        for output in outputs.split(" "):
+            if len(output) in [2, 3, 4, 7]:
+                ans += 1
+    return ans
 
 
 def part2(inp: str):
