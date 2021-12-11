@@ -8,10 +8,8 @@ example = """2199943210
 
 
 def test_part1_example():
-    # TODO: populate
     assert part1(example) == 15
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    assert part2(example) == 1134
