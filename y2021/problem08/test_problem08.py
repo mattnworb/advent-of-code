@@ -1,3 +1,4 @@
+import pytest
 from y2021.problem08 import *
 
 example = """be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
@@ -13,10 +14,15 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
 
 def test_part1_example():
-    # TODO: populate
     assert part1(example) == 26
 
 
+@pytest.mark.xfail  # TODO: implement
+def test_determine_output():
+    ex = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"
+    assert determine_output(ex) == 5353
+
+
+@pytest.mark.xfail  # TODO: implement
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    assert part2(example) == 61229
