@@ -87,5 +87,20 @@ def part1(inp: str):
     return flashes
 
 
+# If you can calculate the exact moments when the octopuses will all flash
+# simultaneously, you should be able to navigate through the cavern. What is the
+# first step during which all octopuses flash?
+def is_all_zeros(g: Grid) -> bool:
+    for row in g:
+        if not all(v == 0 for v in row):
+            return False
+    return True
+
+
 def part2(inp: str):
-    pass
+    grid = parse_input(inp)
+    rounds = 0
+    while not is_all_zeros(grid):
+        one_round(grid)
+        rounds += 1
+    return rounds
