@@ -80,7 +80,7 @@ eyr:2038 hcl:74454a iyr:2023
 pid:3556412378 byr:2007
 """
     ps = parse_passports(invalids)
-    return [is_valid(p, check_fields_valid=True) for p in ps] == [
+    assert [is_valid(p, check_fields_valid=True) for p in ps] == [
         False,
         False,
         False,
@@ -103,7 +103,7 @@ eyr:2022
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
     """
     )
-    return [is_valid(p, check_fields_valid=True) for p in ps] == [
+    assert [is_valid(p, check_fields_valid=True) for p in ps] == [
         True,
         True,
         True,
