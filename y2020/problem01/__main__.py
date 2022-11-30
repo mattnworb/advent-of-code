@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     # part 2
     product = find_sum_product(nums, 3, 2020)
-    if find_sum_product:
+    if product:
         print("part 2:", product)
     else:
         print("part 2: no triple found")

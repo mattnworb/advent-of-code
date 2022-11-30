@@ -150,7 +150,7 @@ def insert(d: DictList, after: int, nums: List[int]):
         after = num  # next insertion point is what we just added
 
 
-def dictlist_to_str(d: DictList, start: int = None, sep=" ") -> str:
+def dictlist_to_str(d: DictList, start: Optional[int] = None, sep=" ") -> str:
     if not start:
         start = next(iter(d.keys()))
     cur = start

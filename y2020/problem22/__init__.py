@@ -45,7 +45,9 @@ def parse_input(inp: str) -> Tuple[Deck, Deck]:
     return list(map(int, p1[1:])), list(map(int, p2[1:]))
 
 
-def play_game(deck1: Deck, deck2: Deck, max_rounds: int = None) -> Tuple[Deck, Deck]:
+def play_game(
+    deck1: Deck, deck2: Deck, max_rounds: Optional[int] = None
+) -> Tuple[Deck, Deck]:
 
     # make copies
     deck1 = list(deck1)
@@ -100,7 +102,7 @@ def score(winning_deck: Deck) -> int:
 
 
 def play_game2(
-    deck1: Deck, deck2: Deck, max_rounds: int = None, game_num: int = 1
+    deck1: Deck, deck2: Deck, max_rounds: Optional[int] = None, game_num: int = 1
 ) -> Tuple[Deck, Deck, int]:
 
     # make copies
