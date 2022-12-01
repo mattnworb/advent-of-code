@@ -16,7 +16,8 @@ def part1(inp: str):
             this_elf = []
         else:
             this_elf.append(int(line))
-    return max(map(sum, calories))
+    # ignore a regression in mypy: https://github.com/python/mypy/issues/9765
+    return max(map(sum, calories))  # type: ignore[arg-type,type-var]
 
 
 # return sum of max 3
@@ -30,5 +31,5 @@ def part2(inp: str):
         else:
             this_elf.append(int(line))
 
-    sums = map(sum, calories)
+    sums = map(sum, [1, 2, 3])  # type: ignore[arg-type]
     return sum(sorted(list(sums))[-3:])
