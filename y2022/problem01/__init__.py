@@ -8,8 +8,8 @@ from typing import *
 # Find the Elf carrying the most Calories. How many total Calories is that Elf
 # carrying?
 def part1(inp: str):
-    calories = []
-    this_elf = []
+    calories: List[List[int]] = []
+    this_elf: List[int] = []
     for line in inp.split("\n"):
         if line == "":
             calories.append(this_elf)
@@ -19,5 +19,16 @@ def part1(inp: str):
     return max(map(sum, calories))
 
 
+# return sum of max 3
 def part2(inp: str):
-    pass
+    calories: List[List[int]] = []
+    this_elf: List[int] = []
+    for line in inp.split("\n"):
+        if line == "":
+            calories.append(this_elf)
+            this_elf = []
+        else:
+            this_elf.append(int(line))
+
+    sums = map(sum, calories)
+    return sum(sorted(list(sums))[-3:])
