@@ -43,6 +43,26 @@ move_scores = {
     "Z": 3,
 }
 
+losing_move = {
+    # rock defeats scissor
+    "A": "Z",
+    # paper defeats rock
+    "B": "X",
+    # scissor defeats paper]
+    "C": "Y",
+}
+
+drawing_move = {"A": "X", "B": "Y", "C": "Z"}
+
+winning_move = {
+    # rock defeats scissor
+    "C": "X",
+    # paper defeats rock
+    "A": "Y",
+    # scissor defeats paper]
+    "B": "Z",
+}
+
 
 def part1(inp: str):
     scores = []
@@ -57,20 +77,13 @@ def part1(inp: str):
 
 
 def outcome_score(opponent: str, me: str) -> int:
-    o = move_scores[opponent]
-    m = move_scores[me]
-    if o == m:
+    if losing_move[opponent] == me:
+        return 0
+    if drawing_move[opponent] == me:
         return 3
-
-    # opponent has rock
-    if opponent == "A":
-        return 0 if me == "Z" else 6
-    # opponent has paper
-    if opponent == "B":
-        return 0 if me == "X" else 6
-    # opponent has scissor
-    else:
-        return 0 if me == "Y" else 6
+    if winning_move[opponent] == me:
+        return 6
+    raise ValueError("can't reach")
 
 
 # The Elf finishes helping with the tent and sneaks back over to you. "Anyway,
@@ -95,26 +108,6 @@ def outcome_score(opponent: str, me: str) -> int:
 #
 # Following the Elf's instructions for the second column, what would your total
 # score be if everything goes exactly according to your strategy guide?
-
-losing_move = {
-    # rock defeats scissor
-    "A": "Z",
-    # paper defeats rock
-    "B": "X",
-    # scissor defeats paper]
-    "C": "Y",
-}
-
-drawing_move = {"A": "X", "B": "Y", "C": "Z"}
-
-winning_move = {
-    # rock defeats scissor
-    "C": "X",
-    # paper defeats rock
-    "A": "Y",
-    # scissor defeats paper]
-    "B": "Z",
-}
 
 
 def part2(inp: str):
