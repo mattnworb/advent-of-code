@@ -9,10 +9,8 @@ CrZsJsPPZsGzwwsLwLmpwMDw"""
 
 
 def test_part1_example():
-
     assert part1(example) == 157
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    assert part2(example) == 70

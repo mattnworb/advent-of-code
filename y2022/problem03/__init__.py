@@ -24,4 +24,16 @@ def find_dupe(rucksack: str) -> str:
 
 
 def part2(inp: str):
-    pass
+    rucksacks = inp.split("\n")
+    scores = []
+    for x in range(0, len(rucksacks), 3):
+        r1 = rucksacks[x]
+        r2 = rucksacks[x + 1]
+        r3 = rucksacks[x + 2]
+        # what is common letter?
+        common = set(r1) & set(r2) & set(r3)
+        assert len(common) == 1
+        letter = next(iter(common))
+        score = string.ascii_letters.find(letter) + 1
+        scores.append(score)
+    return sum(scores)
