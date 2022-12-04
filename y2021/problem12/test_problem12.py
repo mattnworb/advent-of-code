@@ -14,5 +14,4 @@ def test_part1_example():
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    assert part2(example) == 36
