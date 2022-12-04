@@ -5,16 +5,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: problem16",
+      "name": "Python: 2021 problem12",
       "type": "python",
       "request": "launch",
-      "module": "problem16"
-    },
-    {
-      "name": "Python: problem14",
-      "type": "python",
-      "request": "launch",
-      "module": "problem14"
+      "module": "y2021.problem12"
     }
   ]
 }
