@@ -9,6 +9,12 @@
       "type": "python",
       "request": "launch",
       "module": "y2021.problem12"
+    },
+    {
+      "name": "Python: 2021 problem13",
+      "type": "python",
+      "request": "launch",
+      "module": "y2021.problem13"
     }
   ]
 }
