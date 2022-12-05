@@ -21,4 +21,4 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    return sum(len(p1 & p2) > 0 for p1, p2 in parse_input(inp))
