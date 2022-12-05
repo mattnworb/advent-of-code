@@ -25,5 +25,5 @@ def test_part1_example():
     assert part1(example) == 1588
 
 
-# def test_part2_example():
-#     assert part2(example) == 2188189693529
+def test_part2_example():
+    assert part2(example) == 2188189693529
