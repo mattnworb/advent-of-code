@@ -79,7 +79,7 @@ def part1(inp: str):
     stacks, instructions = parse(inp)
 
     for count, from_pos, to_pos in instructions:
-        print(f"moving {count} from {from_pos+1} to {to_pos+1}")
+        # print(f"moving {count} from {from_pos+1} to {to_pos+1}")
         assert (
             stacks[from_pos].size() >= count
         ), f"stack at index {from_pos} only has {stacks[from_pos].size()} items but attempting to remove {count}"
@@ -101,4 +101,27 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    # difference between this and part1 - move batches of crates in order
+    stacks, instructions = parse(inp)
+
+    for count, from_pos, to_pos in instructions:
+        # print(f"moving {count} from {from_pos+1} to {to_pos+1}")
+        assert (
+            stacks[from_pos].size() >= count
+        ), f"stack at index {from_pos} only has {stacks[from_pos].size()} items but attempting to remove {count}"
+        assert (
+            0 <= from_pos < len(stacks)
+        ), f"from_pos={from_pos} out of range, stack count is {len(stacks)}"
+        assert (
+            0 <= to_pos < len(stacks)
+        ), f"to_pos={to_pos} out of range, stack count is {len(stacks)}"
+
+        # here is the change:
+        # create a new, temp Stack
+        s = Stack()
+        for n in range(count):
+            s.push(stacks[from_pos].pop())
+        for n in range(count):
+            stacks[to_pos].push(s.pop())
+
+    return "".join(stack.peek() for stack in stacks if not stack.is_empty())
