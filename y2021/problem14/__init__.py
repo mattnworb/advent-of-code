@@ -12,31 +12,36 @@ def parse(inp: str) -> Tuple[str, Dict[str, str]]:
     return template, instructions
 
 
-def run_steps(template: str, insertions: Dict[str, str], rounds=10) -> str:
-    polymer = template
+def run_steps(template: str, insertions: Dict[str, str], rounds=10) -> List[str]:
+    polymer = list(template)
 
     for n in range(rounds):
-        next_polymer = ""
+        print("starting round", n)
+        next_polymer = []
         for i in range(len(polymer) - 1):
             p = polymer[i : i + 2]
-            if p in insertions:
-                # don't insert p[1] as next step will get that
-                next_polymer += p[0] + insertions[p]
-            else:
-                next_polymer += p[0]
+            next_polymer.append(p[0])
+            pstr = p[0] + p[1]
+            if pstr in insertions:
+                next_polymer.append(insertions[pstr])
+            # don't insert p[1] here as next step will get that
         # last char
-        next_polymer += polymer[-1]
+        next_polymer.append(polymer[-1])
         polymer = next_polymer
     return polymer
 
 
 def part1(inp: str):
     template, pairs = parse(inp)
-    polymer = run_steps(template, pairs, 10)
+    polymer = run_steps(template, pairs, rounds=10)
     c = Counter(polymer)
     freq = c.most_common()
     return freq[0][1] - freq[-1][1]
 
 
 def part2(inp: str):
-    pass
+    template, pairs = parse(inp)
+    polymer = run_steps(template, pairs, rounds=40)
+    c = Counter(polymer)
+    freq = c.most_common()
+    return freq[0][1] - freq[-1][1]
