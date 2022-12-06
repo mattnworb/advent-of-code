@@ -26,8 +26,7 @@ def parse(inp: str) -> Map:
 
 def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
     unvisited = set(m.keys())
-    visited: Set[Position] = set()
-    infinity = -1
+
     # textbook approach is to store Infinity or some other sentinel value in the
     # dist dict, using Infinity makes the comparison of "is the new cost less
     # than the previously-thought cost for this node?" easy. Instead, treat the
@@ -57,16 +56,12 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
             # can stop
             return dist[end_pos]
 
-        visited.add(current)
         unvisited.remove(current)
 
         # select next node - unvisited with smallest dist
         # could do `p for p in unvisited if p in dist` ... but thats the same as a set intersection
         candidates = unvisited & dist.keys()
-        assert (
-            len(candidates) > 0
-        ), f"empty set for unvisited? current={current} unvisited={unvisited}, visited={visited}, dist={dist}"
-        current = min(unvisited & dist.keys(), key=lambda p: dist[p])
+        current = min(candidates, key=lambda p: dist[p])
 
     raise ValueError("cannot reach?")
 
