@@ -1,4 +1,5 @@
 from typing import *
+import heapq
 
 Position = Tuple[int, int]  # (x, y)
 Path = Tuple[Position, ...]
@@ -25,8 +26,6 @@ def parse(inp: str) -> Map:
 
 
 def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
-    unvisited = set(m.keys())
-
     # textbook approach is to store Infinity or some other sentinel value in the
     # dist dict, using Infinity makes the comparison of "is the new cost less
     # than the previously-thought cost for this node?" easy. Instead, treat the
@@ -35,33 +34,36 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
     # lowest tentative cost.
     dist = {start_pos: 0}
 
+    # heap
+    queue = [(0, start_pos)]
+    visited = set()
+
     def neighbors(p: Position) -> Iterator[Position]:
         x, y = p
         for n in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
             if n in m:
                 yield n
 
-    current = start_pos
-    while len(unvisited) > 0:
-        # print(f"find_lowest_risk: at {current}")
-        for neighbor in neighbors(current):
-            if neighbor in unvisited:
-                nd = dist[current] + m[neighbor]
-                # neighbor is not in dist if we don't know any possible cost for it yet
-                if neighbor not in dist or nd < dist[neighbor]:
-                    # print(f"current={current}, updating cost of {neighbor} to {nd}")
-                    dist[neighbor] = nd
-
+    while queue:
+        cost, current = heapq.heappop(queue)
         if current == end_pos:
             # can stop
-            return dist[end_pos]
+            return dist[current]
 
-        unvisited.remove(current)
+        if current in visited:
+            continue
 
-        # select next node - unvisited with smallest dist
-        # could do `p for p in unvisited if p in dist` ... but thats the same as a set intersection
-        candidates = unvisited & dist.keys()
-        current = min(candidates, key=lambda p: dist[p])
+        for neighbor in neighbors(current):
+            if neighbor in visited:
+                continue
+            nd = dist[current] + m[neighbor]
+            # neighbor is not in dist if we don't know any possible cost for it yet
+            if neighbor not in dist or nd < dist[neighbor]:
+                # print(f"current={current}, updating cost of {neighbor} to {nd}")
+                dist[neighbor] = nd
+            heapq.heappush(queue, (dist[neighbor], neighbor))
+
+        visited.add(current)
 
     raise ValueError("cannot reach?")
 
