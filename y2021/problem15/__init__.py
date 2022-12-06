@@ -44,6 +44,7 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
 
     current = start_pos
     while len(unvisited) > 0:
+        # print(f"find_lowest_risk: at {current}")
         for neighbor in neighbors(current):
             if neighbor in unvisited:
                 nd = dist[current] + m[neighbor]
@@ -61,6 +62,10 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
 
         # select next node - unvisited with smallest dist
         # could do `p for p in unvisited if p in dist` ... but thats the same as a set intersection
+        candidates = unvisited & dist.keys()
+        assert (
+            len(candidates) > 0
+        ), f"empty set for unvisited? current={current} unvisited={unvisited}, visited={visited}, dist={dist}"
         current = min(unvisited & dist.keys(), key=lambda p: dist[p])
 
     raise ValueError("cannot reach?")
@@ -69,17 +74,49 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
 def part1(inp: str):
     m = parse(inp)
     start_pos = (0, 0)
-
     # downside of storing m as dict is we have to find the end
-    end_pos = start_pos
-    for p in m:
-        if p[0] > end_pos[0] or p[1] > end_pos[1]:
-            end_pos = p
-    # what moves can i make?
-    # if can_move_up(m,pos):
+    end_pos = max(m)
 
     return find_lowest_risk(m, start_pos, end_pos)
 
 
+def expand_tile(original: Map, times: int) -> Map:
+    # Your original map tile repeats to the right and downward; each time the
+    # tile repeats to the right or downward, all of its risk levels are 1 higher
+    # than the tile immediately up or left of it. However, risk levels above 9
+    # wrap back around to 1
+    newmap = {}
+
+    # what size is the original grid?
+    end = max(original)
+    x_size, y_size = end[0] + 1, end[1] + 1
+
+    for x in range(times):
+        for y in range(times):
+            # add each position of m to newmap
+            for p, cost in original.items():
+                newp = x_size * x + p[0], y_size * y + p[1]
+                # after 9, wrap around to 1, 2, 3, ..., not 0
+                newcost = cost + x + y
+                if newcost > 9:
+                    newcost -= 9
+                newmap[newp] = newcost
+
+    return newmap
+
+
 def part2(inp: str):
-    pass
+    m = parse(inp)
+    m = expand_tile(m, 5)
+
+    start_pos = (0, 0)
+    end_pos = max(m)
+
+    # for y in range(end_pos[1] + 1):
+    #     line = ""
+    #     for x in range(end_pos[0] + 1):
+    #         p = x, y
+    #         line += str(m[p]) if p in m else "x"
+    #     print(line)
+
+    return find_lowest_risk(m, start_pos, end_pos)
