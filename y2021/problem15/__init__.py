@@ -60,8 +60,9 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
         unvisited.remove(current)
 
         # select next node - unvisited with smallest dist
-        possible_next = list(filter(lambda p: p in unvisited and p in dist, unvisited))
-        current = min(possible_next, key=lambda p: dist[p])
+        # could do `p for p in unvisited if p in dist` ... but thats the same as a set intersection
+        current = min(unvisited & dist.keys(), key=lambda p: dist[p])
+
     raise ValueError("cannot reach?")
 
 
