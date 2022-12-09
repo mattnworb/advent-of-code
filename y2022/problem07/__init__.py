@@ -93,4 +93,30 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    root_node = parse(inp)
+
+    total_disk_space = 70_000_000
+    need_unused_space = 30_000_000
+
+    unused_space = total_disk_space - root_node.size()
+    deletion_target = need_unused_space - unused_space
+
+    # Find the smallest directory that, if deleted, would free up enough space
+    # on the filesystem to run the update. What is the total size of that
+    # directory?
+
+    smallest_dir_to_delete_size = 0
+
+    queue = [root_node]
+    while queue:
+        node = queue.pop()
+        size = node.size()
+
+        if size >= deletion_target and (
+            smallest_dir_to_delete_size == 0 or size < smallest_dir_to_delete_size
+        ):
+            smallest_dir_to_delete_size = size
+
+        queue.extend(node.childdirs())
+
+    return smallest_dir_to_delete_size

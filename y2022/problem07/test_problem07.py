@@ -26,10 +26,8 @@ $ ls
 
 
 def test_part1_example():
-    # TODO: populate
     assert part1(example) == 95437
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    assert part2(example) == 24933642
