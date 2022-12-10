@@ -106,9 +106,9 @@ def part2(inp: str):
 
     max_scenic_score = 0
 
-    # TODO: can probably skip visiting the edges as they will have a score of 0
-    for x in range(lenx):
-        for y in range(leny):
+    # can skip visiting the edges as they will have a score of 0
+    for x in range(1, lenx - 1):
+        for y in range(1, leny - 1):
             # remember - the grid position is grid[y][x] not grid[x][y]
             this_pos = grid[y][x]
             dist_up, dist_down, dist_left, dist_right = 0, 0, 0, 0
