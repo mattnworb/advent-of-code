@@ -84,4 +84,76 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    grid = parse(inp)
+
+    # To measure the viewing distance from a given tree, look up, down, left,
+    # and right from that tree; stop if you reach an edge or at the first tree
+    # that is the same height or taller than the tree under consideration. (If a
+    # tree is right on the edge, at least one of its viewing distances will be
+    # zero.)
+    #
+    # A tree's scenic score is found by multiplying together its viewing
+    # distance in each of the four directions.
+    #
+    # Consider each tree on your map. What is the highest scenic score possible for any tree?
+
+    # -------------
+
+    # seems like a brute force approach of visiting every tree and measuring the score would be simplest and not too expensive
+
+    leny = len(grid)
+    lenx = len(grid[0])
+
+    max_scenic_score = 0
+
+    scores: List[List[int]] = []
+
+    # TODO: can probably skip visiting the edges as they will have a score of 0
+    for x in range(lenx):
+        scores.append([])
+        for y in range(leny):
+
+            # remember - the grid position is grid[y][x] not grid[x][y]
+            this_pos = grid[y][x]
+            # look up
+            dist_up = 0
+            for ny in range(y - 1, -1, -1):
+                comp_pos = grid[ny][x]
+                dist_up += 1
+                if this_pos <= comp_pos:
+                    # stop
+                    break
+
+            # look down
+            dist_down = 0
+            for ny in range(y + 1, leny):
+                comp_pos = grid[ny][x]
+                dist_down += 1
+                if this_pos <= comp_pos:
+                    # stop
+                    break
+
+            # look left
+            dist_left = 0
+            for nx in range(x - 1, -1, -1):
+                comp_pos = grid[y][nx]
+                dist_left += 1
+                if this_pos <= comp_pos:
+                    # stop
+                    break
+
+            # look right
+            dist_right = 0
+            for nx in range(x + 1, lenx):
+                comp_pos = grid[y][nx]
+                dist_right += 1
+                if this_pos <= comp_pos:
+                    # stop
+                    break
+
+            this_score = dist_up * dist_down * dist_left * dist_right
+            scores[x].append(this_score)
+            if this_score > max_scenic_score:
+                max_scenic_score = this_score
+
+    return max_scenic_score
