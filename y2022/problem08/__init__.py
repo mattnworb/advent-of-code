@@ -106,53 +106,42 @@ def part2(inp: str):
 
     max_scenic_score = 0
 
-    scores: List[List[int]] = []
-
     # TODO: can probably skip visiting the edges as they will have a score of 0
     for x in range(lenx):
-        scores.append([])
         for y in range(leny):
-
             # remember - the grid position is grid[y][x] not grid[x][y]
             this_pos = grid[y][x]
+            dist_up, dist_down, dist_left, dist_right = 0, 0, 0, 0
+
             # look up
-            dist_up = 0
             for ny in range(y - 1, -1, -1):
-                comp_pos = grid[ny][x]
                 dist_up += 1
-                if this_pos <= comp_pos:
+                if this_pos <= grid[ny][x]:
                     # stop
                     break
 
             # look down
-            dist_down = 0
             for ny in range(y + 1, leny):
-                comp_pos = grid[ny][x]
                 dist_down += 1
-                if this_pos <= comp_pos:
+                if this_pos <= grid[ny][x]:
                     # stop
                     break
 
             # look left
-            dist_left = 0
             for nx in range(x - 1, -1, -1):
-                comp_pos = grid[y][nx]
                 dist_left += 1
-                if this_pos <= comp_pos:
+                if this_pos <= grid[y][nx]:
                     # stop
                     break
 
             # look right
-            dist_right = 0
             for nx in range(x + 1, lenx):
-                comp_pos = grid[y][nx]
                 dist_right += 1
-                if this_pos <= comp_pos:
+                if this_pos <= grid[y][nx]:
                     # stop
                     break
 
             this_score = dist_up * dist_down * dist_left * dist_right
-            scores[x].append(this_score)
             if this_score > max_scenic_score:
                 max_scenic_score = this_score
 
