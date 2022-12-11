@@ -153,5 +153,14 @@ def test_part1_example():
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    expected = """##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....
+"""  # <-- last newline is important
+
+    actual = part2(example)
+    print(actual)
+    assert actual == expected

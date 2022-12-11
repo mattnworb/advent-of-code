@@ -56,4 +56,52 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    instructions = iter(inp.split("\n"))
+
+    crt = ""
+    pixel_pos = 0
+    x = 1
+    v = 0
+    inst = ""
+    next_inst_counter = 0
+
+    # different than part1 - we run until completion
+    cycle = 0
+    while True:
+        cycle += 1
+        # check if we should load next instruction
+        if next_inst_counter == 0:
+            inst = next(instructions, "done")
+            if inst == "done":
+                break
+            if inst.startswith("addx"):
+                sp = inst.split(" ")
+                inst = sp[0]
+                v = int(sp[1])
+
+            if inst == "noop":
+                next_inst_counter = 1
+            elif inst == "addx":
+                next_inst_counter = 2
+
+        # this is where signal strength calculations or CRT drawing happens
+        # x represents middle of the 3 width sprite
+        if pixel_pos in [x - 1, x, x + 1]:
+            crt += "#"
+        else:
+            crt += "."
+
+        if cycle % 40 == 0:
+            crt += "\n"
+            pixel_pos = 0
+        else:
+            pixel_pos += 1
+
+        # cycle is done
+        next_inst_counter -= 1
+        # is the instruction done executing?
+        if next_inst_counter == 0:
+            if inst == "addx":
+                x += v
+
+    return crt
