@@ -1,6 +1,8 @@
 from typing import *
 from dataclasses import dataclass
 from collections import Counter
+from functools import reduce
+import operator
 
 
 @dataclass
@@ -59,10 +61,9 @@ def parse(inp: str) -> List[Monkey]:
     return monkeys
 
 
-def part1(inp: str):
-    monkeys = parse(inp)
-
-    num_rounds = 20
+def do_business(
+    monkeys: List[Monkey], num_rounds: int, worry_func: Callable[[int], int]
+) -> int:
     inspections: Counter[int] = Counter()
 
     for round in range(num_rounds):
@@ -74,7 +75,9 @@ def part1(inp: str):
                 for itemix, worry in enumerate(monkey.items):
                     inspections[monkey_num] += 1
 
-                    worry = monkey.op(worry) // 3
+                    worry = monkey.op(worry)
+                    worry = worry_func(worry)
+
                     monkey.items[itemix] = worry
 
                     throw_to = (
@@ -91,5 +94,21 @@ def part1(inp: str):
     return m1[1] * m2[1]
 
 
+def part1(inp: str):
+    monkeys = parse(inp)
+    return do_business(monkeys, 20, worry_func=lambda w: w // 3)
+
+
 def part2(inp: str):
-    pass
+    monkeys = parse(inp)
+
+    # the insight here is that if we kept multiplying the worry levels for 10000
+    # rounds, the numbers would get gigantic, especially "new = old * old". We
+    # want to mutate the worry level to something "managable" but without
+    # affecting the results of the division in the "test" step - so we can take
+    # the multiple of all the divisors. We know they are all prime from looking
+    # at input; if they weren't this could probably be Least Common Multiple
+    # (but a larger-than-necessary multiple seems like it would work fine too)
+    mult = reduce(operator.mul, (m.test_divisor for m in monkeys))
+
+    return do_business(monkeys, 10000, worry_func=lambda w: w % mult)
