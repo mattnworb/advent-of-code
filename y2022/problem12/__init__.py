@@ -1,5 +1,6 @@
 from typing import *
 from collections import defaultdict
+import heapq
 
 # You ask the device for a heightmap of the surrounding area (your puzzle
 # input). The heightmap shows the local area from above broken into a grid; the
@@ -82,9 +83,7 @@ def solve(
     def h(n: Node) -> int:
         return abs(n[0] - end[0]) + abs(n[1] - end[1])
 
-    open_set = {start}  # TODO: priority queue
-
-    # came_from = {}
+    open_set = [(start, h(start))]  # heap
 
     # g_score[node] is the cost of the cheapest path from start to node that we
     # know of so far
@@ -95,14 +94,10 @@ def solve(
     f_score = {start: h(start)}
 
     while open_set:
-        current = min(
-            open_set & f_score.keys(), key=lambda n: f_score[n]
-        )  # TODO: priority queue
+        current, _ = heapq.heappop(open_set)
         if current == end:
             # done
             return g_score[current]
-
-        open_set.remove(current)
 
         for neighbor in graph[current]:
             score = g_score[current] + 1  # cost of each move is 1
@@ -112,8 +107,10 @@ def solve(
                 # this path is better than any previous one
                 g_score[neighbor] = score
                 f_score[neighbor] = score + h(neighbor)
-                if neighbor not in open_set:
-                    open_set.add(neighbor)
+                # TODO: in 2021 day 15, I had to do some tricks to deal with
+                # duplicate entries in the heap for a given niehgbor, but not
+                # here ... not sure why?
+                heapq.heappush(open_set, (neighbor, h(neighbor)))
 
     # oops
     return None
