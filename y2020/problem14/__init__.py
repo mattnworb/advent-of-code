@@ -47,7 +47,7 @@ def apply_mask(mask: str, value: int) -> int:
 
 
 # Values and memory addresses are both 36-bit unsigned integers.
-all_ones = (2 ** 36) - 1
+all_ones = (2**36) - 1
 
 
 def zero_out(x: int, i: int) -> int:
