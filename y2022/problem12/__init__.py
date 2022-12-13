@@ -36,8 +36,7 @@ from collections import defaultdict
 Node = tuple[int, int]
 
 
-def solve(inp: str) -> int:
-    # try storing as a graph
+def parse_into_height_map(inp) -> Tuple[Dict[Node, int], Node, Node]:
     lines = inp.split("\n")
     max_y = len(lines)
     max_x = len(lines[0])
@@ -52,10 +51,13 @@ def solve(inp: str) -> int:
                 height[x, y] = ord(ch) - 96
     height[start] = 1
     height[end] = 26
+    return height, start, end
 
-    # now build the graph: graph[(x,y)] is a list of positions you can move to
-    # from (x,y). if you can move from A to B it does not imply you can move
-    # from B to A
+
+def build_graph(height: Dict[Node, int]) -> Dict[Node, List[Node]]:
+    # build the graph: graph[(x,y)] is a list of positions you can move to from
+    # (x,y). if you can move from A to B it does not imply you can move from B
+    # to A
     graph: Dict[Node, List[Node]] = defaultdict(list)
     for p in height:
         for neighbor in [
@@ -69,6 +71,12 @@ def solve(inp: str) -> int:
                 # higher than the elevation of your current square
                 if height[neighbor] - height[p] <= 1:
                     graph[p].append(neighbor)
+    return graph
+
+
+def solve(
+    height: Dict[Node, int], graph: Dict[Node, List[Node]], start: Node, end: Node
+) -> Optional[int]:
 
     # now we search
     def h(n: Node) -> int:
@@ -108,12 +116,27 @@ def solve(inp: str) -> int:
                     open_set.add(neighbor)
 
     # oops
-    raise ValueError("couldn't find path")
+    return None
 
 
 def part1(inp: str):
-    return solve(inp)
+    height, start, end = parse_into_height_map(inp)
+    graph = build_graph(height)
+    return solve(height, graph, start, end)
 
 
 def part2(inp: str):
-    pass
+    height, _, end = parse_into_height_map(inp)
+    graph = build_graph(height)
+
+    # What is the fewest steps required to move starting from any square with
+    # elevation a to the location that should get the best signal?
+    fewest = -1
+    candidates = list(filter(lambda n: height[n] == 1, height))
+    for ix, start in enumerate(candidates):
+        steps = solve(height, graph, start, end)
+        if steps is not None and (steps < fewest or fewest == -1):
+            fewest = steps
+        if (ix + 1) % 100 == 0:
+            print(f"tested {ix+1} of {len(candidates)} candidates")
+    return fewest
