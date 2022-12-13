@@ -20,7 +20,7 @@ def parse(inp: str) -> Map:
 #     return sum(int(m[y][x]) for x, y in path[1:])
 
 
-# basic idea here is to Djikstra's shortest path. I spent a bunch of time
+# basic idea here is to Dijkstra's shortest path. I spent a bunch of time
 # reinventing this before I remembered it existing, but not getting very far.
 # https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 
