@@ -37,7 +37,6 @@ def compare(left: Packet, right: Packet) -> Optional[bool]:
 
     # one must be an int
     if type(left) == list:
-        right = [right]
         return compare(left, [right])
     else:
         return compare([left], right)
