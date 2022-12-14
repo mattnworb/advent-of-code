@@ -42,7 +42,9 @@ def candidate_moves(p: Point) -> Iterator[Point]:
     yield move_down_and_right(p)
 
 
-def part1(inp: str):
+def solve(
+    inp: str, infinite_floor: bool = False, print_grid_at_end: bool = False
+) -> int:
     grid: Dict[Tuple[int, int], str] = {}
 
     for line in inp.split("\n"):
@@ -69,9 +71,13 @@ def part1(inp: str):
     while not falling_into_void:
         sand_moved = False
         for candidate in candidate_moves(falling_sand):
-            if candidate not in grid:
-                # before coming to a stop and noting position in a grid, check if we are past the lowest y-value of any rock - which means we are now falling into the void and can stop
-                if falling_sand[1] >= bottom_rock_y:
+            if candidate not in grid and (
+                not infinite_floor or candidate[1] <= bottom_rock_y + 1
+            ):
+                # before coming to a stop and noting position in a grid, check
+                # if we are past the lowest y-value of any rock - which means we
+                # are now falling into the void and can stop
+                if not infinite_floor and falling_sand[1] >= bottom_rock_y:
                     falling_into_void = True
                     break
 
@@ -90,22 +96,31 @@ def part1(inp: str):
         grid[falling_sand] = "o"
         num_resting_sands += 1
 
+        if infinite_floor and falling_sand == sand_start:
+            # stop
+            break
+
         # "... at which point the next unit of sand is created back at the source."
         falling_sand = sand_start
 
-    # print the grid
-    minx = min(p[0] for p in grid)
-    maxx = max(p[0] for p in grid)
-    miny = min(p[1] for p in grid)
-    maxy = max(p[1] for p in grid)
+    if print_grid_at_end:
+        minx = min(p[0] for p in grid)
+        maxx = max(p[0] for p in grid)
+        miny = min(p[1] for p in grid)
+        maxy = max(p[1] for p in grid)
 
-    for y in range(miny, maxy + 1):
-        for x in range(minx, maxx + 1):
-            ch = grid[(x, y)] if (x, y) in grid else "."
-            print(ch, end="")
-        print()
+        for y in range(miny, maxy + 1):
+            for x in range(minx, maxx + 1):
+                ch = grid[(x, y)] if (x, y) in grid else "."
+                print(ch, end="")
+            print()
+
     return num_resting_sands
 
 
+def part1(inp: str):
+    return solve(inp)
+
+
 def part2(inp: str):
-    pass
+    return solve(inp, infinite_floor=True)
