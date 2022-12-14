@@ -4,8 +4,6 @@
   "editor.formatOnSave": true,
   "python.testing.pytestArgs": ["."],
   "python.testing.unittestEnabled": false,
-  "python.testing.nosetestsEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.pythonPath": "/Users/mattbrown/.pyenv/versions/3.9.6/envs/advent-of-code/bin/python"
+  "python.testing.autoTestDiscoverOnSaveEnabled": true
 }
