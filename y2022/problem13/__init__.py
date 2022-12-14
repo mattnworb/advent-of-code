@@ -1,10 +1,11 @@
 from typing import *
 import json
+import functools
 
 Packet = Union[list["Packet"], int]
 
 
-def parse(inp: str) -> List[Tuple]:
+def parse1(inp: str) -> List[Tuple]:
     packets: List[Tuple] = []
     for section in inp.split("\n\n"):
         left, right = map(json.loads, section.split("\n"))
@@ -43,7 +44,7 @@ def compare(left: Packet, right: Packet) -> Optional[bool]:
 
 
 def part1(inp: str):
-    pairs = parse(inp)
+    pairs = parse1(inp)
     n = 0
     for ix, pair in enumerate(pairs):
         left, right = pair
@@ -52,5 +53,31 @@ def part1(inp: str):
     return n
 
 
+def parse2(inp: str) -> List[Packet]:
+    packets = []
+    for line in inp.split("\n"):
+        if line == "":
+            continue
+        p = json.loads(line)
+        packets.append(p)
+    packets.append([[2]])
+    packets.append([[6]])
+    return packets
+
+
 def part2(inp: str):
-    pass
+    packets = parse2(inp)
+
+    def cmp(a, b) -> int:
+        x = compare(a, b)
+        if x == True:
+            return -1
+        elif x == False:
+            return 1
+        else:
+            return 0
+
+    sp = sorted(packets, key=functools.cmp_to_key(cmp))
+    m = sp.index([[2]]) + 1
+    n = sp.index([[6]]) + 1
+    return m * n
