@@ -25,6 +25,4 @@ def test_part1_example():
 
 
 def test_part2_example():
-    # TODO: populate
-    # assert part2(example)
-    pass
+    assert part2(example, search_space=(0, 20)) == 56000011

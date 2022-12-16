@@ -11,4 +11,4 @@ if __name__ == "__main__":
     else:
         print(" (WRONG - expected 6425133")
 
-    print("part 2:", part2(inp))
+    print("part 2:", part2(inp, search_space=(0, 4000000)))
