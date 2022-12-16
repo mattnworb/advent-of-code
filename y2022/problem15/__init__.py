@@ -90,16 +90,42 @@ def parse(inp: str) -> List[Tuple[Point, Point]]:
 
 
 def part1(inp: str, y=2000000) -> int:
-    grid = Grid()
+
+    sensors = []
+    beacons = []
+    distances = []
+
     for sensor, beacon in parse(inp):
-        grid.add(sensor, "S")
-        grid.add(beacon, "B")
+        sensors.append(sensor)
+        beacons.append(beacon)
+        distances.append(distance(sensor, beacon))
 
-        for p in points_within(sensor, distance(sensor, beacon)):
-            if p not in grid:
-                grid.add(p, "#")
+    # we don't know exactly what x positions to scan between on this row, but we know the max it can be
+    x_start, x_end = (
+        min([p[0] - distances[i] for i, p in enumerate(sensors)]),
+        max([p[0] + distances[i] for i, p in enumerate(sensors)]),
+    )
 
-    return len([n for n in grid.get_row(y) if n == "#"])
+    print(f"scanning row={y} between [{x_start}, {x_end}]")
+    count = 0
+    for x in range(x_start, x_end + 1):
+        p = x, y
+
+        if p in beacons:
+            continue
+
+        # if the point is closer to any sensor than its beacon is, then it cannot be a beacon
+        cannot_be_beacon = False
+        for ix, sensor in enumerate(sensors):
+            if distance(p, sensor) <= distances[ix]:
+                cannot_be_beacon = True
+                break
+
+        if cannot_be_beacon:
+            count += 1
+            # print("cannot be beacon", p)
+
+    return count
 
 
 def part2(inp: str):
