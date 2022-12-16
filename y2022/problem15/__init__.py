@@ -94,25 +94,37 @@ def part2(inp: str, search_space: Tuple[int, int]) -> int:
     # 4000000] and test if any sensor-beacon covers it?
 
     distances = {}
-
-    not_beacons: Set[Point] = set()
-
     for sensor, beacon in parse(inp):
         distances[sensor] = distance(sensor, beacon)
 
-    # this is too slow, instead, for each line
+    # for each line
     # - figure out what ranges are covered by each sensor in this line
     # - check if there are any open spaces in that line
-    for x in range(search_space[0], search_space[1] + 1):
-        for y in range(search_space[0], search_space[1] + 1):
-            if x % 1000 == 0 and y % 1000 == 0:
-                print(f"testing point ({x}, {y})")
-            candidate = True
-            for sensor, d in distances.items():
-                if distance(sensor, (x, y)) <= d:
-                    candidate = False
-                    break
-            if candidate:
-                return x * 4000000 + y
+    for y in range(search_space[0], search_space[1] + 1):
+        # if y > 0 and y % 1000 == 0:
+        #     print(f"testing y={y}")
+        intervals = []
+        # figure out the intervals of points (in terms of just the x-coordinate)
+        # that cannot be a beacon due to this sensor
+        for sensor, d in distances.items():
+            leftover_d = d - abs(y - sensor[1])
+            if leftover_d > 0:
+                left_x = sensor[0] - leftover_d
+                right_x = sensor[0] + leftover_d
+
+                # stay within the search space
+                left_x = max(left_x, search_space[0])
+                right_x = min(right_x, search_space[1])
+
+                intervals.append((left_x, right_x))
+
+        # is there an empty space in this line if we look at all the intervals?
+        # could try to merge them but first just sort them (by x position) and find a gap
+        max_end = search_space[0]
+        for start, end in sorted(intervals):
+            if start >= (max_end + 1):
+                # found a gap
+                return (max_end + 1) * 4000000 + y
+            max_end = max(max_end, end)
 
     raise ValueError("not found?")
