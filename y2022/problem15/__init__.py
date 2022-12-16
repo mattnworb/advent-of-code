@@ -27,41 +27,56 @@ def parse(inp: str) -> List[Tuple[Point, Point]]:
 
 def part1(inp: str, y=2000000) -> int:
 
-    sensors = []
-    beacons = []
-    distances = []
+    # First approach I took here was to attempt to populate a sparse grid to
+    # note every (x, y) position where a sensor is, where the beacons are, and
+    # the positions that cannot contain a beacon. This works well for the
+    # examples but is incredibly too slow for the actual input, since some
+    # distances are on the order of 300,000, meaning points_within() returns
+    # maybe around a million points to mark (times each sensor/beacon pair).
+    #
+    # Second approach was to walk through just the row we are interested in,
+    # figure out the left-most and right-most positions worth checking (where we
+    # could possibly rule out some beacons), and then for each position between
+    # them, test if that position falls within the sensor-beacon range for any
+    # sensor. This works better for the input but is still pretty slow: ~13
+    # second execution time for Part 1.
+    #
+    # Third approach which might be much faster - combine the best parts of the
+    # two above - for each sensor-beacon pair, just figure out which (x, y)
+    # positions *in the row we care about* have a distance <= the manhattan
+    # distance of the pair. Can do some math to figure out where the left and
+    # right bounds are and then fill in the spots in between (where there is not
+    # a beacon or sensor already).
+
+    sensors = set()
+    beacons = set()
+    sensor_to_beacon = {}
+    # distances = []
+
+    not_beacons: Set[Point] = set()
 
     for sensor, beacon in parse(inp):
-        sensors.append(sensor)
-        beacons.append(beacon)
-        distances.append(distance(sensor, beacon))
+        sensors.add(sensor)
+        beacons.add(beacon)
+        sensor_to_beacon[sensor] = beacon
+        # distances.append(distance(sensor, beacon))
 
-    # we don't know exactly what x positions to scan between on this row, but we know the max it can be
-    x_start, x_end = (
-        min([p[0] - distances[i] for i, p in enumerate(sensors)]),
-        max([p[0] + distances[i] for i, p in enumerate(sensors)]),
-    )
+    for sensor, beacon in sensor_to_beacon.items():
+        d = distance(sensor, beacon)
 
-    print(f"scanning row={y} between [{x_start}, {x_end}]")
-    count = 0
-    for x in range(x_start, x_end + 1):
-        p = x, y
+        # based on the radius `d`, what is the edge of where beacons cannot be for this sensor *in this row* ?
+        leftover_d = d - abs(y - sensor[1])
+        left_x = sensor[0] - leftover_d
+        right_x = sensor[0] + leftover_d
 
-        if p in beacons:
-            continue
+        # nothing in between left_x and right_x can be a beacon
+        for x in range(left_x, right_x + 1):
+            p = (x, y)
+            # skip positions where sensors and beacons are
+            if p not in sensors and p not in beacons:
+                not_beacons.add(p)
 
-        # if the point is closer to any sensor than its beacon is, then it cannot be a beacon
-        cannot_be_beacon = False
-        for ix, sensor in enumerate(sensors):
-            if distance(p, sensor) <= distances[ix]:
-                cannot_be_beacon = True
-                break
-
-        if cannot_be_beacon:
-            count += 1
-            # print("cannot be beacon", p)
-
-    return count
+    return len(not_beacons)
 
 
 def part2(inp: str):
