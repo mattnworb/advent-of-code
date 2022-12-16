@@ -20,21 +20,6 @@ def test_distance():
     assert distance((8, 7), (2, 10)) == 9
 
 
-def test_points_between():
-    sensor = (8, 7)
-    beacon = (2, 10)
-    d = distance(sensor, beacon)
-    points = set(points_within((8, 7), d))
-    point_list = set(points_within((8, 7), d))
-
-    # don't return duplicates
-    assert len(points) == len(point_list)
-
-    assert beacon in points
-    assert (16, 7) in points
-    assert (8, 10) in points
-
-
 def test_part1_example():
     assert part1(example, y=10) == 26
 
