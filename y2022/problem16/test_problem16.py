@@ -13,6 +13,10 @@ Valve JJ has flow rate=21; tunnel leads to valve II"""
 
 
 def test_part1_example():
+    # minute 1: move to DD
+    # minute 2: open to DD
+    # minute 3: DD releases 20, no time left to do anything
+    assert part1(example, minutes=3) == 20
     assert part1(example) == 1651
 
 

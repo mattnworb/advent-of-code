@@ -1,17 +1,17 @@
 from typing import *
 import re
+import functools
 
-# Valve LD has flow rate=0; tunnels lead to valves CL, QU
+# input is like "Valve LD has flow rate=0; tunnels lead to valves CL, QU"
 # the input varies between tunnel/tunnels, lead/leads, and valve/valves
 input_pattern = re.compile(
     r"Valve (\w\w) has flow rate=(\d+); tunnels? leads? to valves? ([\w, ]+)"
 )
 
 
-def part1(inp: str):
-
+def parse(inp: str) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
+    """Parse the input into two dicts: the flow rate for each valve, and a list of connections from one valve to another"""
     flow_rate = {}
-    open_valves: set[str] = set()
     connections = {}
 
     for line in inp.split("\n"):
@@ -22,68 +22,46 @@ def part1(inp: str):
         flow_rate[valve] = rate
 
         connections[valve] = m.group(3).split(", ")
+    return flow_rate, connections
 
-    # a naive approach would be to explore every permutation we could take
-    #
-    # or maybe ... from where we are, consider the tradeoff between opening a
-    # valve which has a low flow rate or taking the time to move to another
-    # cave/valve that has a higher flow rate (and paying the cost of the moves).
-    # We should be able to know before we decide which one has more value in the
-    # end - and go after that.
-    # But to know what is best move to make we have to evaluate all options ...
 
-    options: List[Dict[int, str]] = []
+def part1(inp: str, minutes: int = 30, start_location="AA"):
 
-    def recurse(
-        minutes_left: int,
-        location: str,
-        visited: Set[str],
-        opened_valves: Set[str],
-        opened_at: Dict[int, str],
-    ):
-        moved = False
-        if minutes_left > 0:
-            # see if we can open this valve
-            if location not in opened_valves and flow_rate[location] > 0:
-                new_dict = dict(opened_at)
-                # if we open the valve now, it opens a minute from now
-                new_dict[minutes_left - 1] = location
-                recurse(
-                    minutes_left - 1,
-                    location,
-                    visited,
-                    opened_valves | {location},
-                    new_dict,
+    flow_rate, connections = parse(inp)
+
+    @functools.cache
+    def max_value(minutes_left: int, location: str, open_valves: frozenset[str]) -> int:
+        # we don't need to know the path we take, just what the maximum value we can find from this position is
+        options = []
+
+        # everything already open flows one tick
+        value = sum(flow_rate[valve] for valve in open_valves)
+
+        if minutes_left <= 1:
+            return value
+
+        # if everything with non-zero flow rate is open, no moves to make, just count the value and tick the clock down
+        if open_valves == set(v for v, amt in flow_rate.items() if amt > 0):
+            return value + max_value(minutes_left - 1, location, open_valves)
+
+        if location not in open_valves and flow_rate[location] > 0:
+            # we can try to open this valve ... it doesn't open this minute but in the next one
+            options.append(
+                value
+                + max_value(
+                    minutes_left - 1, location, frozenset(open_valves | {location})
                 )
-                moved = True
-            # can we walk anywhere else
-            # TODO: this shouldn't just be a blind walk, but picking a non-open valve to try to reach
-            for new_location in connections[location]:
-                # if new_location not in visited:
-                recurse(
-                    minutes_left - 1,
-                    new_location,
-                    visited | {new_location},
-                    opened_valves,
-                    opened_at,
-                )
-                moved = True
+            )
 
-        # when there is nothing left to do (not just min)
-        if not moved:
-            options.append(opened_at)
+        # we can also try using this time to move to each connection
+        for new_location in connections[location]:
+            options.append(
+                value + max_value(minutes_left - 1, new_location, open_valves)
+            )
 
-    recurse(30, "AA", set(), set(), {})
+        return max(options)
 
-    assert options, "no options stored?"
-
-    # figure out which path had the most value
-    def add_up_value(schedule: Dict[int, str]):
-        return sum(
-            minutes * flow_rate[location] for minutes, location in schedule.items()
-        )
-
-    return max(map(add_up_value, options))
+    return max_value(minutes, start_location, frozenset())
 
 
 def part2(inp: str):
