@@ -8,7 +8,7 @@ colorama==0.4.6
 distlib==0.3.6
 exceptiongroup==1.0.4
 filelock==3.8.2
-identify==2.5.9
+identify==2.5.10
 iniconfig==1.1.1
 mypy==0.991
 mypy-extensions==0.4.3
