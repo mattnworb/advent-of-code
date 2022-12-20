@@ -12,11 +12,32 @@ Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II"""
 
 
+def test_compressed_graph():
+    cg = compressed_graph(*parse(example))
+
+    assert cg == {
+        "BB": {"CC": 1, "DD": 2, "EE": 3, "HH": 6, "JJ": 3},
+        "CC": {"BB": 1, "DD": 1, "EE": 2, "HH": 5, "JJ": 4},
+        "DD": {"BB": 2, "CC": 1, "EE": 1, "HH": 4, "JJ": 3},
+        "EE": {"BB": 3, "CC": 2, "DD": 1, "HH": 3, "JJ": 4},
+        "HH": {"BB": 6, "CC": 5, "DD": 4, "EE": 3, "JJ": 7},
+        "JJ": {"BB": 3, "CC": 4, "DD": 3, "EE": 4, "HH": 7},
+    }
+
+
 def test_part1_example():
     # minute 1: move to DD
     # minute 2: open to DD
     # minute 3: DD releases 20, no time left to do anything
     assert part1(example, minutes=3) == 20
+
+    # minute 1: move to DD
+    # minute 2: open to DD
+    # minute 3: DD releases 20, move to EE
+    # minute 4: DD releases 20, open EE
+    # minute 4: DD releases 20, EE releases 3
+    assert part1(example, minutes=5) == 63
+
     assert part1(example) == 1651
 
 
