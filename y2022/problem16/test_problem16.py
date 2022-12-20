@@ -21,5 +21,8 @@ def test_part1_example():
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example)
+    # minute 1: a moves to DD, b moves to BB
+    # minute 2: open DD, open BB
+    # minute 3: 20 + 13 released
+    assert part2(example, minutes=3) == 33
+    assert part2(example) == 1707

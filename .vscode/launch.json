@@ -27,6 +27,12 @@
       "type": "python",
       "request": "launch",
       "module": "y2022.problem12"
+    },
+    {
+      "name": "Python: 2022 problem16",
+      "type": "python",
+      "request": "launch",
+      "module": "y2022.problem16"
     }
   ]
 }
