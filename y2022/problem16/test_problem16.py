@@ -14,25 +14,6 @@ Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II"""
 
 
-def test_mask():
-    assert set_bit(0, 0) == 1
-    assert is_set(set_bit(0, 0), 0)
-    assert not is_set(0, 0)
-
-    assert set_bit(0, 1) == 2
-    assert is_set(2, 1)
-    assert not is_set(2, 0)
-
-    m = set_bit(0, 0)
-    m = set_bit(m, 1)
-    m = set_bit(m, 2)
-
-    assert is_set(m, 0)
-    assert is_set(m, 1)
-    assert is_set(m, 2)
-    assert not is_set(m, 3)
-
-
 def test_part1_example():
     # minute 1: move to DD
     # minute 2: open to DD
