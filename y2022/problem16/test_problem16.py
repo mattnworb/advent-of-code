@@ -1,3 +1,5 @@
+import pytest
+
 from y2022.problem16 import *
 
 example = """Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
@@ -20,6 +22,7 @@ def test_part1_example():
     assert part1(example) == 1651
 
 
+@pytest.mark.xfail
 def test_part2_example():
     # TODO: populate
     assert part2(example)
