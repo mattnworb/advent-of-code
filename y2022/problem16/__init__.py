@@ -82,7 +82,7 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
     @functools.cache
     def max_value(minutes_left: int, location: str, open_valves: frozenset[str]) -> int:
         # we don't need to know the path we take, just what the maximum value we can find from this position is
-        options: List[Tuple[str, int]] = []
+        options: List[int] = []
 
         # everything already open flows one tick
         value = sum(flow_rate[valve] for valve in open_valves)
@@ -97,12 +97,9 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
         if location not in open_valves and flow_rate[location] > 0:
             # we can try to open this valve ... it doesn't open this minute but in the next one
             options.append(
-                (
-                    "open " + location,
-                    value
-                    + max_value(
-                        minutes_left - 1, location, frozenset(open_valves | {location})
-                    ),
+                value
+                + max_value(
+                    minutes_left - 1, location, frozenset(open_valves | {location})
                 )
             )
 
@@ -111,27 +108,21 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
         if flow_rate[location] == 0:
             for new_location in connections[location]:
                 options.append(
-                    (
-                        "move to " + new_location,
-                        value + max_value(minutes_left - 1, new_location, open_valves),
-                    )
+                    value + max_value(minutes_left - 1, new_location, open_valves),
                 )
         else:
             for new_location, time_cost in dist[location].items():
                 new_minutes_left = minutes_left - time_cost
                 if new_minutes_left > 0:
                     options.append(
-                        (
-                            "move to " + new_location,
-                            # `value` is just flow in one minute, if we are jumping ahead in time need to account for that
-                            value * time_cost
-                            + max_value(
-                                minutes_left - time_cost, new_location, open_valves
-                            ),
-                        )
+                        # `value` is just flow in one minute, if we are jumping ahead in time need to account for that
+                        value * time_cost
+                        + max_value(
+                            minutes_left - time_cost, new_location, open_valves
+                        ),
                     )
 
-        return max(o[1] for o in options) if len(options) > 0 else 0
+        return max(options) if len(options) > 0 else 0
 
     return max_value(minutes, start_location, frozenset())
 
