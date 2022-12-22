@@ -80,51 +80,74 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
     dist = compressed_graph(flow_rate, connections, start_location)
 
     @functools.cache
-    def max_value(minutes_left: int, location: str, open_valves: frozenset[str]) -> int:
+    def max_value(
+        minutes_left: int,
+        location: str,
+        open_valves: frozenset[str],
+        # this is a function of open_valves, but we can avoid recalculating it each time
+        value_so_far: int,
+    ) -> int:
         # we don't need to know the path we take, just what the maximum value we can find from this position is
-        options: List[int] = []
-
-        # everything already open flows one tick
-        value = sum(flow_rate[valve] for valve in open_valves)
+        max_option = 0
 
         if minutes_left <= 1:
-            return value
+            return value_so_far
 
         # if everything with non-zero flow rate is open, no moves to make, just count the value and tick the clock down
         if open_valves == nonzero_flow_valves:
-            return value + max_value(minutes_left - 1, location, open_valves)
+            return value_so_far + max_value(
+                minutes_left - 1,
+                location,
+                open_valves,
+                value_so_far,
+            )
 
         if location not in open_valves and flow_rate[location] > 0:
             # we can try to open this valve ... it doesn't open this minute but in the next one
-            options.append(
-                value
+            max_option = max(
+                max_option,
+                value_so_far
                 + max_value(
-                    minutes_left - 1, location, frozenset(open_valves | {location})
-                )
+                    minutes_left - 1,
+                    location,
+                    frozenset(open_valves | {location}),
+                    value_so_far + flow_rate[location],
+                ),
             )
 
         # we can also try using this time to move to each connection
         # special case - starting at AA which has no flow
         if flow_rate[location] == 0:
             for new_location in connections[location]:
-                options.append(
-                    value + max_value(minutes_left - 1, new_location, open_valves),
+                max_option = max(
+                    max_option,
+                    value_so_far
+                    + max_value(
+                        minutes_left - 1,
+                        new_location,
+                        open_valves,
+                        value_so_far,
+                    ),
                 )
         else:
             for new_location, time_cost in dist[location].items():
                 new_minutes_left = minutes_left - time_cost
                 if new_minutes_left > 0:
-                    options.append(
-                        # `value` is just flow in one minute, if we are jumping ahead in time need to account for that
-                        value * time_cost
+                    max_option = max(
+                        max_option,
+                        # `value_so_far` is just flow in one minute, if we are jumping ahead in time need to account for that
+                        value_so_far * time_cost
                         + max_value(
-                            minutes_left - time_cost, new_location, open_valves
+                            minutes_left - time_cost,
+                            new_location,
+                            open_valves,
+                            value_so_far,
                         ),
                     )
 
-        return max(options) if len(options) > 0 else 0
+        return max_option
 
-    return max_value(minutes, start_location, frozenset())
+    return max_value(minutes, start_location, frozenset(), 0)
 
 
 def part2(
