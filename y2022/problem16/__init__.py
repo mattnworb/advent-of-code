@@ -120,14 +120,16 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
                         )
                     )
         else:
-            for new_location, weight in dist[location].items():
-                if minutes_left - weight > 0:
+            for new_location, time_cost in dist[location].items():
+                new_minutes_left = minutes_left - time_cost
+                if new_minutes_left > 0:
                     options.append(
                         (
                             "move to " + new_location,
-                            value
+                            # `value` is just flow in one minute, if we are jumping ahead in time need to account for that
+                            value * time_cost
                             + max_value(
-                                minutes_left - weight, new_location, open_valves
+                                minutes_left - time_cost, new_location, open_valves
                             ),
                         )
                     )
