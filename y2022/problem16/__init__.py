@@ -153,5 +153,106 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
 def part2(
     inp: str,
     minutes: int = 26,
+    start_location="AA",
 ):
-    return 0
+
+    flow_rate, connections = parse(inp)
+
+    nonzero_flow_valves = set(v for v, amt in flow_rate.items() if amt > 0)
+
+    # create a new graph which has only non-zero-flow-rate valves as vertexes.
+    # Compared with the original graph, the cost to travel from one node to
+    # another will not always be 1. this gives us a smaller space of moves to
+    # search.
+
+    dist = compressed_graph(flow_rate, connections, start_location)
+
+    @functools.cache
+    def max_value(
+        minutes_left: int,
+        location: str,
+        valves_to_close: frozenset[str],
+        # this is a function of open_valves, but we can avoid recalculating it each time
+        value_so_far: int,
+    ) -> int:
+        # we don't need to know the path we take, just what the maximum value we can find from this position is
+        max_option = 0
+
+        if minutes_left <= 1:
+            return value_so_far
+
+        # if everything with non-zero flow rate is open, no moves to make, just count the value and tick the clock down
+        if len(valves_to_close) == 0:
+            return value_so_far + max_value(
+                minutes_left - 1,
+                location,
+                valves_to_close,
+                value_so_far,
+            )
+
+        if location in valves_to_close and flow_rate[location] > 0:
+            # we can try to open this valve ... it doesn't open this minute but in the next one
+            max_option = max(
+                max_option,
+                value_so_far
+                + max_value(
+                    minutes_left - 1,
+                    location,
+                    frozenset(valves_to_close - {location}),
+                    value_so_far + flow_rate[location],
+                ),
+            )
+
+        # we can also try using this time to move to each connection
+        # special case - starting at AA which has no flow
+        if flow_rate[location] == 0:
+            for new_location in connections[location]:
+                max_option = max(
+                    max_option,
+                    value_so_far
+                    + max_value(
+                        minutes_left - 1,
+                        new_location,
+                        valves_to_close,
+                        value_so_far,
+                    ),
+                )
+        else:
+            for new_location, time_cost in dist[location].items():
+                new_minutes_left = minutes_left - time_cost
+                if new_minutes_left > 0:
+                    max_option = max(
+                        max_option,
+                        # `value_so_far` is just flow in one minute, if we are jumping ahead in time need to account for that
+                        value_so_far * time_cost
+                        + max_value(
+                            minutes_left - time_cost,
+                            new_location,
+                            valves_to_close,
+                            value_so_far,
+                        ),
+                    )
+
+        return max_option
+
+    # split the valves into two sets: one for me to close each of, and one for the elephant
+    # figure out which option has the max value
+
+    combined_max = 0
+    valves = list(nonzero_flow_valves)
+    for i in range(0, 2 ** len(nonzero_flow_valves)):
+        me_close = set()
+        # test which bits are set in i
+        for n in range(len(nonzero_flow_valves)):
+            if i & (1 << n) != 0:
+                me_close.add(valves[n])
+
+        elephant_close = frozenset(nonzero_flow_valves - me_close)
+        combined_max = max(
+            combined_max,
+            max_value(minutes, start_location, frozenset(me_close), 0)
+            + max_value(minutes, start_location, elephant_close, 0),
+        )
+        print(f"i={i}, max is {combined_max}")
+
+    return max_value(minutes, start_location, frozenset(), 0)
