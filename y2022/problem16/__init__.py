@@ -26,7 +26,9 @@ def parse(inp: str) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
 
 
 def compressed_graph(
-    flow_rate: Dict[str, int], connections: Dict[str, List[str]]
+    flow_rate: Dict[str, int],
+    connections: Dict[str, List[str]],
+    start_location: str,
 ) -> Dict[str, Dict[str, int]]:
     dist: Dict[str, Dict[str, int]] = {}
     for a in flow_rate:
@@ -50,16 +52,11 @@ def compressed_graph(
                 if dist[i][j] > dist[i][k] + dist[k][j]:
                     dist[i][j] = dist[i][k] + dist[k][j]
 
-    # new_graph = {}
-    # for v, conns in connections.items():
-    #     if flow_rate[v] > 0:
-    #         new_graph[v] = [k for k in dist[v] if flow_rate[k] > 0 and dist[v][k] > 0]
-
-    # prune locations with flow_rate==0
+    # prune locations with flow_rate==0, except the starting point
     all_valves = set(flow_rate.keys())
 
     for v in all_valves:
-        if flow_rate[v] == 0:
+        if v != start_location and flow_rate[v] == 0:
             del dist[v]
         else:
             for v2 in all_valves:
@@ -78,7 +75,7 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
     # another will not always be 1. this gives us a smaller space of moves to
     # search.
 
-    dist = compressed_graph(flow_rate, connections)
+    dist = compressed_graph(flow_rate, connections, start_location)
 
     @functools.cache
     def max_value(minutes_left: int, location: str, open_valves: frozenset[str]) -> int:
@@ -111,14 +108,12 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
         # special case - starting at AA which has no flow
         if flow_rate[location] == 0:
             for new_location in connections[location]:
-                if flow_rate[new_location] > 0:  # this seems wrong
-                    options.append(
-                        (
-                            "move to " + new_location,
-                            value
-                            + max_value(minutes_left - 1, new_location, open_valves),
-                        )
+                options.append(
+                    (
+                        "move to " + new_location,
+                        value + max_value(minutes_left - 1, new_location, open_valves),
                     )
+                )
         else:
             for new_location, time_cost in dist[location].items():
                 new_minutes_left = minutes_left - time_cost

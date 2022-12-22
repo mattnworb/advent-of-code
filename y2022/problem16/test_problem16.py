@@ -13,9 +13,10 @@ Valve JJ has flow rate=21; tunnel leads to valve II"""
 
 
 def test_compressed_graph():
-    cg = compressed_graph(*parse(example))
+    cg = compressed_graph(*parse(example), "AA")
 
     assert cg == {
+        "AA": {"BB": 1, "CC": 2, "DD": 1, "EE": 2, "HH": 5, "JJ": 2},
         "BB": {"CC": 1, "DD": 2, "EE": 3, "HH": 6, "JJ": 3},
         "CC": {"BB": 1, "DD": 1, "EE": 2, "HH": 5, "JJ": 4},
         "DD": {"BB": 2, "CC": 1, "EE": 1, "HH": 4, "JJ": 3},
