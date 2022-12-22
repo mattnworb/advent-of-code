@@ -115,11 +115,9 @@ def solve(inp: str, number_of_rocks: int) -> int:
             )
 
             # can we move down? only if there are no rocks in the position below these rocks, and we are not at the floor
-            can_move_down = all(
-                (r[0], r[1] - 1) not in board and r[1] - 1 >= 0 for r in shape
-            )
-            if can_move_down:
-                shape = {(r[0], r[1] - 1) for r in shape}
+            next_shape = {(r[0], r[1] - 1) for r in shape}
+            if all((x, y) not in board and y >= 0 for x, y in next_shape):
+                shape = next_shape
             else:
                 # if not, this rock rests
                 for rock in shape:
