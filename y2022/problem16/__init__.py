@@ -70,6 +70,8 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
 
     flow_rate, connections = parse(inp)
 
+    nonzero_flow_valves = set(v for v, amt in flow_rate.items() if amt > 0)
+
     # create a new graph which has only non-zero-flow-rate valves as vertexes.
     # Compared with the original graph, the cost to travel from one node to
     # another will not always be 1. this gives us a smaller space of moves to
@@ -89,7 +91,7 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
             return value
 
         # if everything with non-zero flow rate is open, no moves to make, just count the value and tick the clock down
-        if open_valves == set(v for v, amt in flow_rate.items() if amt > 0):
+        if open_valves == nonzero_flow_valves:
             return value + max_value(minutes_left - 1, location, open_valves)
 
         if location not in open_valves and flow_rate[location] > 0:
