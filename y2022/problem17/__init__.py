@@ -73,7 +73,7 @@ def parse_input(inp) -> Iterator[str]:
             yield ch
 
 
-def part1(inp: str):
+def solve(inp: str, number_of_rocks: int) -> int:
 
     board: Set[Rock] = set()
     max_height = 0
@@ -86,8 +86,7 @@ def part1(inp: str):
     shape_gen = shapes()
     jet_gen = parse_input(inp)
 
-    # How many units tall will the tower of rocks be after 2022 rocks have stopped falling?
-    for rock_num in range(2022):
+    for rock_num in range(number_of_rocks):
         # new rock
         shape = next(shape_gen)
         # Each rock appears so that its left edge is two units away from the
@@ -134,5 +133,9 @@ def part1(inp: str):
     return max_height
 
 
+def part1(inp: str) -> int:
+    return solve(inp, 2022)
+
+
 def part2(inp: str):
-    pass
+    return solve(inp, 1000000000000)

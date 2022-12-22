@@ -6,4 +6,4 @@ if __name__ == "__main__":
 
     print("part 1:", part1(inp))
 
-    print("part 2:", part2(inp))
+    # print("part 2:", part2(inp))
