@@ -73,67 +73,74 @@ def parse_input(inp) -> Iterator[str]:
             yield ch
 
 
-def solve(inp: str, number_of_rocks: int) -> int:
+def next_rock(
+    board: Set[Rock],
+    max_height: int,
+    shape_gen: Iterator[Shape],
+    jet_gen: Iterator[str],
+) -> int:
 
-    board: Set[Rock] = set()
-    max_height = 0
+    # new rock
+    shape = next(shape_gen)
+    # Each rock appears so that its left edge is two units away from the
+    # left wall and its bottom edge is three units above the highest rock in
+    # the room (or the floor, if there isn't one).
+    shape = move_right(shape, 2)
+    shape = {(x, y + max_height + 3) for x, y in shape}
 
-    # The tall, vertical chamber is exactly seven units wide. Each rock appears
-    # so that its left edge is two units away from the left wall and its bottom
-    # edge is three units above the highest rock in the room (or the floor, if
-    # there isn't one).
+    # After a rock appears, it alternates between being pushed by a jet of
+    # hot gas one unit (in the direction indicated by the next symbol in the
+    # jet pattern) and then falling one unit down. If any movement would
+    # cause any part of the rock to move into the walls, floor, or a stopped
+    # rock, the movement instead does not occur. If a downward movement
+    # would have caused a falling rock to move into the floor or an
+    # already-fallen rock, the falling rock stops where it is (having landed
+    # on something) and a new rock immediately begins falling.
 
-    shape_gen = shapes()
-    jet_gen = parse_input(inp)
+    rock_is_moving = True
 
-    for rock_num in range(number_of_rocks):
-        # new rock
-        shape = next(shape_gen)
-        # Each rock appears so that its left edge is two units away from the
-        # left wall and its bottom edge is three units above the highest rock in
-        # the room (or the floor, if there isn't one).
-        shape = move_right(shape, 2)
-        shape = {(x, y + max_height + 3) for x, y in shape}
+    while rock_is_moving:
+        jet = next(jet_gen)
+        shape = (
+            move_right(shape, board=board)
+            if jet == ">"
+            else move_left(shape, board=board)
+        )
 
-        # After a rock appears, it alternates between being pushed by a jet of
-        # hot gas one unit (in the direction indicated by the next symbol in the
-        # jet pattern) and then falling one unit down. If any movement would
-        # cause any part of the rock to move into the walls, floor, or a stopped
-        # rock, the movement instead does not occur. If a downward movement
-        # would have caused a falling rock to move into the floor or an
-        # already-fallen rock, the falling rock stops where it is (having landed
-        # on something) and a new rock immediately begins falling.
-
-        rock_is_moving = True
-
-        while rock_is_moving:
-            jet = next(jet_gen)
-            shape = (
-                move_right(shape, board=board)
-                if jet == ">"
-                else move_left(shape, board=board)
-            )
-
-            # can we move down? only if there are no rocks in the position below these rocks, and we are not at the floor
-            next_shape = {(r[0], r[1] - 1) for r in shape}
-            if all((x, y) not in board and y >= 0 for x, y in next_shape):
-                shape = next_shape
-            else:
-                # if not, this rock rests
-                for rock in shape:
-                    assert (
-                        rock not in board
-                    ), f"collision after rock number {rock_num} came to rest"
-                    board.add(rock)
-                rock_is_moving = False
-                max_height = max(max_height, max(y for x, y in shape) + 1)
+        # can we move down? only if there are no rocks in the position below these rocks, and we are not at the floor
+        next_shape = {(r[0], r[1] - 1) for r in shape}
+        if all((x, y) not in board and y >= 0 for x, y in next_shape):
+            shape = next_shape
+        else:
+            # if not, this rock rests
+            for rock in shape:
+                assert rock not in board
+                board.add(rock)
+            rock_is_moving = False
+            max_height = max(max_height, max(y for x, y in shape) + 1)
 
     return max_height
 
 
 def part1(inp: str) -> int:
-    return solve(inp, 2022)
+    board: Set[Rock] = set()
+    shape_gen = shapes()
+    jet_gen = parse_input(inp)
+
+    height = 0
+    for n in range(2022):
+        height = next_rock(board, height, shape_gen, jet_gen)
+    return height
 
 
 def part2(inp: str):
-    return solve(inp, 1000000000000)
+    # TODO: find cycles
+    board: Set[Rock] = set()
+    shape_gen = shapes()
+    jet_gen = parse_input(inp)
+
+    height = 0
+    for n in range(len(inp) * 2):
+        height = next_rock(board, height, shape_gen, jet_gen)
+        print(f"rocks: {n+1}, height: {height}")
+    return height
