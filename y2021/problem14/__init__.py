@@ -14,7 +14,6 @@ def parse(inp: str) -> Tuple[str, Dict[str, str]]:
 
 
 def run_steps(template: str, instructions: Dict[str, str], rounds=10) -> Dict[str, int]:
-
     # the naive approach, which works fine for part1 / 10 rounds, is to treat
     # the polymer as a string (or list of chars), build a copy of the string in
     # each round, iterating over each position in the string. around round 20

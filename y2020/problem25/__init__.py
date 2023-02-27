@@ -83,7 +83,6 @@ def transform_n_times(subject: int, loop_size: int) -> int:
 
 
 def part1(inp: str) -> int:
-
     card_pub_key, door_pub_key = map(int, inp.strip().split("\n"))
 
     # what loop size would have generated the two pub keys?

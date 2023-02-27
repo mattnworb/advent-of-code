@@ -79,7 +79,6 @@ def part1(inp: str, cycles: int = 6) -> int:
 
 
 def print_state3(state: State3):
-
     min_z = min(z for x, y, z in state)
     max_z = max(z for x, y, z in state)
 

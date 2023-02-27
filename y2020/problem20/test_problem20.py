@@ -12,7 +12,6 @@ def tiles():
 
 
 def test_parse_input(tiles):
-
     assert len(tiles) == 144
     for tile in tiles.values():
         assert len(tile) == 10

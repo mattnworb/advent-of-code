@@ -26,7 +26,6 @@ def parse(inp: str) -> List[Tuple[Point, Point]]:
 
 
 def part1(inp: str, y=2000000) -> int:
-
     # First approach I took here was to attempt to populate a sparse grid to
     # note every (x, y) position where a sensor is, where the beacons are, and
     # the positions that cannot contain a beacon. This works well for the
@@ -78,7 +77,6 @@ def part1(inp: str, y=2000000) -> int:
 
 
 def part2(inp: str, search_space: Tuple[int, int]) -> int:
-
     # Your handheld device indicates that the distress signal is coming from a
     # beacon nearby. The distress beacon is not detected by any sensor, but the
     # distress beacon must have x and y coordinates each no lower than 0 and no

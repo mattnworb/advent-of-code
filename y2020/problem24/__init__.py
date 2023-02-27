@@ -76,7 +76,6 @@ def process_moves(inp: str) -> Set[Position]:
     black_tiles: Set[Position] = set()
 
     for line in inp.strip().split("\n"):
-
         pos = (0, 0)
 
         for m in parse_line(line):

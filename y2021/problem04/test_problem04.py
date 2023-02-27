@@ -63,7 +63,6 @@ def test_board_col():
 
 
 def test_part1_example():
-
     assert part1(example) == 4512
 
 

@@ -22,6 +22,7 @@ import collections
 # joltage differences between the charging outlet, the adapters, and your
 # device?
 
+
 # Originally my solution tried to find a valid chain of adapters from the input
 # which would use all of them. But duh, if we use all of them, there is only one
 # ordering possible, since the allowed differences of [1, 2, or 3] are all
