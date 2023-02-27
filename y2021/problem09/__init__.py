@@ -93,7 +93,6 @@ def part1(inp: str):
 # The size of a basin is the number of locations within the basin, including the
 # low point. The example above has four basins.
 def part2(inp: str):
-
     g = Grid(inp)
 
     basins: List[Set[Pos]] = []

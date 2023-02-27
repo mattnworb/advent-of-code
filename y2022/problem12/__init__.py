@@ -78,7 +78,6 @@ def build_graph(height: Dict[Node, int]) -> Dict[Node, List[Node]]:
 def solve(
     height: Dict[Node, int], graph: Dict[Node, List[Node]], start: Node, end: Node
 ) -> Optional[int]:
-
     # now we search
     def h(n: Node) -> int:
         return abs(n[0] - end[0]) + abs(n[1] - end[1])

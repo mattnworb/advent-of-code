@@ -26,7 +26,6 @@ def parse(inp: str) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
 
 
 def part1(inp: str, minutes: int = 30, start_location="AA"):
-
     flow_rate, connections = parse(inp)
 
     @functools.cache

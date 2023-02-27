@@ -2,7 +2,6 @@ from typing import *
 
 
 def part1(inp: str):
-
     # Start by figuring out the signal being sent by the CPU. The CPU has a
     # single register, X, which starts with the value 1. It supports only two
     # instructions:

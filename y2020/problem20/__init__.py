@@ -7,6 +7,7 @@ Tile = List[str]
 Position = Tuple[int, int]
 Image = Dict[Position, Tile]
 
+
 # some thoughts on an approach:
 #
 # only the borders of each tile matter
@@ -196,7 +197,6 @@ def assert_image_valid(image: Image):
 def assemble_image(
     tiles: Dict[int, Tile], corner_tile_nums: Set[int]
 ) -> Tuple[Image, Dict[Position, int]]:
-
     # dict of border (string) to count (int)
     border_counts = Counter(b for t in tiles.values() for b in all_borders(t))
 
@@ -372,7 +372,6 @@ def count_sea_monsters(tile: Tile) -> int:
     # of the monster onto it (with the last group being rows [93,94,95]).
     for y in range(0, tile_rows - monster_rows + 1):
         for x in range(0, tile_cols - monster_cols + 1):
-
             # using (x, y) as an anchor point, we see if the monster could exist
             # from this anchor point. Do this by checking if the positions from
             # here contain the required '#' characters.

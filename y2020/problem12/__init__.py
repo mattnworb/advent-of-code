@@ -46,7 +46,6 @@ def part1(instr: List[str]) -> Tuple[int, int]:
 
 
 def move(pos: Tuple[int, int], action: str, value: int) -> Tuple[int, int]:
-
     if action == "N":
         r = pos[0], pos[1] - value
     elif action == "S":

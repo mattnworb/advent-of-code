@@ -51,7 +51,6 @@ def parse_expression(line: str, part1=True) -> List[Either]:
 
         # check if operator
         elif token not in ["(", ")"]:
-
             while (
                 len(operators) > 0
                 # normally this would also check if operator at the top of the

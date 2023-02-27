@@ -48,7 +48,6 @@ def parse_input(inp: str) -> Tuple[Deck, Deck]:
 def play_game(
     deck1: Deck, deck2: Deck, max_rounds: Optional[int] = None
 ) -> Tuple[Deck, Deck]:
-
     # make copies
     deck1 = list(deck1)
     deck2 = list(deck2)
@@ -104,7 +103,6 @@ def score(winning_deck: Deck) -> int:
 def play_game2(
     deck1: Deck, deck2: Deck, max_rounds: Optional[int] = None, game_num: int = 1
 ) -> Tuple[Deck, Deck, int]:
-
     # make copies
     deck1 = list(deck1)
     deck2 = list(deck2)

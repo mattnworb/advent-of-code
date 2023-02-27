@@ -79,7 +79,6 @@ def next_rock(
     shape_gen: Iterator[Shape],
     jet_gen: Iterator[str],
 ) -> int:
-
     # new rock
     shape = next(shape_gen)
     # Each rock appears so that its left edge is two units away from the
