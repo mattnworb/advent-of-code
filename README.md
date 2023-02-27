@@ -19,4 +19,8 @@ python -m timeit -s 'import y2021.problem15; inp = open("y2021/problem15/input")
 1 loop, best of 5: 938 msec per loop
 ```
 
-The `requirements.txt` file is generated with pip-compile from [pip-tools](https://pip-tools.readthedocs.io/en/latest/)
+The `requirements.txt` file is generated with pip-compile from [pip-tools](https://pip-tools.readthedocs.io/en/latest/). To re-compile:
+
+```
+pip-compile --no-emit-index-url > requirements.txt
+```
