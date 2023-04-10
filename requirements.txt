@@ -24,7 +24,7 @@ filelock==3.9.0
     #   virtualenv
 iniconfig==2.0.0
     # via pytest
-mypy==1.1.1
+mypy==1.2.0
     # via -r requirements.in
 mypy-extensions==1.0.0
     # via
