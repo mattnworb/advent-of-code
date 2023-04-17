@@ -4,7 +4,7 @@
 #
 #    pip-compile --no-emit-index-url
 #
-black==23.1.0
+black==23.3.0
     # via -r requirements.in
 cachetools==5.3.0
     # via tox
