@@ -28,7 +28,7 @@ mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
-packaging==23.0
+packaging==23.1
     # via
     #   black
     #   pyproject-api
@@ -49,7 +49,7 @@ pyproject-api==1.5.1
     # via tox
 pytest==7.3.1
     # via -r requirements.in
-tox==4.4.12
+tox==4.5.1
     # via -r requirements.in
 typing-extensions==4.5.0
     # via mypy
