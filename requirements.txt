@@ -47,7 +47,7 @@ pluggy==1.0.0
     #   tox
 pyproject-api==1.5.1
     # via tox
-pytest==7.3.1
+pytest==7.3.2
     # via -r requirements.in
 tox==4.5.1
     # via -r requirements.in
