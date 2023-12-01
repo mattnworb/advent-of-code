@@ -32,5 +32,5 @@ def part2(inp: str):
         else:
             this_elf.append(int(line))
 
-    sums = map(sum, [1, 2, 3])  # type: ignore[arg-type]
+    sums = map(sum, calories)  # type: ignore[arg-type]
     return sum(sorted(list(sums))[-3:])
