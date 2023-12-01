@@ -3,7 +3,7 @@
 To run the problem for a day, run the Python module like
 
 ```sh
-(cd 2020 && python -m problem01)
+python -m y2020.problem01
 ```
 
 Run the tests (yes I wrote tests) with `tox` or `pytest` or to run them for just
