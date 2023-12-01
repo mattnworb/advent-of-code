@@ -25,4 +25,19 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    total = 0
+    words = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    # this will doublecount some digits like "eightwothree" (assuming it should
+    # only find [8,3]), but the problem is ambiguous about this case
+    for line in inp.split("\n"):
+        digits = []
+        for ix, ch in enumerate(line):
+            if ch in "0123456789":
+                digits.append(int(ch))
+
+            for wix, word in enumerate(words):
+                if line[ix : (ix + len(word))] == word:
+                    digits.append(wix + 1)
+
+        total += digits[0] * 10 + digits[-1]
+    return total
