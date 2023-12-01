@@ -6,6 +6,14 @@ To run the problem for a day, run the Python module like
 python -m y2020.problem01
 ```
 
+To generate code for a new problem/day from a template, run:
+
+```sh
+./new_problem.sh <year> <day number>
+```
+
+This will create files in a directory named `y$YEAR/$DAY`.
+
 Run the tests (yes I wrote tests) with `tox` or `pytest` or to run them for just
 one problem, `pytest <year>/<directory>`.
 
