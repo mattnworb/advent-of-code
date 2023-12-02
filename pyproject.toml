@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "my AoC solutions"
 authors = ["Matt Brown <matt@mattnworb.com>"]
 readme = "README.md"
-packages = [{include = "advent_of_code"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
