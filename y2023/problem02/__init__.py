@@ -45,5 +45,47 @@ def part1(inp: str):
     return sum(valid_games)
 
 
+# As you continue your walk, the Elf poses a second question: in each game you
+# played, what is the fewest number of cubes of each color that could have been
+# in the bag to make the game possible?
+#
+# ...
+#
+# The power of a set of cubes is equal to the numbers of red, green, and blue
+# cubes multiplied together. The power of the minimum set of cubes in game 1 is
+# 48. In games 2-5 it was 12, 1560, 630, and 36, respectively. Adding up these
+# five powers produces the sum 2286.
+#
+# For each game, find the minimum set of cubes that must have been present. What
+# is the sum of the power of these sets?
+
+
 def part2(inp: str):
-    pass
+    total_power = 0
+
+    for line in inp.split("\n"):
+        # new game:
+        _, text = line.split(": ")
+        min_red, min_blue, min_green = 0, 0, 0
+
+        for draw in text.split("; "):
+            red, green, blue = 0, 0, 0
+            for s in draw.split(", "):
+                n, color = s.split(" ")
+                num = int(n)
+                if color == "green":
+                    green = num
+                elif color == "blue":
+                    blue = num
+                elif color == "red":
+                    red = num
+                else:
+                    raise ValueError(f"unexpected color {color}")
+
+            min_red = max(red, min_red)
+            min_green = max(green, min_green)
+            min_blue = max(blue, min_blue)
+
+        # draws are done
+        total_power += min_red * min_green * min_blue
+    return total_power
