@@ -13,11 +13,11 @@ example = """467..114..
 
 
 def test_part1_example():
-    # assert part1(example) == 4361
+    assert part1(example) == 4361
 
     ex2 = """..*.
-    .123
-    ...."""
+.123
+...."""
 
     assert part1(ex2) == 123
 
