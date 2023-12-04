@@ -1,8 +1,11 @@
 from typing import *
+from collections import Counter
 
 
 def part1(inp: str):
-    part_numbers: List[int] = []
+    part_numbers: Set[int] = set()
+    all_numbers: Counter[int] = Counter()
+
     grid = inp.split("\n")
 
     def is_symbol(x, y):
@@ -15,14 +18,16 @@ def part1(inp: str):
         at_number = False
         current_number = ""
         for x, ch in enumerate(line):
-            if ch.isdigit():  # and (x, y) not in number_positions:
+            if ch.isdigit():
                 at_number = True
                 current_number += ch
             elif at_number:
                 # number is done
                 part_number = int(current_number)
+                all_numbers[part_number] += 1
+
                 x_start = x - len(current_number)
-                x_end = x - 1
+                x_end = x - 1  # we are already one past the end of the number
 
                 # reset
                 at_number = False
@@ -37,6 +42,7 @@ def part1(inp: str):
                         touches_symbol = True
                     if y + 1 in y_range and is_symbol(i, y + 1):
                         touches_symbol = True
+
                 # and left and right in this row
                 if x_start - 1 in x_range and is_symbol(x_start - 1, y):
                     touches_symbol = True
@@ -44,12 +50,15 @@ def part1(inp: str):
                     touches_symbol = True
 
                 if touches_symbol:
-                    part_numbers.append(part_number)
-                else:
-                    print("not touching:", part_number)
+                    part_numbers.add(part_number)
 
-    print(part_numbers)
-    return sum(part_numbers)
+    # numbers might be repeated in the input but not always touching a symbol
+    # the sum should include ALL of them
+    # "There are lots of numbers and symbols you don't really understand, but
+    # apparently any number adjacent to a symbol, even diagonally, is a "part
+    # number" and should be included in your sum."
+
+    return sum(n for n in all_numbers.elements() if n in part_numbers)
 
 
 def part2(inp: str):
