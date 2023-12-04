@@ -14,14 +14,23 @@ def part1(inp: str):
     x_range = range(len(grid[0]))
     y_range = range(len(grid))
 
+    def print_surrounding(x_start, x_end, y):
+        for py in range(y - 1, y + 2):
+            if py not in y_range:
+                continue
+            for px in range(x_start - 1, x_end + 2):
+                if px not in x_range:
+                    continue
+                print(grid[py][px], end="")
+            print()
+
     for y, line in enumerate(grid):
         at_number = False
         current_number = ""
         for x, ch in enumerate(line):
-            if ch.isdigit():
-                at_number = True
-                current_number += ch
-            elif at_number:
+            if (at_number and not ch.isdigit()) or (
+                ch.isdigit() and x == (len(line) - 1)
+            ):
                 # number is done
                 part_number = int(current_number)
                 all_numbers[part_number] += 1
@@ -52,6 +61,12 @@ def part1(inp: str):
                 if touches_symbol:
                     part_numbers.add(part_number)
 
+                print(f"{part_number} at ({x_start}, {y}), touches={touches_symbol}")
+                print_surrounding(x_start, x_end, y)
+                print()
+            elif ch.isdigit():
+                at_number = True
+                current_number += ch
     # numbers might be repeated in the input but not always touching a symbol
     # the sum should include ALL of them
     # "There are lots of numbers and symbols you don't really understand, but
