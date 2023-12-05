@@ -1,9 +1,11 @@
 from typing import *
+from collections.abc import Sequence
 
-MapTable = Dict[int, int]
+# dict of range to offset. if a seed falls in the range in the dict key, then it
+# should be transformed by adding the offset (dict value) to it
+MapTable = Dict[Sequence[int], int]
 
 
-# TODO: this will be too slow with actual input as the range_lengths are in the hundreds of millions
 def part1(inp: str):
     lines = inp.split("\n")
     assert lines[0].startswith("seeds: ")
@@ -14,6 +16,7 @@ def part1(inp: str):
     map_tables: List[MapTable] = []
     cur_table: MapTable = {}
 
+    # TODO: parsing might be less janky if input was split by "\n\n"
     for line in lines[2:]:
         if line.endswith("map:"):
             # new map
@@ -23,16 +26,21 @@ def part1(inp: str):
             # parsing the map, line contains 3 numbers:
             # destination range start, source range start, range length
             dst_range_start, src_range_start, range_len = map(int, line.split())
-            for i in range(range_len):
-                cur_table[src_range_start + i] = dst_range_start + i
 
-    seed_to_final_state: MapTable = {}
+            offset = dst_range_start - src_range_start
+            cur_table[range(src_range_start, src_range_start + range_len)] = offset
+
+    seed_to_final_state: Dict[int, int] = {}
     for seed in seeds:
         result = seed
         for table in map_tables:
+            # table is a dict with keys that are ranges
+            # figure out which dict entry contains a range containing this value (result). only one shold
             # Any source numbers that aren't mapped correspond to the same destination number
-            if result in table:
-                result = table[result]
+            for rg, offset in table.items():
+                if result in rg:
+                    result += offset
+                    break
         seed_to_final_state[seed] = result
 
     # find the lowest location number that corresponds to any of the initial seeds
