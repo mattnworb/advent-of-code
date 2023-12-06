@@ -53,5 +53,23 @@ def part1(inp: str):
     return reduce(lambda a, b: a * b, winning_options)
 
 
+# So, the example from before:
+#
+# Time:      7  15   30
+# Distance:  9  40  200
+#
+# ...now instead means this:
+#
+# Time:      71530
+# Distance:  940200
 def part2(inp: str):
-    pass
+    lines = inp.split("\n")
+    time_available = int(lines[0][len("Time:") :].replace(" ", ""))
+    record_distance = int(lines[1][len("Distance:") :].replace(" ", ""))
+
+    winners = 0
+    for time_button_held in range(1, time_available):
+        distance = (time_available - time_button_held) * time_button_held
+        if distance > record_distance:
+            winners += 1
+    return winners
