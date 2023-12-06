@@ -54,60 +54,10 @@ def part1(inp: str):
     return min(seed_to_final_state.values())
 
 
-# What is different from part 1 here: when considering the range of seeds, we
-# can't add every value between the start and end to the table, because there
+# What is different from part 1 for part 2: when considering the range of seeds,
+# we can't add every value between the start and end to the table, because there
 # will be millions. so we treat them like ranges the same as we did in part1 for
 # the translation tables
-#
-# however when we calculate the final value of each seed after the
-# transformations, we also can't iterate through everyone - instead have to
-# figure out what subrange of seeds is valid for each row in the translation
-# table
-#
-# for example:
-# seeds: 79 14 55 13
-#
-# seed-to-soil map:
-# 50 98 2
-# 52 50 48
-#
-# soil-to-fertilizer map:
-# 0 15 37
-# 37 52 2
-# 39 0 15
-#
-# we have seeds: range(79, 93) and range(55, 68)
-#
-# seed to soil map: range(98, 100) => range(50, 52)
-#                   range(50,  98) => range(52, 100)
-#
-# all of the first seed range (range(79, 93)) is contained in the second row so
-# that is easy to figure out, turns into range(81, 95)
-#
-# second seed
-#
-# soil to fertilizer map: range(15, 52) => range(0, 15)
-#                         range(52, 54) => range(37, 39)
-#                         range( 0, 15) => range(39, 54)
-#
-# again no changes
-
-
-def calculate_overlap(r1: range, r2: range) -> range:
-    """Returns the subrange of r1 that overlaps with r2, or an empty range if no overlap"""
-    assert r1.step == r2.step == 1
-    assert r1.start < r1.stop and r2.start < r2.stop
-
-    # refer to them as left and right to simplify some checks below
-    if r1.start < r2.start:
-        left, right = r1, r2
-    else:
-        left, right = r2, r1
-
-    if left.stop <= right.start:
-        return range(0)
-
-    return range(max(left.start, right.start), min(left.stop, right.stop))
 
 
 def add(r: range, a: int) -> range:
@@ -159,8 +109,7 @@ def part2(inp: str):
 
     map_tables = parse_map_lines(lines)
 
-    # total_num_of_seeds = sum(map(len, seed_ranges))
-    mutated_seed_ranges = seed_ranges  # list(seed_ranges)
+    mutated_seed_ranges = seed_ranges
 
     for table_name, table in map_tables:
         # we split the input to this table (seeds, soil, etc) into two lists:
@@ -199,7 +148,7 @@ def part2(inp: str):
             # prepare for next row
             seed_queue = not_yet_mutated
 
-        # anything not mutated by this table/round stays the same
+        # anything not mutated by this table/round keeps the same value
         mutated_to_next_state.extend(seed_queue)
         mutated_seed_ranges = mutated_to_next_state
 
