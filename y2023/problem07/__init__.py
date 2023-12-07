@@ -36,6 +36,44 @@ class HandType(Enum):
     HIGH_CARD = 7
 
 
+def hand_sort_fn(
+    card_order: List[str], hand_type_fn: Callable[[str], HandType]
+) -> Callable[[str, str], int]:
+    def hand_sort(a: str, b: str) -> int:
+        # cmp signature is: A comparison function is any callable that accepts two
+        # arguments, compares them, and returns a negative number for less-than,
+        # zero for equality, or a positive number for greater-than
+        assert len(a) == len(b) == 5
+
+        # same hand
+        if a == b:
+            return 0
+
+        type_a, type_b = hand_type_fn(a), hand_type_fn(b)
+
+        # lower enum cardinal value == higher ranking
+        if type_a.value < type_b.value:
+            return 1
+
+        if type_a.value > type_b.value:
+            return -1
+
+        # same type, figure out which card starting from the left is higher-ranked
+        assert type_a == type_b
+
+        for card_a, card_b in zip(a, b):
+            if card_a == card_b:
+                continue
+
+            ia, ib = card_order.index(card_a), card_order.index(card_b)
+
+            return 1 if ia < ib else -1
+
+        raise ValueError(f"shouldn't have gotten here, hands: {(a,b)}")
+
+    return hand_sort
+
+
 def part1(inp: str):
     def hand_type(hand: str):
         assert len(hand) == 5
@@ -65,47 +103,24 @@ def part1(inp: str):
 
         raise ValueError("couldn't determine hand type of " + hand)
 
-    CARD_ORDER = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
-
-    def hand_sort(a: str, b: str) -> int:
-        # cmp signature is: A comparison function is any callable that accepts two
-        # arguments, compares them, and returns a negative number for less-than,
-        # zero for equality, or a positive number for greater-than
-        assert len(a) == len(b) == 5
-
-        # same hand
-        if a == b:
-            return 0
-
-        type_a, type_b = hand_type(a), hand_type(b)
-
-        # lower enum cardinal value == higher ranking
-        if type_a.value < type_b.value:
-            return 1
-
-        if type_a.value > type_b.value:
-            return -1
-
-        # same type, figure out which card starting from the left is higher-ranked
-        assert type_a == type_b
-
-        for card_a, card_b in zip(a, b):
-            if card_a == card_b:
-                continue
-
-            ia, ib = CARD_ORDER.index(card_a), CARD_ORDER.index(card_b)
-
-            return 1 if ia < ib else -1
-
-        raise ValueError(f"shouldn't have gotten here, hands: {(a,b)}")
-
     hands_to_bids = {}
     for line in inp.split("\n"):
         hand, bid = line.split()
         hands_to_bids[hand] = int(bid)
 
+    ranked_hands = sorted(
+        hands_to_bids,
+        key=cmp_to_key(
+            hand_sort_fn(
+                ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"],
+                hand_type,
+            )
+        ),
+    )
+
     total_winnings = 0
-    for ix, hand in enumerate(sorted(hands_to_bids, key=cmp_to_key(hand_sort))):
+
+    for ix, hand in enumerate(ranked_hands):
         rank = ix + 1
         total_winnings += rank * hands_to_bids[hand]
 
@@ -160,47 +175,21 @@ def part2(inp: str):
 
         raise ValueError("couldn't determine hand type of " + hand)
 
-    CARD_ORDER = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
-
-    def hand_sort(a: str, b: str) -> int:
-        # cmp signature is: A comparison function is any callable that accepts two
-        # arguments, compares them, and returns a negative number for less-than,
-        # zero for equality, or a positive number for greater-than
-        assert len(a) == len(b) == 5
-
-        # same hand
-        if a == b:
-            return 0
-
-        type_a, type_b = hand_type(a), hand_type(b)
-
-        # lower enum cardinal value == higher ranking
-        if type_a.value < type_b.value:
-            return 1
-
-        if type_a.value > type_b.value:
-            return -1
-
-        # same type, figure out which card starting from the left is higher-ranked
-        assert type_a == type_b
-
-        for card_a, card_b in zip(a, b):
-            if card_a == card_b:
-                continue
-
-            ia, ib = CARD_ORDER.index(card_a), CARD_ORDER.index(card_b)
-
-            return 1 if ia < ib else -1
-
-        raise ValueError(f"shouldn't have gotten here, hands: {(a,b)}")
-
     hands_to_bids = {}
     for line in inp.split("\n"):
         hand, bid = line.split()
         hands_to_bids[hand] = int(bid)
 
     total_winnings = 0
-    ranked_hands = sorted(hands_to_bids, key=cmp_to_key(hand_sort))
+    ranked_hands = sorted(
+        hands_to_bids,
+        key=cmp_to_key(
+            hand_sort_fn(
+                ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"],
+                hand_type,
+            )
+        ),
+    )
     for ix, hand in enumerate(ranked_hands):
         rank = ix + 1
         total_winnings += rank * hands_to_bids[hand]
