@@ -1,6 +1,8 @@
 from y2023.problem08 import *
 
-example1 = """RL
+
+def test_part1_example():
+    example1 = """RL
 
 AAA = (BBB, CCC)
 BBB = (DDD, EEE)
@@ -10,18 +12,24 @@ EEE = (EEE, EEE)
 GGG = (GGG, GGG)
 ZZZ = (ZZZ, ZZZ)"""
 
-example2 = """LLR
+    example2 = """LLR
 
 AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)"""
-
-
-def test_part1_example():
     assert part1(example1) == 2
     assert part1(example2) == 6
 
 
 def test_part2_example():
-    # TODO: populate
-    assert part2(example1)
+    example = """LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)"""
+    assert part2(example) == 6
