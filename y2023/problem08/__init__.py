@@ -1,4 +1,5 @@
 from typing import *
+from math import lcm
 
 
 def part1(inp: str):
@@ -48,19 +49,41 @@ def part2(inp: str):
         assert len(dst) == 10
         nodes[src] = (dst[1:4], dst[6:9])
 
-    start_state = set(filter(lambda node: node.endswith("A"), nodes.keys()))
-    end_state = set(filter(lambda node: node.endswith("Z"), nodes.keys()))
+    # naive approach - way too slow
+    #
+    # this problem reminds me of past years where you have N things that go
+    # through a cycle and you need to find after how many steps they all align
+    # to some end state. From past experience, its magnitudes quicker to find
+    # the cycle time for each thing, then find the Least Common Multiple, then
+    # simulate all the steps until every cycle aligns.
 
-    positions = start_state
-    steps = 0
-    while True:
-        for move in moves:
-            steps += 1
-            next_state = set()
-            for node in positions:
-                next_state.add(nodes[node][0] if move == "L" else nodes[node][1])
+    # start_state = set(filter(lambda node: node.endswith("A"), nodes.keys()))
+    # end_state = set(filter(lambda node: node.endswith("Z"), nodes.keys()))
 
-            positions = next_state
-            if positions == end_state:
-                return steps
-    # return steps
+    # positions = start_state
+    # steps = 0
+    # while True:
+    #     for move in moves:
+    #         steps += 1
+    #         next_state = set()
+    #         for node in positions:
+    #             next_state.add(nodes[node][0] if move == "L" else nodes[node][1])
+
+    #         positions = next_state
+    #         if positions == end_state:
+    #             return steps
+
+    def count_steps(node: str) -> int:
+        steps = 0
+        while True:
+            for move in moves:
+                steps += 1
+                next_node = nodes[node][0] if move == "L" else nodes[node][1]
+                if next_node.endswith("Z"):
+                    return steps
+                node = next_node
+
+    start_nodes = set(filter(lambda node: node.endswith("A"), nodes.keys()))
+
+    step_counts = [count_steps(node) for node in start_nodes]
+    return lcm(*step_counts)
