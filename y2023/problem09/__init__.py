@@ -23,5 +23,19 @@ def part1(inp: str):
     return sum(next_vals)
 
 
+def calculate_prev_value(nums: List[int]) -> int:
+    if all(n == 0 for n in nums):
+        return 0
+
+    diff_between_values = [nums[i + 1] - nums[i] for i in range(len(nums) - 1)]
+
+    return nums[0] - calculate_prev_value(diff_between_values)
+
+
 def part2(inp: str):
-    pass
+    seqs: List[List[int]] = []
+    for line in inp.split("\n"):
+        seqs.append(list(map(int, line.split())))
+
+    next_vals = list(map(calculate_prev_value, seqs))
+    return sum(next_vals)
