@@ -72,8 +72,7 @@ def figure_out_start(map: Map, pos: Position):
     return next(iter(possible))
 
 
-def part1(inp: str):
-    # parse input
+def parse_input(inp: str) -> Tuple[Map, Position]:
     map: Map = {}
     start: Position = (0, 0)
     for y, line in enumerate(inp.split("\n")):
@@ -81,14 +80,10 @@ def part1(inp: str):
             map[(x, y)] = ch
             if ch == "S":
                 start = (x, y)
+    return map, start
 
-    # print(f"S is at {start}")
 
-    s_pipe = figure_out_start(map, start)
-    # print(f"S must be: {s_pipe}")
-
-    map[start] = s_pipe
-
+def expand_loop(map: Map, start: Position) -> Set[Position]:
     # figure out what the loop's positions are by walking out from each of the
     # connections of the starting point
     #
@@ -107,7 +102,15 @@ def part1(inp: str):
             for conn in conns:
                 queue.append(conn)
 
-    # print(f"found loop (size={len(loop)}): {loop}")
+    return loop
+
+
+def part1(inp: str):
+    map, start = parse_input(inp)
+    s_pipe = figure_out_start(map, start)
+    map[start] = s_pipe
+
+    loop = expand_loop(map, start)
 
     # we don't need to actually walk through the loop and count steps -
     # definitionally in a loop where each piece has two connections, the
@@ -117,8 +120,92 @@ def part1(inp: str):
     return len(loop) // 2
 
 
-# hi
+def non_loop_neighbors(
+    map: Map, loop: Set[Position], pos: Position
+) -> Iterator[Position]:
+    x, y = pos
+
+    for d in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+        p2 = x + d[0], y + d[1]
+        if p2 in map and p2 not in loop:
+            yield p2
+
+
+# for any position, find the set of all neighbors (and those neighbor's neighbors, etc) until we hit either a wall or the loop
+def expand_region(map: Map, region: Set[Position], loop: Set[Position], pos: Position):
+    if pos in loop:
+        return set()
+
+    ns = set(non_loop_neighbors(map, loop, pos))
+
+    new_region = region | ns
+
+    if region == new_region:
+        return region
+
+    for neighbor in ns:
+        new_region |= expand_region(map, new_region, loop, neighbor)
+
+    return new_region
+
+
+def on_border(map: Map, pos: Position) -> bool:
+    if pos[0] == 0 or pos[1] == 0:
+        return True
+
+    max_pos = max(map)
+
+    if pos[0] == max_pos[0] or pos[1] == max_pos[1]:
+        return True
+
+    return False
 
 
 def part2(inp: str):
-    pass
+    # (map - loop) gives the set of tiles which *could* be enclosed
+    #
+    # keep a few sets:
+    # - candidates = map - loop
+    # - inside (enclosed)
+    # - outside (not encloosed)
+    #
+    # for each tile in the candidates set:
+    # - if any of its neighbors are in the outside set, mark it as outside
+    # - add current + its neighbors to a queue
+    # - for each in queue:
+    #   - if the node is on a border - mark whole thing as outside
+    #   - if node is in loop - stop
+    #   - otherwise add next connections to queue
+    # - when queue is empty and didn't mark as outside - mark as inside
+    map, start = parse_input(inp)
+    s_pipe = figure_out_start(map, start)
+    map[start] = s_pipe
+
+    loop = expand_loop(map, start)
+
+    # each position can be in one of three sets:
+    # - the loop
+    # - outside the loop (not enclosed)
+    # - anything else is enclosed / inside the loop
+
+    candidates = map.keys() - loop
+
+    outside: Set[Position] = set()
+    inside: Set[Position] = set()
+    for node in candidates:
+        # build a set of this node and all the other non-loop positions it is
+        # neighbors of, stopping at the borders of the map. if any of the
+        # positions in that set touch a border, the whole set is moved to
+        # "outside"
+
+        if node in outside or node in loop:
+            continue
+
+        region = expand_region(map, {node}, loop, node)
+
+        if any(on_border(map, p) for p in region):
+            outside |= region
+        else:
+            inside |= region
+
+    return len(inside)
