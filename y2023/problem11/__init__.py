@@ -4,7 +4,7 @@ from itertools import combinations
 Position = Tuple[int, int]
 
 
-def expand(s: List[str]) -> Set[Position]:
+def expand(s: List[str], multiplier=2) -> Set[Position]:
     # rather than storing the whole map, and then mutating it to insert rows and
     # columns, just store the positions of the galaxies, and then figure out how
     # to mutate each one to add some number to the x and y coordinates each
@@ -30,7 +30,12 @@ def expand(s: List[str]) -> Set[Position]:
         # transpose
         empty_rows_before = len([r for r in missing_y if r < galaxy[1]])
         empty_cols_before = len([c for c in missing_x if c < galaxy[0]])
-        new_g.add((galaxy[0] + empty_cols_before, galaxy[1] + empty_rows_before))
+        new_g.add(
+            (
+                galaxy[0] + empty_cols_before * (multiplier - 1),
+                galaxy[1] + empty_rows_before * (multiplier - 1),
+            )
+        )
 
     return new_g
 
@@ -50,4 +55,10 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    lines = inp.split("\n")
+    galaxies = expand(lines, multiplier=1000000)
+
+    total = 0
+    for pair in combinations(galaxies, 2):
+        total += distance(pair[0], pair[1])
+    return total
