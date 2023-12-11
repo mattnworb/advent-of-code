@@ -37,6 +37,19 @@ def test_part2_example():
     assert part2(example) == 4
 
     example = """
+..........
+.S------7.
+.|F----7|.
+.||....||.
+.||....||.
+.|L-7F-J|.
+.|..||..|.
+.L--JL--J.
+..........
+""".strip()
+    assert part2(example) == 4
+
+    example = """
 .F----7F7F7F7F-7....
 .|F--7||||||||FJ....
 .||.FJ||||||||L7....

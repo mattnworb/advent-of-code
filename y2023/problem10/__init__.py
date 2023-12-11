@@ -140,11 +140,15 @@ def expand_region(map: Map, region: Set[Position], loop: Set[Position], pos: Pos
 
     new_region = region | ns
 
+    # bail when we can't expand the region any more
     if region == new_region:
         return region
 
+    # otherwise add the neighbors of the neighbors to the region
     for neighbor in ns:
         new_region |= expand_region(map, new_region, loop, neighbor)
+
+    # and can we squeeze between pipes in the loop to other non-pipe/non-loop positions? if so consider
 
     return new_region
 
@@ -159,6 +163,10 @@ def on_border(map: Map, pos: Position) -> bool:
         return True
 
     return False
+
+
+# def can_squeeze_between(map:Map, region:Set[Position]) -> bool:
+#     """Test if any of the positions in region can touch the outside by squeezing between pipes"""
 
 
 def part2(inp: str):
@@ -188,39 +196,69 @@ def part2(inp: str):
     # - outside the loop (not enclosed)
     # - anything else is enclosed / inside the loop
 
-    candidates = map.keys() - loop
+    # candidates = map.keys() - loop
 
-    outside: Set[Position] = set()
-    inside: Set[Position] = set()
-    for node in candidates:
-        # build a set of this node and all the other non-loop positions it is
-        # neighbors of, stopping at the borders of the map or the loop. if any
-        # of the positions in that set touch a border, the whole set is moved to
-        # "outside"
-        if node in outside or node in loop:
+    # outside: Set[Position] = set()
+    # inside: Set[Position] = set()
+    # for node in candidates:
+    #     # build a set of this node and all the other non-loop positions it is
+    #     # neighbors of, stopping at the borders of the map or the loop. if any
+    #     # of the positions in that set touch a border, the whole set is moved to
+    #     # "outside"
+    #     if node in outside or node in loop:
+    #         continue
+
+    #     region = expand_region(map, {node}, loop, node)
+
+    #     # this is buggy - does not account for this scenario:
+    #     # "In fact, there doesn't even need to be a full tile path to the
+    #     # outside for tiles to count as outside the loop - squeezing between
+    #     # pipes is also allowed! Here, I is still within the loop and O is still
+    #     # outside the loop:"
+    #     #
+    #     # ..........
+    #     # .S------7.
+    #     # .|F----7|.
+    #     # .||OOOO||.
+    #     # .||OOOO||.
+    #     # .|L-7F-J|.
+    #     # .|II||II|.
+    #     # .L--JL--J.
+    #     # ..........
+
+    #     if any(on_border(map, p) for p in region):
+    #         outside |= region
+    #     else:
+    #         inside |= region
+
+    # return len(inside)
+
+    inside = set()
+    for node in map:
+        if node in loop:
             continue
+        # scan horizontally from (0, py) to (px,py) counting how many times we "cross" the loop/polygon
+        is_inside = False
+        for x in range(node[0]):
+            p = (x, node[1])
+            # why not L or J?
+            # consider "-" as not intersecting
+            if p in loop and map[p] in ("|", "7", "F"):
+                is_inside = not is_inside
 
-        region = expand_region(map, {node}, loop, node)
+            # if inside...
+            # elif intersections % 2 == 1:
+            #     if map[p] in ("L", "F"):
+            #         intersections += 1
+            # else:
+            #     if map[p] in ("7", "J"):
+            #         intersections += 1
 
-        # this is buggy - does not account for this scenario:
-        # "In fact, there doesn't even need to be a full tile path to the
-        # outside for tiles to count as outside the loop - squeezing between
-        # pipes is also allowed! Here, I is still within the loop and O is still
-        # outside the loop:"
-        #
-        # ..........
-        # .S------7.
-        # .|F----7|.
-        # .||OOOO||.
-        # .||OOOO||.
-        # .|L-7F-J|.
-        # .|II||II|.
-        # .L--JL--J.
-        # ..........
-
-        if any(on_border(map, p) for p in region):
-            outside |= region
-        else:
-            inside |= region
+        if is_inside:
+            inside.add(node)
 
     return len(inside)
+    # max_pos = max(map)
+    # for y in range(max_pos[1]+1):
+
+    #     for x in range(max_pos[0]+1):
