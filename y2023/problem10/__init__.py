@@ -194,14 +194,29 @@ def part2(inp: str):
     inside: Set[Position] = set()
     for node in candidates:
         # build a set of this node and all the other non-loop positions it is
-        # neighbors of, stopping at the borders of the map. if any of the
-        # positions in that set touch a border, the whole set is moved to
+        # neighbors of, stopping at the borders of the map or the loop. if any
+        # of the positions in that set touch a border, the whole set is moved to
         # "outside"
-
         if node in outside or node in loop:
             continue
 
         region = expand_region(map, {node}, loop, node)
+
+        # this is buggy - does not account for this scenario:
+        # "In fact, there doesn't even need to be a full tile path to the
+        # outside for tiles to count as outside the loop - squeezing between
+        # pipes is also allowed! Here, I is still within the loop and O is still
+        # outside the loop:"
+        #
+        # ..........
+        # .S------7.
+        # .|F----7|.
+        # .||OOOO||.
+        # .||OOOO||.
+        # .|L-7F-J|.
+        # .|II||II|.
+        # .L--JL--J.
+        # ..........
 
         if any(on_border(map, p) for p in region):
             outside |= region
