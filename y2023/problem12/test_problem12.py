@@ -1,0 +1,17 @@
+from y2023.problem12 import *
+
+example = """???.### 1,1,3
+.??..??...?##. 1,1,3
+?#?#?#?#?#?#?#? 1,3,1,6
+????.#...#... 4,1,1
+????.######..#####. 1,6,5
+?###???????? 3,2,1"""
+
+
+def test_part1_example():
+    assert part1(example) == 21
+
+
+def test_part2_example():
+    # TODO: populate
+    assert part2(example)
