@@ -9,6 +9,13 @@ example = """???.### 1,1,3
 
 
 def test_part1_example():
+    assert part1("# 1") == 1
+    assert part1("# 0") == 0
+    assert part1(". 0") == 1
+    assert part1("?? 1") == 2
+    assert part1("#? 2") == 2
+    assert part1(".? 1") == 1
+
     assert part1(example) == 21
 
 
