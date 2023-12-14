@@ -2,11 +2,13 @@ from typing import *
 from collections import Counter
 
 
-def find_reflection(pattern: List[str]) -> int:
+def find_reflection(pattern: List[str], ignore: int = 0) -> int:
     """Return the number of rows above the horizontal line of reflection in the pattern, or 0 if no line of reflection found."""
     midpoint = len(pattern) // 2
 
     for r in range(len(pattern) - 1):
+        if ignore > 0 and r + 1 == ignore:
+            continue
         # reflection lines fall between rows
         # if r=0, pretend the line is between rows 0 and 1 (one line is reflected)
         # loop over r testing:
@@ -36,11 +38,9 @@ def find_reflection(pattern: List[str]) -> int:
     return 0
 
 
-def summarize(pattern: List[str]) -> int:
-    # problem description implies each pattern either has a horizontal reflection or vertical BUT not both
-
+def summarize(pattern: List[str], ignore: int = 0) -> int:
     # check for a horizontal line of reflection (i.e. rows)
-    r = find_reflection(pattern)
+    r = find_reflection(pattern, ignore=ignore // 100)
     if r > 0:
         return r * 100
 
@@ -50,9 +50,7 @@ def summarize(pattern: List[str]) -> int:
     for c in range(len(pattern[0])):
         columns.append("".join(line[c] for line in pattern))
 
-    r = find_reflection(columns)
-    assert r != 0
-    return r
+    return find_reflection(columns, ignore=ignore)
 
 
 def part1(inp: str):
@@ -63,8 +61,52 @@ def part1(inp: str):
             pattern.append(line)
         patterns.append(pattern)
 
-    return sum(map(summarize, patterns))
+    total = 0
+
+    for pattern in patterns:
+        s = summarize(pattern)
+        assert s != 0
+        total += s
+
+    return total
+
+
+def change_each_char_once(pattern: list[str]) -> Iterator[list[str]]:
+    num_rows = len(pattern)
+    num_cols = len(pattern[0])
+    for i in range(num_rows * num_cols):
+        r, c = i // num_cols, i % num_cols
+        flipped_ch = "#" if pattern[r][c] == "." else "."
+        new_pattern = pattern[:r]
+        new_pattern.append(pattern[r][:c] + flipped_ch + pattern[r][c + 1 :])
+        new_pattern.extend(pattern[r + 1 :])
+        yield new_pattern
 
 
 def part2(inp: str):
-    pass
+    patterns: List[List[str]] = []
+    for chunk in inp.split("\n\n"):
+        pattern = []
+        for line in chunk.split("\n"):
+            pattern.append(line)
+        patterns.append(pattern)
+
+    total = 0
+    for pattern in patterns:
+        original = summarize(pattern)
+        assert original != 0
+
+        found = False
+        for candidate in change_each_char_once(pattern):
+            s = summarize(candidate, ignore=original)
+            if s > 0:
+                found = True
+                total += s
+                # print(f"found new line, old={original} new={s}")
+                break
+
+        assert (
+            found
+        ), f"could not find smudge for pattern {pattern}, original value was {original}"
+
+    return total
