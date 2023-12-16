@@ -1,82 +1,122 @@
 from typing import *
 
 
-Record = Tuple[str, List[int]]
+Record = tuple[str, tuple[int, ...]]
 
 
-def count_possible(
-    line: str, ix: int, run_length: int, groups: list[int], group_ix: int
+def replace(line: str, ix: int, ch: str) -> str:
+    return line[:ix] + ch + line[ix + 1 :]
+
+
+def solve(
+    pattern: str,
+    ix: int,
+    groups: tuple[int, ...],
+    group_ix: int,
+    run_length: int,
+    prev_was_pound: Optional[bool] = None,
 ) -> int:
-    # string = ##..#? 2,1
-    # first call: count_possible(line, ix=0, run_length=0, groups, group_ix=0)
-    # since line[ix] == #, check if run_length+1 is <= groups[group_ix], since yes,
-    #   recurse to count_possible(line, ix=1,run_length=1, groups, group_ix)
-    # since line[ix] == #, check if run_length+1 is <= groups[group_ix], since yes,
-    #   recurse to count_possible(line, ix=2,run_length=2, groups, group_ix)
-    # since line[ix] == ., reset run_length, check if prev char was #, since yes advance group_ix
-    #   recurse to count_possible(line, ix=3,run_length=0, groups, group_ix=1)
-    # since line[ix] == ., reset run_length, check if prev char was #, since no don't change group_ix
-    #   recurse to count_possible(line, ix=4,run_length=0, groups, group_ix=1)
-    # since line[ix] == #, check if run_length+1 is <= groups[group_ix], since yes,
-    #   recurse to count_possible(line, ix=5,run_length=1, groups, group_ix=1)
-    # since line[ix] == ?
-    #   check if we can replace it with #
-    #     no, since groups[group_ix] == run_length
-    #     return 0
-    #     (otherwise recurse, passing ix+1 and run_length+1)
-    #   replace it with .
-    #     increment group_ix since prev char was # (marking transition)
-    #     recurse to count_possible(line, ix=6,run_length=0, groups, group_ix=2)
+    # states to consider
     #
-    # base case:
-    #   ix >= len(line)
-    #   check if group_ix == len(groups) meaning we exhausted them all
-    #   return 1 if so else 0
+    # each time we are about to use a #, check if it is valid to do so
+    # valid: run_length < groups[group_ix]
+    # invalid: no more # to consume
+    #          run_length >= groups[group_ix]
+    #
+    # how do we know when we have moved to a new group?
+    # arrive at # and not prev_was_pound _and_ there are groups left
+    #
+    # what to check when arriving at . or about to use one?
+    # if prev_was_pound and run_length < groups[group_ix] i.e. did not consume all of active group
+    #
+    # when are we done?
+    # consumed string (ix == len(pattern)), on last group, run_length == groups[group_ix]
+    # last part means we pass run_length down always even when using . and only reset when starting new group
 
-    # don't need both run_length and mutations of group
+    if ix >= len(pattern):
+        # line is done
+        # this is a valid state if we are on the last group and run_length == last group
+        if (group_ix == len(groups) - 1 and run_length == groups[-1]) or (
+            # special case for input like ".. 0"
+            group_ix == -1
+            and len(groups) == 1
+            and groups[0] == 0
+        ):
+            return 1
+        return 0
 
-    if ix >= len(line):
-        return 1 if group_ix == len(groups) or run_length == groups[-1] else 0
+    def is_pound_valid() -> bool:
+        if prev_was_pound:
+            return run_length < groups[group_ix]
+        # check do we have a new group to start?
+        return group_ix < len(groups) - 1
 
-    if line[ix] == "#":
-        # can we go further? answer is no if we've gone over the length of this group
-        if run_length + 1 <= groups[group_ix]:
-            return count_possible(line, ix + 1, run_length + 1, groups, group_ix)
-        else:
-            return 0
+    def is_period_valid() -> bool:
+        return not (prev_was_pound and run_length < groups[group_ix])
 
-    if line[ix] == ".":
-        # check if we just moved onto a new group
-        if ix > 0 and line[ix - 1] == "#":
-            return (
-                count_possible(line, ix + 1, 0, groups, group_ix + 1)
-                if group_ix + 1 < len(groups)
-                else 0
+    if pattern[ix] == "#" and is_pound_valid():
+        # did we start a new group of #s?
+        if prev_was_pound == False or group_ix == -1:
+            # check do we have a new group to start?
+            if group_ix == len(groups) - 1:
+                return 0
+            # new group started
+            # do we need to check that the previous one completed all the way?
+            return solve(
+                pattern, ix + 1, groups, group_ix + 1, run_length=1, prev_was_pound=True
             )
-        else:
-            return count_possible(line, ix + 1, 0, groups, group_ix)
+        # continuing previous group, increment run_length
+        return solve(
+            pattern, ix + 1, groups, group_ix, run_length + 1, prev_was_pound=True
+        )
 
-    if line[ix] == "?":
-        # pretend we are replacing with "."
-        # "did we just move to new group check" again
-        # FIXME: this miss the case where line[ix-1] is ?
-        if ix > 0 and line[ix - 1] == "#":
-            n = (
-                count_possible(line, ix + 1, 0, groups, group_ix + 1)
-                if group_ix < len(groups)
-                else 0
+    elif pattern[ix] == "." and is_period_valid():
+        return solve(
+            pattern, ix + 1, groups, group_ix, run_length, prev_was_pound=False
+        )
+
+    elif pattern[ix] == "?":
+        # recurse for both . and # - if valid - and add values
+        n = 0
+        if is_period_valid():
+            n += solve(
+                replace(pattern, ix, "."),
+                ix + 1,
+                groups,
+                group_ix,
+                run_length,
+                prev_was_pound=False,
             )
-        else:
-            n = count_possible(line, ix + 1, 0, groups, group_ix)
 
-        # optionally we can try # too
-        if run_length < groups[group_ix]:
-            # trying #
-            n += count_possible(line, ix + 1, run_length + 1, groups, group_ix)
-
+        if is_pound_valid():
+            # we can't use a # if this would be starting a new group and we've run out
+            # TODO: this condition is wrong when we are on the first group and
+            # about to use our first # in the sequence, i.e. "..# 1"
+            #
+            if prev_was_pound == False or group_ix == -1:
+                if group_ix <= len(groups) - 1:
+                    # start new group, reset run_length
+                    n += solve(
+                        replace(pattern, ix, "#"),
+                        ix + 1,
+                        groups,
+                        group_ix + 1,
+                        run_length=1,
+                        prev_was_pound=True,
+                    )
+            else:
+                n += solve(
+                    replace(pattern, ix, "#"),
+                    ix + 1,
+                    groups,
+                    group_ix,
+                    run_length + 1,
+                    prev_was_pound=True,
+                )
         return n
 
-    raise ValueError("can't reach here")
+    # fall through for cases like pattern[ix] == "#" and not is_pound_valid()
+    return 0
 
 
 def part1(inp: str):
@@ -84,12 +124,12 @@ def part1(inp: str):
 
     for line in inp.split("\n"):
         first, nums = line.split(" ")
-        record = (first, list(map(int, nums.split(","))))
+        record = (first, tuple(map(int, nums.split(","))))
         records.append(record)
 
     total = 0
     for line, groups in records:
-        total += count_possible(line, 0, 0, groups, 0)
+        total += solve(line, 0, groups, group_ix=-1, run_length=0)
     return total
 
 

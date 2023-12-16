@@ -8,17 +8,32 @@ example = """???.### 1,1,3
 ?###???????? 3,2,1"""
 
 
-def test_part1_example():
+def test_part1_simple():
     assert part1("# 1") == 1
     assert part1("# 0") == 0
     assert part1(". 0") == 1
+    assert part1("? 1") == 1
+
+    assert part1(".# 1") == 1
+    assert part1("#. 1") == 1
+
+    assert part1("#.# 1,1") == 1
+
     assert part1("?? 1") == 2
-    assert part1("#? 2") == 2
+    assert part1("#? 2") == 1
     assert part1(".? 1") == 1
 
+
+def test_replace():
+    assert replace("abcdefg", 3, "x") == "abcxefg"
+
+
+def test_part1_example():
+    # assert part1("?#?#?#?#?#?#?#? 1,3,1,6") == 10
     assert part1(example) == 21
 
 
 def test_part2_example():
     # TODO: populate
-    assert part2(example)
+    # assert part2(example)
+    pass
