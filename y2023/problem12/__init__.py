@@ -1,13 +1,10 @@
 from typing import *
-
+import functools
 
 Record = tuple[str, tuple[int, ...]]
 
 
-def replace(line: str, ix: int, ch: str) -> str:
-    return line[:ix] + ch + line[ix + 1 :]
-
-
+@functools.cache
 def solve(
     pattern: str,
     ix: int,
@@ -80,7 +77,7 @@ def solve(
         n = 0
         if is_period_valid():
             n += solve(
-                replace(pattern, ix, "."),
+                pattern,
                 ix + 1,
                 groups,
                 group_ix,
@@ -97,7 +94,7 @@ def solve(
                 if group_ix <= len(groups) - 1:
                     # start new group, reset run_length
                     n += solve(
-                        replace(pattern, ix, "#"),
+                        pattern,
                         ix + 1,
                         groups,
                         group_ix + 1,
@@ -106,7 +103,7 @@ def solve(
                     )
             else:
                 n += solve(
-                    replace(pattern, ix, "#"),
+                    pattern,
                     ix + 1,
                     groups,
                     group_ix,
@@ -134,4 +131,19 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    pass
+    # To unfold the records, on each row, replace the list of spring conditions
+    # with five copies of itself (separated by ?) and replace the list of
+    # contiguous groups of damaged springs with five copies of itself (separated
+    # by ,)
+    records: List[Record] = []
+
+    for line in inp.split("\n"):
+        first, nums = line.split(" ")
+        groups = tuple(map(int, nums.split(","))) * 5
+        record = (first + "?" + first + "?" + first + "?" + first + "?" + first, groups)
+        records.append(record)
+
+    total = 0
+    for line, groups in records:
+        total += solve(line, 0, groups, group_ix=-1, run_length=0)
+    return total
