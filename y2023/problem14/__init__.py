@@ -38,18 +38,27 @@ def move_rocks_and_score(line: str) -> int:
     return score
 
 
+def spin_once(grid: list[str]) -> list[str]:
+    columns = []
+    for c in range(len(grid[0])):
+        columns.append("".join(line[c] for line in grid))
+    return columns
+
+
 def part1(inp: str):
     grid: List[str] = []
     for line in inp.split("\n"):
         grid.append(line)
 
     # transpose as its easier to work with left to right scanning one row at a time
-    columns = []
-    for c in range(len(grid[0])):
-        columns.append("".join(line[c] for line in grid))
+    grid = spin_once(grid)
 
-    return sum(map(move_rocks_and_score, columns))
+    return sum(map(move_rocks_and_score, grid))
 
 
 def part2(inp: str):
+    # This process should work if you leave it running long enough, but you're
+    # still worried about the north support beams. To make sure they'll survive
+    # for a while, you need to calculate the total load on the north support
+    # beams after 1000000000 cycles.
     pass
