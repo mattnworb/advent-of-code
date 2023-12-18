@@ -1,8 +1,8 @@
 from typing import *
 
 
-def move_rocks_left(grid: List[str]) -> list[str]:
-    new_grid = []
+def move_rocks_north(grid: Sequence[Sequence[str]]) -> None:
+    # mutate in-place
 
     for line in grid:
         prev_cube_ix = 0
@@ -38,7 +38,7 @@ def score(grid: list[str]) -> int:
     return total
 
 
-def transpose(grid: list[str]) -> list[str]:
+def transpose(grid: Sequence[str]) -> Sequence[str]:
     columns = []
     for c in range(len(grid[0])):
         columns.append("".join(line[c] for line in grid))
@@ -56,13 +56,32 @@ def part1(inp: str):
     return score(grid)
 
 
+def rotate_cw(grid: list[str]) -> list[str]:
+    return list(map("".join, zip(*reversed(grid))))
+
+
+def one_spin_cycle(grid: Sequence[str]) -> list[str]:
+    # move north
+    grid = move_rocks_left(transpose(grid))
+    # move west
+    grid = move_rocks_left(transpose(rotate_cw(grid)))
+    # move south
+    grid = move_rocks_left(transpose(rotate_cw(grid)))
+    # move east
+    grid = move_rocks_left(transpose(rotate_cw(grid)))
+    # rotate back to original orientation
+    # return rotate_cw(grid)
+    return grid
+
+
 def part2(inp: str):
     # "This process should work if you leave it running long enough, but you're
     # still worried about the north support beams. To make sure they'll survive
     # for a while, you need to calculate the total load on the north support
     # beams after 1000000000 cycles."
 
-    # note: the number of cycles is how many times to move in all four directions, so we really move 4 trillion times total
+    # note: the number of cycles is how many times to move in all four
+    # directions, so we really move 4 trillion times total
     cycles = 1_000_000_000  # one trillion
 
     grid: List[str] = []
@@ -71,8 +90,12 @@ def part2(inp: str):
 
     # in the problem text, everything moves "roll north, then west, then south,
     # then east"
+    #
+    # to avoid rewriting my move() function, rolling west is really the same
+    # thing as rotating the grid clockwise then moving left, moving south is
+    # another rotation, etc.
 
-    grid = transpose(grid)
+    # one cycle
 
     # move, then spin
     pass

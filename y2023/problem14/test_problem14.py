@@ -27,8 +27,31 @@ def test_transpose():
     assert transpose(transpose(m)) == m
 
 
+def test_rotate_cw():
+    assert rotate_cw(["12", "34"]) == ["31", "42"]
+    assert rotate_cw(rotate_cw(rotate_cw(rotate_cw(["12", "34"])))) == ["12", "34"]
+
+
 def test_part1_example():
     assert part1(example) == 136
+
+
+def test_part2_building_blocks():
+    g = one_spin_cycle(example.split("\n"))
+    assert (
+        "\n".join(g)
+        == """
+.....#....
+....#...O#
+...OO##...
+.OO#......
+.....OOO#.
+.O#...O#.#
+....O#....
+......OOOO
+#...O###..
+#..OO#....""".strip()
+    )
 
 
 def test_part2_example():
