@@ -18,12 +18,11 @@ def add(p: Position, vector: Vector) -> Position:
 Beam = Tuple[Position, Vector]
 
 
-def part1(inp: str):
-    layout = inp.split("\n")
+def energize(layout: list[str], initial_beam: Beam) -> int:
     max_x = len(layout[0]) - 1
     max_y = len(layout) - 1
 
-    beams: list[Beam] = [((0, 0), right)]
+    beams: list[Beam] = [initial_beam]
 
     # how many tiles end up being energized?
     visited: Set[Beam] = set()
@@ -76,5 +75,23 @@ def part1(inp: str):
     return len({pos for pos, direction in visited})
 
 
+def part1(inp: str):
+    layout = inp.split("\n")
+    beam = ((0, 0), right)
+    return energize(layout, beam)
+
+
 def part2(inp: str):
-    pass
+    layout = inp.split("\n")
+
+    candidates = []
+    # top row
+    candidates.extend([((x, 0), down) for x in range(len(layout[0]))])
+    # bottom row
+    candidates.extend([((x, len(layout) - 1), up) for x in range(len(layout[0]))])
+    # leftmost column
+    candidates.extend([((0, y), right) for y in range(len(layout))])
+    # righttmost column
+    candidates.extend([((len(layout[0]) - 1, y), left) for y in range(len(layout))])
+
+    return max(energize(layout, beam) for beam in candidates)
