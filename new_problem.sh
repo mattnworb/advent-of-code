@@ -25,10 +25,10 @@ cat <<END >"${path}/__init__.py"
 from typing import *
 
 def part1(inp: str):
-    pass
+    return 0
 
 def part2(inp: str):
-    pass
+    return 0
 END
 
 cat <<END >"${path}/__main__.py"
@@ -50,9 +50,9 @@ example = """"""
 
 def test_part1_example():
     # TODO: populate
-    assert part1(example)
+    assert part1(example) == 0
 
 def test_part2_example():
     # TODO: populate
-    assert part2(example)
+    assert part2(example) == 0
 END
