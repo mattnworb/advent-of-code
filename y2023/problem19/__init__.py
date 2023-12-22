@@ -1,5 +1,5 @@
 from typing import *
-
+from dataclasses import dataclass
 
 Part = dict[str, int]
 Rule = Callable[[Part], Optional[str]]
@@ -27,9 +27,7 @@ def create_jump_rule(dest: str) -> Rule:
     return f
 
 
-def part1(inp: str):
-    workflow_inp, ratings_inp = inp.split("\n\n")
-
+def build_workflows(workflow_inp: str) -> dict[str, list[Rule]]:
     workflows: dict[str, list[Rule]] = {}
 
     for line in workflow_inp.split("\n"):
@@ -51,6 +49,13 @@ def part1(inp: str):
                 func = create_jump_rule(dest)
             rules.append(func)
         workflows[name] = rules
+    return workflows
+
+
+def part1(inp: str):
+    workflow_inp, ratings_inp = inp.split("\n\n")
+
+    workflows = build_workflows(workflow_inp)
 
     accepted_parts: list[Part] = []
 
@@ -70,13 +75,132 @@ def part1(inp: str):
         if next_workflow == "A":
             accepted_parts.append(part)
 
-    # total = 0
-    # for part in accepted_parts:
-    #     total += sum(rating for rating in part.values())
-    # return total
-
     return sum(sum(rating for rating in part.values()) for part in accepted_parts)
 
 
+@dataclass
+class EvalRule:
+    category: str
+    op: str
+    val: int
+    dest: str
+
+    def negate(self) -> "EvalRule":
+        return EvalRule(
+            self.category, ">" if self.op == "<" else "<", self.val, self.dest
+        )
+
+
+def negate(condition: str) -> str:
+    if "<" in condition:
+        return condition.replace("<", ">=")
+    elif ">" in condition:
+        return condition.replace(">", "<=")
+    return condition
+
+
+def range_intersection(a: range, b: range) -> range:
+    assert a.step == b.step == 1
+    return range(max(a.start, b.start), min(a.stop, b.stop))
+
+
 def part2(inp: str):
-    return 0
+    # there are 4000^4 == 2.56e14 possible parts if each of the four ratings can
+    # have values between 1-4000. so we can't brute force it quickly.
+    #
+    # so instead, build a graph of which workflows lead to which, with edge
+    # labels as the condition (if any). then find the paths that lead to A, and
+    # figure out what range of values for each category is allowable
+    #
+    # example: {"pv": OrderedDict(**{"a<2006": "qkq", "m>2090": "A", "": "rfg"}}
+    graph: dict[str, dict[str, str]] = {}
+
+    for line in inp.split("\n\n")[0].split("\n"):
+        name = line[: line.find("{")]
+        rules: dict[str, str] = OrderedDict()
+        for rule in line[line.find("{") + 1 : -1].split(","):
+            if ":" in rule:
+                # condition to eval
+                assert rule[1] in (
+                    "<",
+                    ">",
+                ), f"expected > or < but got '{rule[1]}' in rule '{rule}'"
+                category = rule[0]
+                val = int(rule[2 : rule.find(":")])
+                dest = rule[rule.find(":") + 1 :]
+                # TODO a better type for the condition than a string?
+                # er = EvalRule(category, rule[1],val, dest)
+                rules[rule[: rule.find(":")]] = dest
+            else:
+                dest = rule
+                rules[""] = dest
+            graph[name] = rules
+
+    # - find all paths in graph starting at 'in' and ending in 'A', where the
+    #   path is a list of conditions like "s<1351,a<2006,x<1416"
+    # - for each path, calculate the number of combinations of parts that
+    #   satisfy those conditions
+    def dfs(v, paths, path):
+        if v not in graph:
+            return
+        prev_edge = None
+        for edge, n in graph[v].items():
+            if graph[v][edge] == "A":
+                paths.append(merge_paths(path, prev_edge, edge))
+            elif graph[v][edge] != "R":
+                dfs(n, paths, merge_paths(path, prev_edge, edge))
+            prev_edge = edge
+
+    def merge_paths(path, prev_edge, edge):
+        new_path = list(path)
+        if prev_edge:
+            new_path.append(negate(prev_edge))
+        if edge != "":
+            new_path.append(edge)
+        return new_path
+
+    paths: list[str] = []
+    dfs("in", paths, [])
+
+    print(paths)
+
+    combinations = 0
+    for path in paths:
+        ranges = {
+            "x": range(1, 4001),
+            "s": range(1, 4001),
+            "a": range(1, 4001),
+            "m": range(1, 4001),
+        }
+
+        for condition in path:
+            cat = condition[0]
+            assert cat in ranges
+            if ">=" in condition:
+                r = range(int(condition[3:]), 4001)
+            elif "<=" in condition:
+                r = range(1, int(condition[3:]) + 1)
+            elif ">" in condition:
+                r = range(int(condition[2:]) + 1, 4001)
+            elif "<" in condition:
+                r = range(1, int(condition[2:]))
+            else:
+                raise ValueError("bad op")
+            ranges[cat] = range_intersection(ranges[cat], r)
+
+        # TODO: this doesn't account for *distinct* combinations
+        # paths=[['s<1351', 'a<2006', 'x<1416'],
+        #        ['s<1351', 'a<2006', 'x>=1416', 'x>2662'],
+        #        ['s<1351', 'a>=2006', 'm>2090'],
+        #        ['s<1351', 'm<=2090', 'x<=2440'],
+        #        ['s>=1351', 's>2770', 's>3448'],
+        #        ['s>=1351', 's>2770', 's<=3448', 'm>1548'],
+        #        ['s>=1351', 's>2770', 's<=3448', 'm<=1548'],
+        #        ['s>=1351', 's<=2770', 'm<1801', 'm>838'],
+        #        ['s>=1351', 's<=2770', 'm<1801', 'm<=838', 'a<=1716']
+        #       ]
+        combinations += (
+            len(ranges["x"]) * len(ranges["s"]) * len(ranges["a"]) * len(ranges["m"])
+        )
+
+    return combinations
