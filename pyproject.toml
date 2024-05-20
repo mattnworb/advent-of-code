@@ -10,7 +10,7 @@ package-mode = false
 python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.2.0"
+black = "^24.4.2"
 mypy = "^1.10.0"
 pytest = "^8.2.1"
 tox = "^4.15.0"
