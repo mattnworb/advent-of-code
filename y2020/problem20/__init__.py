@@ -171,27 +171,27 @@ def assert_image_valid(image: Image):
 
         if x > 0:
             q = x - 1, y
-            assert left_border(tile) == right_border(
-                image[q]
-            ), f"left border of {p} does not match right border of {q}: {left_border(tile)} != {right_border(image[q])}"
+            assert left_border(tile) == right_border(image[q]), (
+                f"left border of {p} does not match right border of {q}: {left_border(tile)} != {right_border(image[q])}"
+            )
 
         if y > 0:
             q = x, y - 1
-            assert top_border(tile) == bottom_border(
-                image[q]
-            ), f"top border of {p} does not match bottom border of {q}: {top_border(tile)} != {bottom_border(image[q])}"
+            assert top_border(tile) == bottom_border(image[q]), (
+                f"top border of {p} does not match bottom border of {q}: {top_border(tile)} != {bottom_border(image[q])}"
+            )
 
         if x < max_x - 1:
             q = x + 1, y
-            assert right_border(tile) == left_border(
-                image[q]
-            ), f"right border of {p} does not match left border of {q}: {right_border(tile)} != {left_border(image[q])}"
+            assert right_border(tile) == left_border(image[q]), (
+                f"right border of {p} does not match left border of {q}: {right_border(tile)} != {left_border(image[q])}"
+            )
 
         if y < max_y - 1:
             q = x, y + 1
-            assert bottom_border(tile) == top_border(
-                image[q]
-            ), f"bottom border of {p} does not match top border of {q}: {bottom_border(tile)} != {top_border(image[q])}"
+            assert bottom_border(tile) == top_border(image[q]), (
+                f"bottom border of {p} does not match top border of {q}: {bottom_border(tile)} != {top_border(image[q])}"
+            )
 
 
 def assemble_image(

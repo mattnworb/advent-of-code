@@ -80,15 +80,15 @@ def part1(inp: str):
 
     for count, from_pos, to_pos in instructions:
         # print(f"moving {count} from {from_pos+1} to {to_pos+1}")
-        assert (
-            stacks[from_pos].size() >= count
-        ), f"stack at index {from_pos} only has {stacks[from_pos].size()} items but attempting to remove {count}"
-        assert (
-            0 <= from_pos < len(stacks)
-        ), f"from_pos={from_pos} out of range, stack count is {len(stacks)}"
-        assert (
-            0 <= to_pos < len(stacks)
-        ), f"to_pos={to_pos} out of range, stack count is {len(stacks)}"
+        assert stacks[from_pos].size() >= count, (
+            f"stack at index {from_pos} only has {stacks[from_pos].size()} items but attempting to remove {count}"
+        )
+        assert 0 <= from_pos < len(stacks), (
+            f"from_pos={from_pos} out of range, stack count is {len(stacks)}"
+        )
+        assert 0 <= to_pos < len(stacks), (
+            f"to_pos={to_pos} out of range, stack count is {len(stacks)}"
+        )
         for n in range(count):
             stacks[to_pos].push(stacks[from_pos].pop())
 
@@ -106,15 +106,15 @@ def part2(inp: str):
 
     for count, from_pos, to_pos in instructions:
         # print(f"moving {count} from {from_pos+1} to {to_pos+1}")
-        assert (
-            stacks[from_pos].size() >= count
-        ), f"stack at index {from_pos} only has {stacks[from_pos].size()} items but attempting to remove {count}"
-        assert (
-            0 <= from_pos < len(stacks)
-        ), f"from_pos={from_pos} out of range, stack count is {len(stacks)}"
-        assert (
-            0 <= to_pos < len(stacks)
-        ), f"to_pos={to_pos} out of range, stack count is {len(stacks)}"
+        assert stacks[from_pos].size() >= count, (
+            f"stack at index {from_pos} only has {stacks[from_pos].size()} items but attempting to remove {count}"
+        )
+        assert 0 <= from_pos < len(stacks), (
+            f"from_pos={from_pos} out of range, stack count is {len(stacks)}"
+        )
+        assert 0 <= to_pos < len(stacks), (
+            f"to_pos={to_pos} out of range, stack count is {len(stacks)}"
+        )
 
         # here is the change:
         # create a new, temp Stack

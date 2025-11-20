@@ -42,9 +42,7 @@ dark yellow bags contain 2 dark green bags.
 dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.
-""".strip().split(
-        "\n"
-    )
+""".strip().split("\n")
 
     g = parse_rules(rules)
     assert count_bags("shiny gold", g) == 126

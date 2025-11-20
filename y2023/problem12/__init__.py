@@ -35,9 +35,7 @@ def solve(
         # this is a valid state if we are on the last group and run_length == last group
         if (group_ix == len(groups) - 1 and run_length == groups[-1]) or (
             # special case for input like ".. 0"
-            group_ix == -1
-            and len(groups) == 1
-            and groups[0] == 0
+            group_ix == -1 and len(groups) == 1 and groups[0] == 0
         ):
             return 1
         return 0

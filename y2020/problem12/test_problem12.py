@@ -6,9 +6,7 @@ N3
 F7
 R90
 F11
-""".strip().split(
-    "\n"
-)
+""".strip().split("\n")
 
 
 def test_part1_example():

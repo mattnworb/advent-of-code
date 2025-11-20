@@ -183,9 +183,7 @@ tile_with_monsters = """
 #.##..#..#...#..####...#
 .#.###..##..##..####.##.
 ...###...##...#...#..###
-""".strip().split(
-    "\n"
-)
+""".strip().split("\n")
 
 
 def test_count_sea_monsters():
