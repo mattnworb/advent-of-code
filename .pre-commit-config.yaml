@@ -1,14 +1,16 @@
 repos:
-  - repo: https://github.com/ambv/black
-    rev: 21.11b1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.14.5
     hooks:
-      - id: black
-        language_version: python3
-#  - repo: https://github.com/pre-commit/pre-commit-hooks
-#    rev: v2.4.0
-#    hooks:
-#      - id: flake8
-#      - id: check-merge-conflict
-#      - id: requirements-txt-fixer
-#      - id: check-yaml
-#        args: [.pre-commit-config.yaml]
+      # Run the linter.
+      - id: ruff-check
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
