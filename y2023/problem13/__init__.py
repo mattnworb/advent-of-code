@@ -105,8 +105,8 @@ def part2(inp: str):
                 # print(f"found new line, old={original} new={s}")
                 break
 
-        assert (
-            found
-        ), f"could not find smudge for pattern {pattern}, original value was {original}"
+        assert found, (
+            f"could not find smudge for pattern {pattern}, original value was {original}"
+        )
 
     return total

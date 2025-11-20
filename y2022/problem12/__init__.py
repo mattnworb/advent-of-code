@@ -134,5 +134,5 @@ def part2(inp: str):
         if steps is not None and (steps < fewest or fewest == -1):
             fewest = steps
         if (ix + 1) % 100 == 0:
-            print(f"tested {ix+1} of {len(candidates)} candidates")
+            print(f"tested {ix + 1} of {len(candidates)} candidates")
     return fewest

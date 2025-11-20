@@ -69,7 +69,7 @@ def hand_sort_fn(
 
             return 1 if ia < ib else -1
 
-        raise ValueError(f"shouldn't have gotten here, hands: {(a,b)}")
+        raise ValueError(f"shouldn't have gotten here, hands: {(a, b)}")
 
     return hand_sort
 

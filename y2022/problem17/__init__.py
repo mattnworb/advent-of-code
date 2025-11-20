@@ -141,5 +141,5 @@ def part2(inp: str):
     height = 0
     for n in range(len(inp) * 2):
         height = next_rock(board, height, shape_gen, jet_gen)
-        print(f"rocks: {n+1}, height: {height}")
+        print(f"rocks: {n + 1}, height: {height}")
     return height

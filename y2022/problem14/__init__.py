@@ -90,9 +90,9 @@ def solve(
             continue
 
         # "If all three possible destinations are blocked, the unit of sand comes to rest and no longer moves..."
-        assert (
-            falling_sand not in grid
-        ), f"can't rest at {falling_sand} because the spot is already occupied with {grid[falling_sand]}"
+        assert falling_sand not in grid, (
+            f"can't rest at {falling_sand} because the spot is already occupied with {grid[falling_sand]}"
+        )
         grid[falling_sand] = "o"
         num_resting_sands += 1
 

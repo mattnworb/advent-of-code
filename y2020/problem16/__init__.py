@@ -230,9 +230,9 @@ def determine_rule_order(rules: Rules, tickets: List[Ticket]) -> Dict[int, str]:
         if not made_progress:
             raise ValueError("no progress made")
 
-    assert all(
-        len(possible_rules) == 1 for possible_rules in candidates
-    ), f"did not solve problem after pass #2, state is {candidates}"
+    assert all(len(possible_rules) == 1 for possible_rules in candidates), (
+        f"did not solve problem after pass #2, state is {candidates}"
+    )
 
     print("\nsolved?")
     print("candidates:")

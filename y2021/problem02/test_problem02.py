@@ -9,9 +9,7 @@ forward 8
 up 3
 down 8
 forward 2
-""".strip().split(
-        "\n"
-    )
+""".strip().split("\n")
     assert part1(cmds) == 150
 
 
@@ -23,7 +21,5 @@ forward 8
 up 3
 down 8
 forward 2
-""".strip().split(
-        "\n"
-    )
+""".strip().split("\n")
     assert part2(cmds) == 900
