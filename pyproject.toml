@@ -1,20 +1,21 @@
-[tool.poetry]
+[project]
 name = "advent-of-code"
 version = "0.1.0"
-description = "my AoC solutions"
-authors = ["Matt Brown <matt@mattnworb.com>"]
+description = "my Advent of Code solutions"
 readme = "README.md"
-package-mode = false
+requires-python = ">=3.14"
+dependencies = []
 
-[tool.poetry.dependencies]
-python = "^3.10"
+[dependency-groups]
+dev = [
+  "mypy>=1.18.2",
+  "pytest>=9.0.1",
+  "ruff>=0.14.5",
+  "tox>=4.32.0",
+  "tox-uv>=1.29.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-black = "^25.0.0"
-mypy = "^1.11.1"
-pytest = "^8.3.2"
-tox = "^4.15.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint]
+# disable pycodestyle ("E") and Pyflakes ("F") for now since we were not
+# checking for them before
+ignore = ["E", "F"]
