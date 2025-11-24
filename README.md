@@ -5,11 +5,11 @@
 To run the problem for a day, run the Python module like
 
 ```sh
-poetry run python -m y2020.problem01
+uv run python -m y2020.problem01
 ```
 
 The solution code generally has no dependencies outside of the standard library
-but for tests, formatting etc I'm using [poetry](https://python-poetry.org/) to
+but for tests, formatting etc I'm using [uv](https://docs.astral.sh/uv/) to
 manage dependencies.
 
 ## Setting up new problem
@@ -24,8 +24,8 @@ This will create files in a directory named `y$YEAR/$DAY`.
 
 ## Tests
 
-Run the tests (yes I wrote tests) with `tox` or `pytest` or to run them for just
-one problem, `poetry run pytest <year>/<directory>`.
+Run the tests (yes I wrote tests) with `uv run tox` or `uv run pytest` or to run them for just
+one problem, `uv run pytest <year>/<directory>`.
 
 Install the pre-commit hooks to keep the code nicely formatted via
 [pre-commit](https://pre-commit.com/) with `pre-commit install`.
