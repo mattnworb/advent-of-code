@@ -33,4 +33,35 @@ def part1(inp: str):
 
 
 def part2(inp: str):
-    return 0
+    # You remember from the training seminar that "method 0x434C49434B" means
+    # you're actually supposed to count the number of times any click causes the
+    # dial to point at 0, regardless of whether it happens during a rotation or
+    # at the end of one.
+
+    # Be careful: if the dial were pointing at 50, a single rotation like R1000
+    # would cause the dial to point at 0 ten times before returning back to 50!
+    pos = 50
+    zeros = 0
+
+    for line in inp.splitlines():
+        direction = line[0]
+        assert direction in ("L", "R")
+
+        amount = int(line[1:])
+
+        crosses = (amount + (pos if direction == "R" else (100 - pos))) // 100
+        if pos == 0 and crosses > 0:
+            crosses -= 1
+        zeros += crosses
+
+        if direction == "L":
+            newpos = (pos - amount) % 100
+        else:
+            newpos = (pos + amount) % 100
+
+        # if pos == 0:
+        print(
+            f"pos {pos:2}, move {line:4} to {newpos:2}. zeros += {crosses} -> {zeros}"
+        )
+        pos = newpos
+    return zeros
