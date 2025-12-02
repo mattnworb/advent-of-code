@@ -48,9 +48,11 @@ from $pkg import *
 
 example = """"""
 
+
 def test_part1_example():
     # TODO: populate
     assert part1(example) == 0
+
 
 def test_part2_example():
     # TODO: populate
