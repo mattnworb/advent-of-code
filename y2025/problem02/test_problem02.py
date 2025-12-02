@@ -7,6 +7,10 @@ def test_part1_example():
     assert part1(example) == 1227775554
 
 
+def test_part2_is_invalid():
+    assert part2_is_invalid(1010) == True
+    assert part2_is_invalid(1011) == False
+
+
 def test_part2_example():
-    # TODO: populate
-    assert part2(example) == 0
+    assert part2(example) == 4174379265
