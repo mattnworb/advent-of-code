@@ -49,9 +49,21 @@ def part2(inp: str):
 
         amount = int(line[1:])
 
-        crosses = (amount + (pos if direction == "R" else (100 - pos))) // 100
-        if pos == 0 and crosses > 0:
-            crosses -= 1
+        if direction == "R":
+            if pos == 0:
+                crosses = amount // 100
+            elif amount >= (100 - pos):
+                crosses = (amount - (100 - pos)) // 100 + 1
+            else:
+                crosses = 0
+        else:
+            if pos == 0:
+                crosses = amount // 100
+            elif amount >= pos:
+                crosses = (amount - pos) // 100 + 1
+            else:
+                crosses = 0
+
         zeros += crosses
 
         if direction == "L":
@@ -60,8 +72,8 @@ def part2(inp: str):
             newpos = (pos + amount) % 100
 
         # if pos == 0:
-        print(
-            f"pos {pos:2}, move {line:4} to {newpos:2}. zeros += {crosses} -> {zeros}"
-        )
+        # print(
+        #     f"pos {pos:2}, move {line:4} to {newpos:2}. zeros += {crosses} -> {zeros}"
+        # )
         pos = newpos
     return zeros
