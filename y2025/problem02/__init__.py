@@ -45,7 +45,7 @@ def part2(inp: str):
 def part2_is_invalid(num: int) -> bool:
     num_str = str(num)
     if len(num_str) == 1:
-        return True
+        return False
 
     # the length of id_str controls how long the repeating pattern can be:
     #
