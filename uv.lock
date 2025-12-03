@@ -1,6 +1,6 @@
 version = 1
 revision = 3
-requires-python = ">=3.14"
+requires-python = "==3.14.1"
 
 [[package]]
 name = "advent-of-code"
@@ -20,11 +20,11 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "mypy", specifier = ">=1.18.2" },
-    { name = "pytest", specifier = ">=9.0.1" },
-    { name = "ruff", specifier = ">=0.14.5" },
-    { name = "tox", specifier = ">=4.32.0" },
-    { name = "tox-uv", specifier = ">=1.29.0" },
+    { name = "mypy", specifier = "==1.18.2" },
+    { name = "pytest", specifier = "==9.0.1" },
+    { name = "ruff", specifier = "==0.14.5" },
+    { name = "tox", specifier = "==4.32.0" },
+    { name = "tox-uv", specifier = "==1.29.0" },
 ]
 
 [[package]]
