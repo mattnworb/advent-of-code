@@ -3,16 +3,16 @@ name = "advent-of-code"
 version = "0.1.0"
 description = "my Advent of Code solutions"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = "==3.14.1"
 dependencies = []
 
 [dependency-groups]
 dev = [
-  "mypy>=1.18.2",
-  "pytest>=9.0.1",
-  "ruff>=0.14.5",
-  "tox>=4.32.0",
-  "tox-uv>=1.29.0",
+  "mypy==1.18.2",
+  "pytest==9.0.1",
+  "ruff==0.14.5",
+  "tox==4.32.0",
+  "tox-uv==1.29.0",
 ]
 
 [tool.ruff.lint]
