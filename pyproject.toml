@@ -10,7 +10,7 @@ dependencies = []
 dev = [
   "mypy==1.18.2",
   "pytest==9.0.1",
-  "ruff==0.14.5",
+  "ruff==0.14.7",
   "tox==4.32.0",
   "tox-uv==1.29.0",
 ]
