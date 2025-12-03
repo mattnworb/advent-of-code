@@ -23,5 +23,6 @@
   "platformAutomerge": true,
   "pre-commit": {
     "enabled": true
-  }
+  },
+  "rangeStrategy": "pin"
 }
