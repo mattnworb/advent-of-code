@@ -26,3 +26,6 @@ jobs:
 
       - name: tox
         run: uv run tox
+
+      - name: mypy
+        run: uv run mypy .
