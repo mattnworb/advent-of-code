@@ -22,7 +22,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          version: "0.10.3"
+          version: "0.10.4"
 
       - name: tox
         run: uv run tox
