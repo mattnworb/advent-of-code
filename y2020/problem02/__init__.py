@@ -1,5 +1,4 @@
 import re
-from typing import List, Optional, Tuple
 
 
 def is_password_valid_v1(line: str) -> bool:

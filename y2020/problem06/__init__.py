@@ -1,6 +1,3 @@
-from typing import List, Set
-
-
 def count_groups(inp: str, intersect=False) -> int:
     groups = inp.strip().split("\n\n")
 

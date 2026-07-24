@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List
+
 
 # The automatic passport scanners are slow because they're having trouble
 # detecting which passports have all required fields. The expected fields are as

@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 Position = tuple[int, int]
 
 

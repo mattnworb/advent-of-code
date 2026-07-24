@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Dict, List, Set, Tuple
+
 
 Graph = dict[str, set[tuple[int, str]]]
 

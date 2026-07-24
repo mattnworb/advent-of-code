@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, List, Tuple
+
 
 # The boot code is represented as a text file with one instruction per line of
 # text. Each instruction consists of an operation (acc, jmp, or nop) and an

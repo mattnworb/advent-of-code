@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 # - Action N means to move north by the given value.
 # - Action S means to move south by the given value.
 # - Action E means to move east by the given value.

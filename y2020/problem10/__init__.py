@@ -1,6 +1,6 @@
 import collections
 import itertools
-from typing import Dict, List, Optional, Set, Tuple
+
 
 # Each of your joltage adapters is rated for a specific output joltage (your
 # puzzle input). Any given adapter can take an input 1, 2, or 3 jolts lower than

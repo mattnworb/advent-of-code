@@ -1,5 +1,3 @@
-from typing import Tuple
-
 # The first 7 characters will either be F or B; these specify exactly one of the
 # 128 rows on the plane (numbered 0 through 127). Each letter tells you which
 # half of a region the given seat is in. Start with the whole list of rows; the

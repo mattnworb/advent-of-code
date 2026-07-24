@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Set
+
 
 # The first step of attacking the weakness in the XMAS data is to find the first
 # number in the list (after the preamble) which is not the sum of two of the 25
