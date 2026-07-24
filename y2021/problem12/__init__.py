@@ -54,12 +54,10 @@ def legit_next_moves(graph: Graph, path: Path, part2: bool = False) -> Iterator[
                 # or if small and not visited yet
                 if cave not in path:
                     yield cave
-                elif cave not in ("start", "end"):
-                    # we can return to this cave only if no other small cave has been visited twice yet
-                    # counts = Counter(p for p in path if is_small(p))
-                    # if counts.most_common(1)[0][1] <= 1:
-                    if not small_cave_visited_twice(path):
-                        yield cave
+                elif cave not in ("start", "end") and not small_cave_visited_twice(
+                    path
+                ):
+                    yield cave
 
 
 def small_cave_visited_twice(path: Path):

@@ -25,10 +25,9 @@ class Map:
         for line in map_as_string.split("\n"):
             line = line.strip()
             if line:
-                if len(lines) > 0:
+                if len(lines) > 0 and len(line) != len(lines[0]):
                     # validate all lines are the same length
-                    if len(line) != len(lines[0]):
-                        raise ValueError("map does not have equal lines")
+                    raise ValueError("map does not have equal lines")
                 lines.append(line)
         return cls(lines)
 

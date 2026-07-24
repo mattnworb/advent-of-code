@@ -64,8 +64,7 @@ def part2(inp: str):
 
             # print(f"comparing windows this={this_window} and prev={prev_window}")
 
-            if len(prev_window) == 3:
-                if sum(this_window) > sum(prev_window):
-                    increases += 1
+            if len(prev_window) == 3 and sum(this_window) > sum(prev_window):
+                increases += 1
 
     return increases
