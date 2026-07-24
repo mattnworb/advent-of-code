@@ -79,7 +79,7 @@ def part1(inp: str):
     g = Grid(inp)
     # "The risk level of a low point is 1 plus its height"
     lps = g.find_low_points()
-    return sum(map(lambda v: v + 1, (g.points[r][c] for r, c in lps)))
+    return sum(v + 1 for v in (g.points[r][c] for r, c in lps))
 
 
 # Next, you need to find the largest basins so you know what areas are most

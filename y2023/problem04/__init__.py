@@ -1,5 +1,5 @@
-from typing import *
 from collections import Counter
+from typing import *
 
 
 def part1(inp: str):

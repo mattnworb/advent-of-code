@@ -1,4 +1,4 @@
-from typing import List, Callable
+from collections.abc import Callable
 
 occupied_seat = "#"
 empty_seat = "L"
@@ -14,7 +14,7 @@ def solve_part2(inp: str) -> int:
 
 def solve(
     inp: str,
-    count_func: Callable[[List[str], int, int], int],
+    count_func: Callable[[list[str], int, int], int],
     need_occupied: int,
     need_empty: int,
 ) -> int:
@@ -23,7 +23,7 @@ def solve(
     rounds = 0
     prev_map = list(seats)  # copy
     while rounds < 1000:
-        new_map: List[str] = []
+        new_map: list[str] = []
         for r in range(len(seats)):
             new_row = ""
             for c in range(len(seats[r])):
@@ -52,7 +52,7 @@ def solve(
     raise ValueError("too many rounds? 1000 and not stable")
 
 
-def count_occupied(seatmap: List[str], r: int, c: int) -> int:
+def count_occupied(seatmap: list[str], r: int, c: int) -> int:
     count = 0
 
     # check adjacent squares, skip (0,0)
@@ -79,7 +79,7 @@ def count_occupied(seatmap: List[str], r: int, c: int) -> int:
 # change, and floor never changes.
 
 
-def count_visible_occupied(seatmap: List[str], r: int, c: int) -> int:
+def count_visible_occupied(seatmap: list[str], r: int, c: int) -> int:
     max_r = len(seatmap)
     max_c = len(seatmap[0])
 

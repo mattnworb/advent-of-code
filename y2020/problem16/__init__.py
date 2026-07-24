@@ -1,7 +1,7 @@
-from typing import *
-from functools import reduce
-import operator
 import collections
+import operator
+from functools import reduce
+from typing import *
 
 # example:
 # class: 1-3 or 5-7
@@ -178,7 +178,7 @@ def determine_rule_order(rules: Rules, tickets: List[Ticket]) -> Dict[int, str]:
     for ticket in tickets:
         # print(f"at ticket: {ticket}")
         for ix, field in enumerate(ticket):
-            for rule_name in rules.keys():
+            for rule_name in rules:
                 if rule_name in candidates[ix] and not is_field_valid(
                     rules[rule_name], field
                 ):
@@ -207,7 +207,7 @@ def determine_rule_order(rules: Rules, tickets: List[Ticket]) -> Dict[int, str]:
 
         print(f"solved so far: {solved_positions}")
 
-        for rule_name in rules.keys():
+        for rule_name in rules:
             if rule_name not in solved_positions.values():
                 # check if this rule appears in just one position
                 positions_in = [ix for ix, c in enumerate(candidates) if rule_name in c]
@@ -221,7 +221,7 @@ def determine_rule_order(rules: Rules, tickets: List[Ticket]) -> Dict[int, str]:
                     ix = positions_in[0]
                     solved_positions[ix] = rule_name
 
-                    for other in rules.keys():
+                    for other in rules:
                         if other != rule_name and other in candidates[ix]:
                             candidates[ix].remove(other)
 

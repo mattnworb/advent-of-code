@@ -1,5 +1,5 @@
-from typing import *
 import functools
+from typing import *
 
 Record = tuple[str, tuple[int, ...]]
 

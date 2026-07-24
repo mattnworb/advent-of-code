@@ -1,6 +1,6 @@
-from typing import *
-import json
 import functools
+import json
+from typing import *
 
 Packet = Union[list["Packet"], int]
 

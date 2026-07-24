@@ -46,7 +46,7 @@ from typing import *
 def total_distances(
     candidate: int, positions: List[int], cost_fn: Callable[[int, int], int]
 ) -> int:
-    return sum(map(lambda p: cost_fn(p, candidate), positions))
+    return sum(cost_fn(p, candidate) for p in positions)
 
 
 def least_distance(
@@ -75,7 +75,7 @@ def pt1cost(a, b):
 
 def part1(inp: str):
     positions = parse_input(inp)
-    best_pos, total_dist = least_distance(positions, pt1cost)
+    _best_pos, total_dist = least_distance(positions, pt1cost)
     return total_dist
 
 
@@ -105,5 +105,5 @@ def pt2cost(p1: int, p2: int) -> int:
 
 def part2(inp: str):
     positions = parse_input(inp)
-    best_pos, total_dist = least_distance(positions, pt2cost)
+    _best_pos, total_dist = least_distance(positions, pt2cost)
     return total_dist

@@ -1,5 +1,5 @@
-from typing import *
 import time
+from typing import *
 
 # The small crab challenges you to a game! The crab is going to mix up some
 # cups, and you have to predict where they'll end up.
@@ -183,8 +183,7 @@ def part2(inp: str) -> int:
 
     # extend the list to 1 million
     now = time.monotonic()
-    for v in range(max(cups) + 1, 1_000_000 + 1):
-        cups.append(v)
+    cups.extend(range(max(cups) + 1, 1_000_000 + 1))
     elapsed = time.monotonic() - now
     print(f"Took {elapsed:.2f} secs to add one million items to the cups list")
 

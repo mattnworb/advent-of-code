@@ -1,8 +1,8 @@
-from typing import *
-from dataclasses import dataclass
-from collections import Counter
-from functools import reduce
 import operator
+from collections import Counter
+from dataclasses import dataclass
+from functools import reduce
+from typing import *
 
 
 @dataclass

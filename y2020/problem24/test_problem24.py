@@ -29,7 +29,7 @@ def test_parse_line():
 
 
 def test_part1_example():
-    part1(example) == 10
+    assert part1(example) == 10
 
 
 def test_part2_example():

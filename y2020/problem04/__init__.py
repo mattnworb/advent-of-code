@@ -1,4 +1,3 @@
-from typing import List, Dict
 import re
 
 # The automatic passport scanners are slow because they're having trouble
@@ -19,7 +18,7 @@ import re
 # newlines. Passports are separated by blank lines.
 
 
-def parse_passports(text: str) -> List[Dict[str, str]]:
+def parse_passports(text: str) -> list[dict[str, str]]:
     passports = []
 
     for passport in text.split("\n\n"):
@@ -35,7 +34,7 @@ def parse_passports(text: str) -> List[Dict[str, str]]:
     return passports
 
 
-def is_valid(passport: Dict[str, str], check_fields_valid=False) -> bool:
+def is_valid(passport: dict[str, str], check_fields_valid=False) -> bool:
     # "cid" is not reqiured in part 1
     required_fields = {"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"}
 

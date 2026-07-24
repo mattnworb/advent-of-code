@@ -1,6 +1,5 @@
 from typing import *
 
-
 # (x, y) positions:
 Position = tuple[int, int]
 # these are really vectors

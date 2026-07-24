@@ -1,6 +1,5 @@
 from typing import *
 
-
 # Instructions:
 #
 # The homework (your puzzle input) consists of a series of expressions that
@@ -107,7 +106,7 @@ def evaluate(expression: List[Either]) -> int:
 
             stack.insert(0, result)
         else:
-            raise ValueError(f"unknown type {op}")
+            raise TypeError(f"unknown type {op}")
 
     assert len(stack) == 1
 

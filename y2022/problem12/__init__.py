@@ -1,6 +1,6 @@
-from typing import *
-from collections import defaultdict
 import heapq
+from collections import defaultdict
+from typing import *
 
 # You ask the device for a heightmap of the surrounding area (your puzzle
 # input). The heightmap shows the local area from above broken into a grid; the
@@ -67,11 +67,8 @@ def build_graph(height: Dict[Node, int]) -> Dict[Node, List[Node]]:
             (p[0] - 1, p[1]),
             (p[0] + 1, p[1]),
         ]:
-            if neighbor in height:  # checking if neighbor is in grid
-                # the elevation of the destination square can be at most one
-                # higher than the elevation of your current square
-                if height[neighbor] - height[p] <= 1:
-                    graph[p].append(neighbor)
+            if neighbor in height and height[neighbor] - height[p] <= 1:
+                graph[p].append(neighbor)
     return graph
 
 

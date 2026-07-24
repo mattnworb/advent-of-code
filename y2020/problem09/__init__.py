@@ -1,4 +1,3 @@
-from typing import List, Set
 import itertools
 
 # The first step of attacking the weakness in the XMAS data is to find the first
@@ -6,7 +5,7 @@ import itertools
 # numbers before it. What is the first number that does not have this property?
 
 
-def find_not_sum_pair(nums: List[int], preamble_length=25) -> int:
+def find_not_sum_pair(nums: list[int], preamble_length=25) -> int:
     for i in range(preamble_length, len(nums)):
         allowed = compute_sum_pairs(nums[i - preamble_length : i])
 
@@ -16,8 +15,8 @@ def find_not_sum_pair(nums: List[int], preamble_length=25) -> int:
     raise ValueError("uh oh - done?")
 
 
-def compute_sum_pairs(nums: List[int]) -> Set[int]:
-    return set(map(lambda t: t[0] + t[1], itertools.combinations(nums, 2)))
+def compute_sum_pairs(nums: list[int]) -> set[int]:
+    return {t[0] + t[1] for t in itertools.combinations(nums, 2)}
 
 
 # The final step in breaking the XMAS encryption relies on the invalid number
@@ -30,9 +29,9 @@ def compute_sum_pairs(nums: List[int]) -> Set[int]:
 
 # this is obviously unoptimized and just brute forcing, but it runs fine for an
 # input of 1000 numbers
-def find_contiguous_sum(nums: List[int], target: int) -> List[int]:
+def find_contiguous_sum(nums: list[int], target: int) -> list[int]:
     for size in range(2, len(nums)):
-        for n in range(0, len(nums) - size):
+        for n in range(len(nums) - size):
             window = nums[n : n + size]
             if sum(window) == target:
                 return window

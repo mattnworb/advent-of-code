@@ -1,5 +1,5 @@
-from typing import *
 from collections import Counter
+from typing import *
 
 # tuple where index 0 = x, 1 = y
 Point = Tuple[int, int]

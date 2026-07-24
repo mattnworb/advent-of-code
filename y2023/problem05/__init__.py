@@ -1,5 +1,5 @@
-from typing import *
 from collections.abc import Sequence
+from typing import *
 
 # dict of range to offset. if a seed falls in the range in the dict key, then it
 # should be transformed by adding the offset (dict value) to it

@@ -142,7 +142,6 @@ def part2(inp: str):
                     break
 
             this_score = dist_up * dist_down * dist_left * dist_right
-            if this_score > max_scenic_score:
-                max_scenic_score = this_score
+            max_scenic_score = max(max_scenic_score, this_score)
 
     return max_scenic_score

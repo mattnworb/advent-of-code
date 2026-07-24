@@ -1,5 +1,5 @@
-from typing import *
 from collections import defaultdict
+from typing import *
 
 # You start by compiling a list of foods (your puzzle input), one food per line.
 # Each line includes that food's ingredients list followed by some or all of the

@@ -1,5 +1,5 @@
-from typing import *
 from collections import Counter
+from typing import *
 
 # Although you know nothing about this specific species of lanternfish, you make
 # some guesses about their attributes. Surely, each lanternfish creates a new

@@ -116,7 +116,7 @@ def parse_line(line: str) -> Iterator[str]:
         if ch == "w" or ch == "e":
             yield line[ix]
             ix += 1
-        elif ch.startswith("n") or ch.startswith("s"):
+        elif ch.startswith(("n", "s")):
             yield line[ix : ix + 2]
             ix += 2
         else:
@@ -156,5 +156,5 @@ def part2(inp: str, rounds: int):
 
 def adjacent_tiles(p: Position) -> Iterator[Position]:
     # x, y = p
-    for m in moves.keys():
+    for m in moves:
         yield move(p, m)

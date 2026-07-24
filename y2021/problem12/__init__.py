@@ -1,7 +1,7 @@
-from typing import *
 import string
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 from functools import cache
+from typing import *
 
 Path = Tuple[str, ...]
 Graph = Dict[str, List[str]]
@@ -47,19 +47,12 @@ def legit_next_moves(graph: Graph, path: Path, part2: bool = False) -> Iterator[
             if not is_small(cave) or cave not in path:
                 yield cave
         else:
-            # can move if cave is big - but avoid an endless cycle like A -> B -> A
-            if not is_small(cave):
+            if (
+                not is_small(cave)
+                or cave not in path
+                or (cave not in ("start", "end") and not small_cave_visited_twice(path))
+            ):
                 yield cave
-            else:
-                # or if small and not visited yet
-                if cave not in path:
-                    yield cave
-                elif cave not in ("start", "end"):
-                    # we can return to this cave only if no other small cave has been visited twice yet
-                    # counts = Counter(p for p in path if is_small(p))
-                    # if counts.most_common(1)[0][1] <= 1:
-                    if not small_cave_visited_twice(path):
-                        yield cave
 
 
 def small_cave_visited_twice(path: Path):

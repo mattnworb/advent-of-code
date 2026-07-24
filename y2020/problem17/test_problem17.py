@@ -1,6 +1,5 @@
 from . import *
 
-
 ex1 = """
 .#.
 ..#

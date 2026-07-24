@@ -1,5 +1,3 @@
-from typing import Tuple
-
 # The first 7 characters will either be F or B; these specify exactly one of the
 # 128 rows on the plane (numbered 0 through 127). Each letter tells you which
 # half of a region the given seat is in. Start with the whole list of rows; the
@@ -18,7 +16,7 @@ ROWS = range(127)
 COLS = range(8)
 
 
-def decode_seat(seat: str) -> Tuple[int, int]:
+def decode_seat(seat: str) -> tuple[int, int]:
     row = narrow(ROWS, seat[0:7], "F", "B")
     col = narrow(COLS, seat[7:], "L", "R")
 
@@ -47,5 +45,5 @@ def narrow(starting_range, moves: str, left_ch: str, right_ch: str) -> int:
     return low
 
 
-def seat_id(seat: Tuple[int, int]) -> int:
+def seat_id(seat: tuple[int, int]) -> int:
     return seat[0] * 8 + seat[1]

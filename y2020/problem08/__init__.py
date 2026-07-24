@@ -1,4 +1,3 @@
-from typing import Tuple, List, Dict
 from collections import Counter
 
 # The boot code is represented as a text file with one instruction per line of
@@ -17,8 +16,8 @@ from collections import Counter
 # - `nop` stands for No OPeration - it does nothing. The instruction immediately
 #   below it is executed next.
 
-Instruction = Tuple[str, int]
-BootCode = List[Instruction]
+Instruction = tuple[str, int]
+BootCode = list[Instruction]
 
 
 def parse_boot_code(inp: str) -> BootCode:
@@ -29,15 +28,15 @@ def parse_boot_code(inp: str) -> BootCode:
     return instrs
 
 
-class Console(object):
+class Console:
     def __init__(self, code: BootCode):
         self.code = code
         self.accumulator = 0
         self.ip = 0  # instruction pointer
 
         # track which instructions have been visited
-        self.visit_order: List[int] = []
-        self.count_per_instr: Dict[int, int] = Counter()
+        self.visit_order: list[int] = []
+        self.count_per_instr: dict[int, int] = Counter()
         self._track_visit()
 
     def _track_visit(self):

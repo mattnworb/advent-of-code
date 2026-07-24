@@ -1,7 +1,5 @@
-from typing import List, Dict, Tuple, Optional, Set
-
-import itertools
 import collections
+import itertools
 
 # Each of your joltage adapters is rated for a specific output joltage (your
 # puzzle input). Any given adapter can take an input 1, 2, or 3 jolts lower than
@@ -27,10 +25,10 @@ import collections
 # which would use all of them. But duh, if we use all of them, there is only one
 # ordering possible, since the allowed differences of [1, 2, or 3] are all
 # positive - its not like we can have adapter 5, then 3, then 6.
-def solve_part1(adapters: List[int]) -> int:
+def solve_part1(adapters: list[int]) -> int:
     a = [0] + sorted(adapters) + [max(adapters) + 3]
 
-    c: Dict[int, int] = {}
+    c: dict[int, int] = {}
 
     for i in range(1, len(a)):
         diff = a[i] - a[i - 1]
@@ -44,13 +42,13 @@ def solve_part1(adapters: List[int]) -> int:
 
 
 # this is so ugly, find a better solution
-def find_chain(adapters: List[int], chain=None, joltage=0) -> Optional[List[int]]:
+def find_chain(adapters: list[int], chain=None, joltage=0) -> list[int] | None:
     # infinite loop when input is not sorted, why?
     new_adapters = sorted(adapters) + [max(adapters) + 3]
     return _find_chain(new_adapters, chain=chain, joltage=joltage)
 
 
-def _find_chain(adapters: List[int], chain=None, joltage=0) -> Optional[List[int]]:
+def _find_chain(adapters: list[int], chain=None, joltage=0) -> list[int] | None:
     if len(adapters) == 0:
         print(f"done! chain is {chain}")
         return chain
@@ -74,8 +72,8 @@ def _find_chain(adapters: List[int], chain=None, joltage=0) -> Optional[List[int
     return None
 
 
-def distances(chain: List[int]) -> Dict[int, int]:
-    c: Dict[int, int] = collections.Counter()
+def distances(chain: list[int]) -> dict[int, int]:
+    c: dict[int, int] = collections.Counter()
 
     prev = 0
     for i in range(len(chain)):
@@ -86,11 +84,11 @@ def distances(chain: List[int]) -> Dict[int, int]:
 
 
 # recursion with memoization
-def part2(adapters: List[int]) -> int:
+def part2(adapters: list[int]) -> int:
     return _part2(0, set(adapters), max(adapters), {})
 
 
-def _part2(current, adapters: Set[int], end, memo) -> int:
+def _part2(current, adapters: set[int], end, memo) -> int:
     if (current, end) in memo:
         return memo[(current, end)]
 
@@ -114,7 +112,7 @@ def _part2(current, adapters: Set[int], end, memo) -> int:
     return c
 
 
-def solve_part2_dp(adapters: List[int]) -> int:
+def solve_part2_dp(adapters: list[int]) -> int:
     adapters = sorted(adapters)
     c = {0: 1}
     # for each adapter to use

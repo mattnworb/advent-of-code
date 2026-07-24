@@ -89,9 +89,7 @@ def score(grid: Sequence[Sequence[str]]) -> int:
     total = 0
     for r in range(len(grid)):
         rows_from_south = len(grid) - r
-        total += sum(
-            [rows_from_south for c in range(len(grid[r])) if grid[r][c] == "O"]
-        )
+        total += sum(rows_from_south for c in range(len(grid[r])) if grid[r][c] == "O")
     return total
 
 

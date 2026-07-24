@@ -1,5 +1,5 @@
-from typing import *
 from itertools import combinations
+from typing import *
 
 Position = Tuple[int, int]
 
@@ -18,8 +18,8 @@ def expand(s: List[str], multiplier=2) -> Set[Position]:
                 g.add((x, y))
 
     # TODO: loop over g less
-    g_xs = set(p[0] for p in g)
-    g_ys = set(p[1] for p in g)
+    g_xs = {p[0] for p in g}
+    g_ys = {p[1] for p in g}
 
     missing_x = set(range(max(g_xs))) - g_xs
     missing_y = set(range(max(g_ys))) - g_ys

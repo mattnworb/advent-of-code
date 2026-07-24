@@ -1,5 +1,5 @@
-from typing import *
 import string
+from typing import *
 
 
 def part1(inp: str):

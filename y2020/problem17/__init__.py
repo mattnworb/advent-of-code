@@ -1,5 +1,3 @@
-from typing import *
-
 # The pocket dimension contains an infinite 3-dimensional grid. At every integer
 # 3-dimensional coordinate (x,y,z), there exists a single cube which is either
 # active or inactive.
@@ -22,9 +20,9 @@ from typing import *
 #   cube remains active. Otherwise, the cube becomes inactive.
 # - If a cube is inactive but exactly 3 of its neighbors are active, the cube
 #   becomes active. Otherwise, the cube remains inactive.
-
 # so... its a three-dimensional Conway's Game of Life
 from collections import defaultdict
+from typing import *
 
 # part1 is 3 dimensional
 Position3 = Tuple[int, int, int]
@@ -64,12 +62,11 @@ def part1(inp: str, cycles: int = 6) -> int:
     # treat the starting point as (0,0,0) - the position values don't actually
     # matter since the value to return is the number of cubes in a certain
     # state.
-    y, z = 0, 0
-    for line in inp.strip().split("\n"):
+    z = 0
+    for y, line in enumerate(inp.strip().split("\n")):
         for x, ch in enumerate(line.strip()):
             if ch == "#":
                 state.add((x, y, z))
-        y += 1
 
     for _ in range(cycles):
         # print_state3(state)
@@ -128,12 +125,11 @@ def one_round3(state: State3) -> State3:
 def part2(inp: str, cycles: int = 6) -> int:
     state = set()
 
-    y, z, w = 0, 0, 0
-    for line in inp.strip().split("\n"):
+    z, w = 0, 0
+    for y, line in enumerate(inp.strip().split("\n")):
         for x, ch in enumerate(line.strip()):
             if ch == "#":
                 state.add((x, y, z, w))
-        y += 1
 
     for _ in range(cycles):
         # print_state3(state)

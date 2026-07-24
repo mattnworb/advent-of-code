@@ -25,15 +25,15 @@
 # will be finite. Since rule 1 matches a and rule 3 matches b, rule 2 matches
 # either ab or ba. Therefore, rule 0 matches aab or aba.
 
-from typing import *
 import re
+from typing import *
 
 
 def part1(inp: str) -> int:
     raw_rules, messages = parse_input(inp)
 
     rules: Dict[int, str] = {}
-    for n in raw_rules.keys():
+    for n in raw_rules:
         rules[n] = expand_rules(raw_rules, n)
 
     # test rule is fully expanded
@@ -50,7 +50,7 @@ def part2(inp: str) -> int:
     raw_rules[11] = "42 31 | 42 11 31"
 
     rules: Dict[int, str] = {}
-    for n in raw_rules.keys():
+    for n in raw_rules:
         rules[n] = expand_rules(raw_rules, n)
 
     pattern = re.compile(rules[0])

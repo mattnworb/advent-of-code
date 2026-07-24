@@ -1,10 +1,8 @@
-from typing import Tuple, List
-
-Position = Tuple[int, int]
+Position = tuple[int, int]
 
 
-class Map(object):
-    def __init__(self, lines: List[str]):
+class Map:
+    def __init__(self, lines: list[str]):
         self.lines = lines
 
     def at(self, x: int, y: int) -> str:
@@ -23,14 +21,13 @@ class Map(object):
 
     @classmethod
     def parse_map(cls, map_as_string: str):
-        lines: List[str] = []
+        lines: list[str] = []
         for line in map_as_string.split("\n"):
             line = line.strip()
             if line:
-                if len(lines) > 0:
+                if len(lines) > 0 and len(line) != len(lines[0]):
                     # validate all lines are the same length
-                    if len(line) != len(lines[0]):
-                        raise ValueError("map does not have equal lines")
+                    raise ValueError("map does not have equal lines")
                 lines.append(line)
         return cls(lines)
 

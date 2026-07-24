@@ -1,5 +1,5 @@
-from typing import *
 import heapq
+from typing import *
 
 Position = Tuple[int, int]  # (x, y)
 Path = Tuple[Position, ...]
@@ -45,7 +45,7 @@ def find_lowest_risk(m: Map, start_pos: Position, end_pos: Position) -> int:
                 yield n
 
     while queue:
-        cost, current = heapq.heappop(queue)
+        _cost, current = heapq.heappop(queue)
         if current == end_pos:
             # can stop
             return dist[current]

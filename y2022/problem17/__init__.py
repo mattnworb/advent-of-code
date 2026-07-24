@@ -1,6 +1,5 @@
 from typing import *
 
-
 # first thoughts: represent the "rocks" - positions on the board occupied by
 # the tetris pieces - as (x,y) tuples in a set, so that the board (set)
 # contains just the rock's positions. treat the bottom row of the board as
@@ -26,8 +25,10 @@ def shapes() -> Iterator[Shape]:
         yield {(0, 0), (1, 0), (0, 1), (1, 1)}
 
 
-def move_right(shape: Shape, times: int = 1, board: Set[Rock] = set()):
+def move_right(shape: Shape, times: int = 1, board: Set[Rock] | None = None):
     """Adjust the coordinates of the shape so that it moves right `times` time, but not past the edge of the wall"""
+    if board is None:
+        board = set()
     max_x = max(x for x, y in shape)
     # cannot move the right-most part of the shape past a value of 6, since the x-axis is bounded between [0,6]:
 
@@ -47,8 +48,10 @@ def move_right(shape: Shape, times: int = 1, board: Set[Rock] = set()):
     return shape
 
 
-def move_left(shape: Shape, times: int = 1, board: Set[Rock] = set()):
+def move_left(shape: Shape, times: int = 1, board: Set[Rock] | None = None):
     """Adjust the coordinates of the shape so that it moves left `times` time, but not past the edge of the wall"""
+    if board is None:
+        board = set()
     min_x = min(x for x, y in shape)
     # cannot move the left-most part of the shape past a value of 0, since the x-axis is bounded between [0,6]:
 
@@ -69,8 +72,7 @@ def move_left(shape: Shape, times: int = 1, board: Set[Rock] = set()):
 
 def parse_input(inp) -> Iterator[str]:
     while True:
-        for ch in inp:
-            yield ch
+        yield from inp
 
 
 def next_rock(

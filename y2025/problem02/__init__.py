@@ -1,5 +1,5 @@
+from functools import cache, lru_cache
 from typing import *
-from functools import lru_cache
 
 
 def part1(inp: str):
@@ -41,7 +41,7 @@ def part2(inp: str):
     return sum(invalids)
 
 
-@lru_cache(maxsize=None)
+@cache
 def part2_is_invalid(num: int) -> bool:
     num_str = str(num)
     if len(num_str) == 1:

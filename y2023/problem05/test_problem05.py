@@ -45,10 +45,10 @@ def test_add():
 
 
 def test_breakup():
-    assert breakup(range(5, 8), range(0, 11)) == [range(5, 8)]
+    assert breakup(range(5, 8), range(11)) == [range(5, 8)]
 
-    assert breakup(range(0, 11), range(5, 8)) == [
-        range(0, 5),
+    assert breakup(range(11), range(5, 8)) == [
+        range(5),
         range(5, 8),
         (range(8, 11)),
     ]
