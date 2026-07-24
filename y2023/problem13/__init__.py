@@ -56,10 +56,7 @@ def summarize(pattern: List[str], ignore: int = 0) -> int:
 def part1(inp: str):
     patterns: List[List[str]] = []
     for chunk in inp.split("\n\n"):
-        pattern = []
-        for line in chunk.split("\n"):
-            pattern.append(line)
-        patterns.append(pattern)
+        patterns.append(chunk.split("\n"))
 
     total = 0
 
@@ -86,10 +83,7 @@ def change_each_char_once(pattern: list[str]) -> Iterator[list[str]]:
 def part2(inp: str):
     patterns: List[List[str]] = []
     for chunk in inp.split("\n\n"):
-        pattern = []
-        for line in chunk.split("\n"):
-            pattern.append(line)
-        patterns.append(pattern)
+        patterns.append(chunk.split("\n"))
 
     total = 0
     for pattern in patterns:
