@@ -25,7 +25,7 @@ def shapes() -> Iterator[Shape]:
         yield {(0, 0), (1, 0), (0, 1), (1, 1)}
 
 
-def move_right(shape: Shape, times: int = 1, board: Set[Rock] = None):
+def move_right(shape: Shape, times: int = 1, board: Set[Rock] | None = None):
     """Adjust the coordinates of the shape so that it moves right `times` time, but not past the edge of the wall"""
     if board is None:
         board = set()
@@ -48,7 +48,7 @@ def move_right(shape: Shape, times: int = 1, board: Set[Rock] = None):
     return shape
 
 
-def move_left(shape: Shape, times: int = 1, board: Set[Rock] = None):
+def move_left(shape: Shape, times: int = 1, board: Set[Rock] | None = None):
     """Adjust the coordinates of the shape so that it moves left `times` time, but not past the edge of the wall"""
     if board is None:
         board = set()
