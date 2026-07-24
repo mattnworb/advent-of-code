@@ -47,17 +47,12 @@ def legit_next_moves(graph: Graph, path: Path, part2: bool = False) -> Iterator[
             if not is_small(cave) or cave not in path:
                 yield cave
         else:
-            # can move if cave is big - but avoid an endless cycle like A -> B -> A
-            if not is_small(cave):
+            if (
+                not is_small(cave)
+                or cave not in path
+                or (cave not in ("start", "end") and not small_cave_visited_twice(path))
+            ):
                 yield cave
-            else:
-                # or if small and not visited yet
-                if cave not in path:
-                    yield cave
-                elif cave not in ("start", "end") and not small_cave_visited_twice(
-                    path
-                ):
-                    yield cave
 
 
 def small_cave_visited_twice(path: Path):
