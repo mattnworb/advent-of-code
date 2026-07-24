@@ -106,7 +106,7 @@ def evaluate(expression: List[Either]) -> int:
 
             stack.insert(0, result)
         else:
-            raise ValueError(f"unknown type {op}")
+            raise TypeError(f"unknown type {op}")
 
     assert len(stack) == 1
 
