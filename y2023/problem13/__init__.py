@@ -1,5 +1,5 @@
-from typing import *
 from collections import Counter
+from typing import *
 
 
 def find_reflection(pattern: List[str], ignore: int = 0) -> int:

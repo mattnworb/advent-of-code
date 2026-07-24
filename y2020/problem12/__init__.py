@@ -9,7 +9,7 @@ from typing import List, Tuple
 # - Action F means to move forward by the given value in the direction the ship is currently facing.
 
 
-def part1(instr: List[str]) -> Tuple[int, int]:
+def part1(instr: list[str]) -> tuple[int, int]:
     pos = (0, 0)  # (x, y) - x = east/west, y = north/south
     direction = 90  # degrees, clockwise
 
@@ -45,7 +45,7 @@ def part1(instr: List[str]) -> Tuple[int, int]:
     return pos
 
 
-def move(pos: Tuple[int, int], action: str, value: int) -> Tuple[int, int]:
+def move(pos: tuple[int, int], action: str, value: int) -> tuple[int, int]:
     if action == "N":
         r = pos[0], pos[1] - value
     elif action == "S":
@@ -61,7 +61,7 @@ def move(pos: Tuple[int, int], action: str, value: int) -> Tuple[int, int]:
     return r
 
 
-def manhattan_distance(pos: Tuple[int, int]) -> int:
+def manhattan_distance(pos: tuple[int, int]) -> int:
     return abs(pos[0]) + abs(pos[1])
 
 
@@ -72,7 +72,7 @@ def manhattan_distance(pos: Tuple[int, int]) -> int:
 # - Action L means to rotate the waypoint around the ship left (counter-clockwise) the given number of degrees.
 # - Action R means to rotate the waypoint around the ship right (clockwise) the given number of degrees.
 # - Action F means to move forward to the waypoint a number of times equal to the given value.
-def part2(instr: List[str]) -> Tuple[int, int]:
+def part2(instr: list[str]) -> tuple[int, int]:
     pos = (0, 0)  # (x, y) - x = east/west, y = north/south
 
     # The waypoint starts 10 units east and 1 unit north relative to the ship.

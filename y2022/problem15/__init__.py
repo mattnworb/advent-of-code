@@ -1,5 +1,5 @@
-from typing import *
 import re
+from typing import *
 
 parse_pattern = re.compile(
     r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)"

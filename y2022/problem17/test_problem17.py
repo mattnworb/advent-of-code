@@ -1,5 +1,6 @@
-from y2022.problem17 import *
 import pytest
+
+from y2022.problem17 import *
 
 
 def test_move_right():

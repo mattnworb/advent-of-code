@@ -1,7 +1,7 @@
-from typing import *
 from collections import Counter, defaultdict
 from functools import reduce
 from operator import mul
+from typing import *
 
 Tile = List[str]
 Position = Tuple[int, int]
@@ -356,7 +356,7 @@ def indexes_of_char(ch, s):
     return [ix for ix, c in enumerate(s) if c == ch]
 
 
-monster_positions = list(map(lambda row: indexes_of_char("#", row), monster))
+monster_positions = [indexes_of_char("#", row) for row in monster]
 
 
 def count_sea_monsters(tile: Tile) -> int:
@@ -370,8 +370,8 @@ def count_sea_monsters(tile: Tile) -> int:
 
     # if the tile has 96 rows, range from 0 to 93 so we can overlay the 3 rows
     # of the monster onto it (with the last group being rows [93,94,95]).
-    for y in range(0, tile_rows - monster_rows + 1):
-        for x in range(0, tile_cols - monster_cols + 1):
+    for y in range(tile_rows - monster_rows + 1):
+        for x in range(tile_cols - monster_cols + 1):
             # using (x, y) as an anchor point, we see if the monster could exist
             # from this anchor point. Do this by checking if the positions from
             # here contain the required '#' characters.

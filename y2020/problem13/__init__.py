@@ -1,8 +1,7 @@
-from typing import *
-
 # mypy is complaining that the math module does not have a lcm attribute, which
 # is wrong
 from math import lcm  # type: ignore
+from typing import *
 
 
 def parse_buses(line: str) -> Dict[int, int]:

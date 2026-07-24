@@ -47,9 +47,8 @@ def part1(inp: str):
         # cycle is done
         next_inst_counter -= 1
         # is the instruction done executing?
-        if next_inst_counter == 0:
-            if inst == "addx":
-                x += v
+        if next_inst_counter == 0 and inst == "addx":
+            x += v
 
     return sum(strengths)
 
@@ -99,8 +98,7 @@ def part2(inp: str):
         # cycle is done
         next_inst_counter -= 1
         # is the instruction done executing?
-        if next_inst_counter == 0:
-            if inst == "addx":
-                x += v
+        if next_inst_counter == 0 and inst == "addx":
+            x += v
 
     return crt

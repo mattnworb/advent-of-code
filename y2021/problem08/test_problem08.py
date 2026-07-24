@@ -1,4 +1,5 @@
 import pytest
+
 from y2021.problem08 import *
 
 example = """be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe

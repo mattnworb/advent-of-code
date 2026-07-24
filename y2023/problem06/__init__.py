@@ -1,5 +1,5 @@
-from typing import *
 from functools import reduce
+from typing import *
 
 
 # example input

@@ -4,10 +4,10 @@ from typing import List, Set
 def count_groups(inp: str, intersect=False) -> int:
     groups = inp.strip().split("\n\n")
 
-    all_answers: List[Set[str]] = []
+    all_answers: list[set[str]] = []
 
     for group in groups:
-        s: Set[str] = set()
+        s: set[str] = set()
 
         # a list of sets
         # answers for each person in the group

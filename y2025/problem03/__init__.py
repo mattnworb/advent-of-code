@@ -13,8 +13,7 @@ def part1(inp: str):
 
             for ix in range(index_of_max + 1, len(bank)):
                 joltage = int(bank[index_of_max] + bank[ix])
-                if joltage > max_joltage:
-                    max_joltage = joltage
+                max_joltage = max(max_joltage, joltage)
 
         total += max_joltage
     return total

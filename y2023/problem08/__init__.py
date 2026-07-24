@@ -1,5 +1,5 @@
-from typing import *
 from math import lcm
+from typing import *
 
 
 def part1(inp: str):

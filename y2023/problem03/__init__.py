@@ -1,7 +1,6 @@
-from typing import *
-
 # from collections import Counter
 import re
+from typing import *
 
 Span = Tuple[int, int]
 Grid = List[str]
@@ -31,10 +30,7 @@ def touches_symbol(grid: Grid, span: Span, y: int) -> bool:
     # and left and right in this row
     if x_start - 1 in x_range and is_symbol(grid, x_start - 1, y):
         return True
-    if x_end in x_range and is_symbol(grid, x_end, y):
-        return True
-
-    return False
+    return bool(x_end in x_range and is_symbol(grid, x_end, y))
 
 
 def part1(inp: str):

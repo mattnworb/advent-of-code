@@ -18,7 +18,7 @@ ROWS = range(127)
 COLS = range(8)
 
 
-def decode_seat(seat: str) -> Tuple[int, int]:
+def decode_seat(seat: str) -> tuple[int, int]:
     row = narrow(ROWS, seat[0:7], "F", "B")
     col = narrow(COLS, seat[7:], "L", "R")
 
@@ -47,5 +47,5 @@ def narrow(starting_range, moves: str, left_ch: str, right_ch: str) -> int:
     return low
 
 
-def seat_id(seat: Tuple[int, int]) -> int:
+def seat_id(seat: tuple[int, int]) -> int:
     return seat[0] * 8 + seat[1]

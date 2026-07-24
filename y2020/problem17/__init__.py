@@ -1,5 +1,3 @@
-from typing import *
-
 # The pocket dimension contains an infinite 3-dimensional grid. At every integer
 # 3-dimensional coordinate (x,y,z), there exists a single cube which is either
 # active or inactive.
@@ -22,9 +20,9 @@ from typing import *
 #   cube remains active. Otherwise, the cube becomes inactive.
 # - If a cube is inactive but exactly 3 of its neighbors are active, the cube
 #   becomes active. Otherwise, the cube remains inactive.
-
 # so... its a three-dimensional Conway's Game of Life
 from collections import defaultdict
+from typing import *
 
 # part1 is 3 dimensional
 Position3 = Tuple[int, int, int]

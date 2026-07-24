@@ -1,8 +1,8 @@
-from typing import List, Dict, Tuple, Set
 import re
 from collections import defaultdict
+from typing import Dict, List, Set, Tuple
 
-Graph = Dict[str, Set[Tuple[int, str]]]
+Graph = dict[str, set[tuple[int, str]]]
 
 
 def extract_color(bagname: str) -> str:
@@ -15,7 +15,7 @@ def extract_color(bagname: str) -> str:
 # TODO: this is all a mess, consolidate to one function
 
 
-def parse_rules(rules: List[str]) -> Graph:
+def parse_rules(rules: list[str]) -> Graph:
     links: Graph = {}
 
     for rule in rules:
@@ -39,15 +39,15 @@ def parse_rules(rules: List[str]) -> Graph:
     return links
 
 
-def reverse(g: Graph) -> Dict[str, Set[str]]:
-    n: Dict[str, Set[str]] = defaultdict(set)
+def reverse(g: Graph) -> dict[str, set[str]]:
+    n: dict[str, set[str]] = defaultdict(set)
     for bagname, conns in g.items():
         for count, name in conns:
             n[name].add(bagname)
     return n
 
 
-def expand(bagname: str, rgraph: Dict[str, Set[str]]) -> Set[str]:
+def expand(bagname: str, rgraph: dict[str, set[str]]) -> set[str]:
     answer = set()
 
     queue = set(rgraph[bagname])

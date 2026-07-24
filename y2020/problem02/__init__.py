@@ -1,6 +1,5 @@
-from typing import List, Tuple, Optional
-
 import re
+from typing import List, Optional, Tuple
 
 
 def is_password_valid_v1(line: str) -> bool:
@@ -14,7 +13,7 @@ def is_password_valid_v1(line: str) -> bool:
     return min_length <= pw.count(ch) <= max_length
 
 
-def count_valid_passwords_v1(lines: List[str]) -> int:
+def count_valid_passwords_v1(lines: list[str]) -> int:
     count = 0
     for line in lines:
         line = line.strip()
@@ -41,7 +40,7 @@ def is_password_valid_v2(line: str) -> bool:
     return (pw[pos1 - 1] == ch) != (pw[pos2 - 1] == ch)
 
 
-def count_valid_passwords_v2(lines: List[str]) -> int:
+def count_valid_passwords_v2(lines: list[str]) -> int:
     count = 0
     for line in lines:
         line = line.strip()

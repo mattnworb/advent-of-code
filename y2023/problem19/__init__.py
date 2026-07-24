@@ -1,5 +1,5 @@
-from typing import *
 from dataclasses import dataclass
+from typing import *
 
 Part = dict[str, int]
 Rule = Callable[[Part], Optional[str]]
@@ -85,7 +85,7 @@ class EvalRule:
     val: int
     dest: str
 
-    def negate(self) -> "EvalRule":
+    def negate(self) -> EvalRule:
         return EvalRule(
             self.category, ">" if self.op == "<" else "<", self.val, self.dest
         )

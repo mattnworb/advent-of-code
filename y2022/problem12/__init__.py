@@ -1,6 +1,6 @@
-from typing import *
-from collections import defaultdict
 import heapq
+from collections import defaultdict
+from typing import *
 
 # You ask the device for a heightmap of the surrounding area (your puzzle
 # input). The heightmap shows the local area from above broken into a grid; the

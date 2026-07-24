@@ -111,7 +111,7 @@ def solve(
 
         for y in range(miny, maxy + 1):
             for x in range(minx, maxx + 1):
-                ch = grid[(x, y)] if (x, y) in grid else "."
+                ch = grid.get((x, y), ".")
                 print(ch, end="")
             print()
 

@@ -1,8 +1,7 @@
-from typing import *
+from collections import Counter
 
 # To play Camel Cards, you are given a list of hands and their corresponding bid
 # (your puzzle input). For example:
-
 # 32T3K 765
 # T55J5 684
 # KK677 28
@@ -20,10 +19,9 @@ from typing import *
 # My first instinct is to store the input in a dict of hand to bid, sort the keys using a custom compartor, then iterate thru
 #
 # but are there duplicate hands? ... not in my input
-
 from enum import Enum
-from collections import Counter
 from functools import cmp_to_key
+from typing import *
 
 
 class HandType(Enum):

@@ -1,6 +1,5 @@
 from . import find_sum_product
 
-
 nums = [1721, 979, 366, 299, 675, 1456]
 
 

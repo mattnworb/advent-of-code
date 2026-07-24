@@ -1,6 +1,8 @@
-from . import *
 from collections import Counter
+
 import pytest  # type: ignore
+
+from . import *
 
 
 @pytest.fixture

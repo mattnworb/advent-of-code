@@ -1,7 +1,7 @@
-from typing import *
 import string
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 from functools import cache
+from typing import *
 
 Path = Tuple[str, ...]
 Graph = Dict[str, List[str]]

@@ -1,6 +1,5 @@
 from . import *
 
-
 ex1 = """
 mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
 mem[8] = 11

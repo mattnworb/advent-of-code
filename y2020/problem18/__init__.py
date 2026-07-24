@@ -1,6 +1,5 @@
 from typing import *
 
-
 # Instructions:
 #
 # The homework (your puzzle input) consists of a series of expressions that

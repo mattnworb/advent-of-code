@@ -26,7 +26,7 @@ class Board:
         return False
 
     def all_unmarked(self) -> Set[int]:
-        return set([p for row in self.nums for p in row if p not in self.marked])
+        return {p for row in self.nums for p in row if p not in self.marked}
 
 
 def part1(inp: str):

@@ -1,6 +1,6 @@
-from typing import *
-import re
 import functools
+import re
+from typing import *
 
 # input is like "Valve LD has flow rate=0; tunnels lead to valves CL, QU"
 # the input varies between tunnel/tunnels, lead/leads, and valve/valves
@@ -40,7 +40,7 @@ def part1(inp: str, minutes: int = 30, start_location="AA"):
             return value
 
         # if everything with non-zero flow rate is open, no moves to make, just count the value and tick the clock down
-        if open_valves == set(v for v, amt in flow_rate.items() if amt > 0):
+        if open_valves == {v for v, amt in flow_rate.items() if amt > 0}:
             return value + max_value(minutes_left - 1, location, open_valves)
 
         if location not in open_valves and flow_rate[location] > 0:

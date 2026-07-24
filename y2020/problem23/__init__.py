@@ -1,5 +1,5 @@
-from typing import *
 import time
+from typing import *
 
 # The small crab challenges you to a game! The crab is going to mix up some
 # cups, and you have to predict where they'll end up.

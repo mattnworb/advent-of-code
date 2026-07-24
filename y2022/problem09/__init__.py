@@ -1,5 +1,5 @@
-from typing import *
 from enum import Enum
+from typing import *
 
 Position = Tuple[int, int]
 Directions = List[Tuple[str, int]]

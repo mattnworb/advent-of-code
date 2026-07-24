@@ -1,6 +1,5 @@
-from typing import *
-
 import re
+from typing import *
 
 address_pattern = re.compile(r"\[(\d+)\]")
 
