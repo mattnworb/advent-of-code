@@ -62,12 +62,11 @@ def part1(inp: str, cycles: int = 6) -> int:
     # treat the starting point as (0,0,0) - the position values don't actually
     # matter since the value to return is the number of cubes in a certain
     # state.
-    y, z = 0, 0
-    for line in inp.strip().split("\n"):
+    z = 0
+    for y, line in enumerate(inp.strip().split("\n")):
         for x, ch in enumerate(line.strip()):
             if ch == "#":
                 state.add((x, y, z))
-        y += 1
 
     for _ in range(cycles):
         # print_state3(state)
@@ -126,12 +125,11 @@ def one_round3(state: State3) -> State3:
 def part2(inp: str, cycles: int = 6) -> int:
     state = set()
 
-    y, z, w = 0, 0, 0
-    for line in inp.strip().split("\n"):
+    z, w = 0, 0
+    for y, line in enumerate(inp.strip().split("\n")):
         for x, ch in enumerate(line.strip()):
             if ch == "#":
                 state.add((x, y, z, w))
-        y += 1
 
     for _ in range(cycles):
         # print_state3(state)
