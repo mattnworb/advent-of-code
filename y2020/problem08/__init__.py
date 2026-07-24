@@ -1,6 +1,5 @@
 from collections import Counter
 
-
 # The boot code is represented as a text file with one instruction per line of
 # text. Each instruction consists of an operation (acc, jmp, or nop) and an
 # argument (a signed number like +4 or -20).

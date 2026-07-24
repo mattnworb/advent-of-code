@@ -1,6 +1,5 @@
 from collections.abc import Callable
 
-
 occupied_seat = "#"
 empty_seat = "L"
 

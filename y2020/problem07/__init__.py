@@ -1,7 +1,6 @@
 import re
 from collections import defaultdict
 
-
 Graph = dict[str, set[tuple[int, str]]]
 
 

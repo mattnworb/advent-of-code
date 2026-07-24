@@ -1,7 +1,6 @@
 import collections
 import itertools
 
-
 # Each of your joltage adapters is rated for a specific output joltage (your
 # puzzle input). Any given adapter can take an input 1, 2, or 3 jolts lower than
 # its rating and still produce its rated output joltage.
