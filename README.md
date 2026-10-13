@@ -30,6 +30,10 @@ one problem, `uv run pytest <year>/<directory>`.
 Install the pre-commit hooks to keep the code nicely formatted via
 [pre-commit](https://pre-commit.com/) with `pre-commit install`.
 
+The repo's `.envrc` sets pip and uv to use public PyPI, overriding any
+inherited settings. Run `direnv allow` after changing `.envrc` to load these
+settings before running pre-commit.
+
 To benchmark one of the modules with `timeit`, can run something like:
 
 ```sh
