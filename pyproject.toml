@@ -12,7 +12,7 @@ dev = [
   "pytest==9.2.0",
   "ruff==0.17.4",
   "tox==4.67.13",
-  "tox-uv==1.37.6",
+  "tox-uv==1.37.7",
 ]
 
 [tool.ruff.lint]
