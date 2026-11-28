@@ -24,7 +24,7 @@ dev = [
     { name = "pytest", specifier = "==9.2.0" },
     { name = "ruff", specifier = "==0.17.6" },
     { name = "tox", specifier = "==4.67.16" },
-    { name = "tox-uv", specifier = "==1.37.9" },
+    { name = "tox-uv", specifier = "==1.37.10" },
 ]
 
 [[package]]
@@ -336,27 +336,27 @@ wheels = [
 
 [[package]]
 name = "tox-uv"
-version = "1.37.9"
+version = "1.37.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "tox-uv-bare" },
     { name = "uv" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/1b/60a92908e89730b9a85240e171b7f6cd7f3ef1b8b4ae222fddcced60fd7d/tox_uv-1.37.9-py3-none-any.whl", hash = "sha256:c3a16f891115341fe751f50c4657b6bc449304e5917f3e35b7930cc6d75905c2", size = 65878, upload-time = "2026-11-18T01:41:15.183Z" },
+    { url = "https://files.pythonhosted.org/packages/8e/bf/5883b9b607b29715c63e603b762790d633a671667c6929f671d9764b4199/tox_uv-1.37.10-py3-none-any.whl", hash = "sha256:bf825377e603bfe66dd5dbb2a42294edf8711ad7a91e098114d3ca497a512fd1", size = 66317, upload-time = "2026-11-27T20:55:01.804Z" },
 ]
 
 [[package]]
 name = "tox-uv-bare"
-version = "1.37.9"
+version = "1.37.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
     { name = "tox" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8a/d3/43985230bef3a49720fd2591dd3fe72ef7ca9ff1dab538bce29af4e9223f/tox_uv_bare-1.37.9.tar.gz", hash = "sha256:ea95c452c8b6db9e1e1015aa5daea6c182e9dff67484436f2e66e7db0cbbfebc", size = 40996, upload-time = "2026-11-18T01:41:18.165Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1f/2c/f662d7faa203425cdea912287e0c58f399caa60a1293f0e1eddf115939b0/tox_uv_bare-1.37.10.tar.gz", hash = "sha256:5efd1b2d4ca72eb61968a1747d6acb4f0542b530fc000d6caa9a31aedb8cb499", size = 42919, upload-time = "2026-11-27T20:55:04.208Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/12/59/df40cf652996a048c2b93db816d754e7a5f94e34844143e0a14549f3eebc/tox_uv_bare-1.37.9-py3-none-any.whl", hash = "sha256:49fa9f73999b03f9b0baa3f484d1b03e8eef3ea2682a1927fb928c3a9f0aa468", size = 82843, upload-time = "2026-11-18T01:41:16.424Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/50/44f7abd84421ae94bed094e54fcf812bf4ba62d746b4760a0726fc0685ac/tox_uv_bare-1.37.10-py3-none-any.whl", hash = "sha256:a883cdd80a8cada86fda2305cba3748a4ac38c929c458e92cc48971ad7c9b59a", size = 84078, upload-time = "2026-11-27T20:55:03.064Z" },
 ]
 
 [[package]]
